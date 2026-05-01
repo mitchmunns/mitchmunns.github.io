@@ -1,26 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Homepage</title>
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            margin-top: 100px;
-        }
-        a {
-            font-size: 24px;
-            text-decoration: none;
-            color: blue;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Mitch Munns</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+      margin: 0;
+      background: #fafafa;
+      color: #222;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    p.subtitle {
+      font-size: 18px;
+      color: #666;
+      margin-top: 0;
+    }
+
+    .section {
+      margin-top: 40px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    a {
+      color: #2a6df4;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .links a {
+      display: block;
+      margin: 8px 0;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container">
 
-    <h1>Welcome</h1>
-    <p>Check out my game:</p>
+    <h1>Your Name</h1>
+    <p class="subtitle">
+      PhD Researcher | Cognitive Science | Spatial Representation
+    </p>
 
-    <a href="/nameofonlinegame/">Play my game</a>
+    <div class="section">
+      <h2>About</h2>
+      <div class="card">
+        <p>
+          I study spatial cognition and how people form internal representations of environments and abstract relations.
+          My work includes behavioral experiments, VR navigation tasks, and measurement.
+        </p>
+      </div>
+    </div>
 
+    <div class="section">
+      <h2>Projects</h2>
+
+      <div class="card">
+        <strong>Online Game / Experiment</strong>
+        <p>A spatial reasoning task built in Unity.</p>
+        <a href="/nameofonlinegame/">Play here →</a>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <h2>Links</h2>
+      <div class="card links">
+        <a href="#">CV (add later)</a>
+        <a href="#">GitHub</a>
+        <a href="#">Publications</a>
+      </div>
+    </div>
+
+  </div>
 </body>
 </html>
