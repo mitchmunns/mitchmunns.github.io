@@ -63,11 +63,25 @@
       display: block;
       margin: 8px 0;
     }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    
+      padding: 40px;
+      max-width: 500px;
+      text-align: center;
+      color: white;
+    }
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <div class="container glass">
 
     <h1>Your Name</h1>
     <p class="subtitle">
