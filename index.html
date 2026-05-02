@@ -5,28 +5,46 @@
 <title>Mitch Munns</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <style>
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
   margin: 0;
   min-height: 100vh;
-
-  background-image: url("mm_background.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-
   display: flex;
   justify-content: center;
   padding: 40px 20px;
 }
 
-/* Main glass panel */
+/* MAP BACKGROUND */
+#map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* soften map for readability */
+#map::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px) brightness(0.85);
+}
+
+/* MAIN WRAPPER */
 .wrapper {
   width: 100%;
   max-width: 900px;
 }
 
+/* GLASS PANEL */
 .glass {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(16px);
@@ -36,12 +54,12 @@ body {
   border: 1px solid rgba(255,255,255,0.35);
 
   padding: 40px 50px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 
   animation: fadeIn 0.8s ease;
 }
 
-/* Nav bar */
+/* NAV */
 .nav {
   display: flex;
   justify-content: flex-end;
@@ -51,7 +69,7 @@ body {
 }
 
 .nav a {
-  color: rgba(0,0,0,0.7);
+  color: rgba(0,0,0,0.75);
   text-decoration: none;
 }
 
@@ -59,7 +77,7 @@ body {
   text-decoration: underline;
 }
 
-/* Header */
+/* HEADER */
 .header {
   display: flex;
   align-items: center;
@@ -83,7 +101,7 @@ h1 {
   color: rgba(0,0,0,0.65);
 }
 
-/* Sections */
+/* SECTIONS */
 .section {
   margin-top: 40px;
 }
@@ -94,7 +112,7 @@ h2 {
   color: rgba(0,0,0,0.8);
 }
 
-/* Cards */
+/* CARDS */
 .card {
   background: rgba(255,255,255,0.65);
   padding: 18px;
@@ -107,7 +125,7 @@ h2 {
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 a {
@@ -124,7 +142,7 @@ a:hover {
   margin: 5px 0;
 }
 
-/* Animation */
+/* animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -139,6 +157,10 @@ a:hover {
 </head>
 
 <body>
+
+<!-- MAP -->
+<div id="map"></div>
+
 <div class="wrapper">
 <div class="glass">
 
@@ -165,9 +187,8 @@ a:hover {
   <div class="section">
     <h2>About</h2>
     <div class="card">
-      I study spatial cognition and how people construct internal representations of environments and abstract relations. 
-      My research integrates behavioral experiments, latent variable modeling, and immersive virtual reality paradigms 
-      to understand how individuals differ in navigation and reasoning.
+      I study spatial cognition and how people construct internal representations of environments and abstract relations.
+      My research integrates behavioral experiments, latent variable modeling, and immersive virtual reality paradigms.
     </div>
   </div>
 
@@ -198,8 +219,8 @@ a:hover {
     <h2>Projects</h2>
 
     <div class="card">
-      <strong>Spatial Reasoning Task</strong>
-      <p>Interactive task for measuring spatial representation and transformation abilities.</p>
+      <strong>Spatial Task</strong>
+      <p>Interactive spatial reasoning task.</p>
       <a href="/gizmos/">Launch →</a>
     </div>
 
@@ -217,5 +238,19 @@ a:hover {
 
 </div>
 </div>
+
+<!-- MAP SCRIPT -->
+<script>
+  var map = L.map('map', {
+    zoomControl: false,
+    attributionControl: false,
+    scrollWheelZoom: false,
+    dragging: true
+  }).setView([34.414, -119.848], 13); // UCSB / Isla Vista
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  }).addTo(map);
+</script>
+
 </body>
 </html>
