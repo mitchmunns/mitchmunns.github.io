@@ -78,6 +78,43 @@ body {
   gap: 20px;
 }
 
+.header-text h1 {
+  margin: 0;
+  font-size: 34px;
+  color: rgba(255,255,255,0.95);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* pill style */
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+}
+
+/* circular campus icon */
+.badge-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .profile-pic {
   width: 90px;
   height: 90px;
@@ -154,15 +191,24 @@ a {
     <a href="#">Contact</a>
   </div>
 
-  <div class="header">
-    <img src="profile.jpg" class="profile-pic">
-    <div>
-      <h1>Mitch Munns</h1>
-      <p class="subtitle">
-        PhD Researcher · Cognitive Science · Spatial Representation
-      </p>
+<div class="header">
+  <img src="profile.jpg" class="profile-pic">
+  <div class="header-text">
+    <h1>Mitch Munns</h1>
+    <div class="badges">
+      <div class="badge">
+        <img src="ucsb.jpg" class="badge-icon">
+        <span>PhD Researcher at UCSB</span>
+      </div>
+      <div class="badge">
+        <span>🧠 Cognitive Science</span>
+      </div>
+      <div class="badge">
+        <span>📍 Spatial Representation</span>
+      </div>
     </div>
   </div>
+</div>
 
   <div class="section">
     <h2>About</h2>
