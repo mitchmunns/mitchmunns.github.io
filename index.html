@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ---------------- BASE ---------------- */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
@@ -20,7 +19,7 @@ body {
   background: #0b0f14;
 }
 
-/* ---------------- CANVAS ---------------- */
+/* CANVAS BACKGROUND */
 #bg {
   position: fixed;
   top: 0;
@@ -30,7 +29,7 @@ body {
   z-index: 0;
 }
 
-/* ---------------- LAYOUT ---------------- */
+/* LAYOUT */
 .wrapper {
   position: relative;
   z-index: 1;
@@ -39,11 +38,11 @@ body {
   padding: 40px 20px;
 }
 
-/* ---------------- GLASS ---------------- */
+/* GLASS */
 .glass {
   background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
   border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.28);
@@ -54,7 +53,7 @@ body {
   animation: fadeIn 0.8s ease;
 }
 
-/* ---------------- NAV ---------------- */
+/* NAV */
 .nav {
   display: flex;
   justify-content: flex-end;
@@ -72,7 +71,7 @@ body {
   text-decoration: underline;
 }
 
-/* ---------------- HEADER ---------------- */
+/* HEADER */
 .header {
   display: flex;
   align-items: center;
@@ -97,7 +96,7 @@ h1 {
   color: rgba(255,255,255,0.7);
 }
 
-/* ---------------- SECTIONS ---------------- */
+/* SECTIONS */
 .section {
   margin-top: 40px;
 }
@@ -108,7 +107,7 @@ h2 {
   color: rgba(255,255,255,0.85);
 }
 
-/* ---------------- CARDS ---------------- */
+/* CARDS */
 .card {
   background: rgba(255,255,255,0.65);
   padding: 18px;
@@ -133,7 +132,7 @@ a {
   margin: 5px 0;
 }
 
-/* ---------------- ANIMATION ---------------- */
+/* animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -150,7 +149,6 @@ a {
 
   <div class="nav">
     <a href="#">CV</a>
-    <a href="mm_CV.pdf" target="_blank" rel="noopener noreferrer" class="cv-button"> CV</a>
     <a href="#">Research</a>
     <a href="#">Publications</a>
     <a href="#">Contact</a>
@@ -194,7 +192,7 @@ a {
     <div class="card links">
       <a href="/mm_CV.docx">CV</a>
       <a href="#">GitHub</a>
-      <a href="https://scholar.google.com/citations?user=hJHejacAAAAJ&hl=en&oi=sra" target="_blank" rel="noopener noreferrer">Google Scholar</a>
+      <a href="#">Google Scholar</a>
     </div>
   </div>
 
@@ -202,7 +200,7 @@ a {
 </div>
 
 <script>
-/* ---------------- CANVAS GRAPH ---------------- */
+/* ---------------- CANVAS ---------------- */
 
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -232,29 +230,36 @@ resize();
 const NODES = 80;
 const nodes = [];
 
-function initNodes() {
-  nodes.length = 0;
-
-  for (let i = 0; i < NODES; i++) {
-    nodes.push({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.6,
-      vy: (Math.random() - 0.5) * 0.6
-    });
-  }
+for (let i = 0; i < NODES; i++) {
+  nodes.push({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.6,
+    vy: (Math.random() - 0.5) * 0.6
+  });
 }
 
-initNodes();
+/* ---------------- EDGE SYSTEM ---------------- */
 
-/* ---------------- DRAW ---------------- */
+const edges = new Map();
+
+function edgeKey(i, j) {
+  return i < j ? i + "-" + j : j + "-" + i;
+}
+
+function hasEdge(i, j) {
+  return edges.has(edgeKey(i, j));
+}
+
+/* ---------------- DRAW LOOP ---------------- */
 
 function draw() {
   ctx.clearRect(0, 0, w, h);
 
-  // edges
+  /* -------- edges -------- */
   for (let i = 0; i < NODES; i++) {
     for (let j = i + 1; j < NODES; j++) {
+
       const a = nodes[i];
       const b = nodes[j];
 
@@ -262,19 +267,61 @@ function draw() {
       const dy = a.y - b.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist < 140) {
-        ctx.strokeStyle = `rgba(120,200,255,${1 - dist / 140})`;
-        ctx.lineWidth = 1;
+      const key = edgeKey(i, j);
+      let edge = edges.get(key);
 
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
+      const active = dist < 140;
+
+      if (active) {
+        if (!edge) {
+          edge = { intensity: 0, hue: 200 + Math.random() * 80 };
+          edges.set(key, edge);
+        }
+        edge.intensity = Math.min(1, edge.intensity + 0.08);
+      } else if (edge) {
+        edge.intensity -= 0.03;
+        if (edge.intensity <= 0) edges.delete(key);
+      } else {
+        continue;
+      }
+
+      ctx.strokeStyle = `hsla(${edge.hue},80%,65%,${edge.intensity * (1 - dist / 140)})`;
+      ctx.lineWidth = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+  }
+
+  /* -------- TRIANGLE FILL -------- */
+  for (let i = 0; i < NODES; i++) {
+    for (let j = i + 1; j < NODES; j++) {
+      for (let k = j + 1; k < NODES; k++) {
+
+        if (hasEdge(i, j) && hasEdge(j, k) && hasEdge(k, i)) {
+
+          const a = nodes[i];
+          const b = nodes[j];
+          const c = nodes[k];
+
+          const hue = (i * 13 + j * 17 + k * 19) % 360;
+
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.lineTo(c.x, c.y);
+          ctx.closePath();
+
+          ctx.fillStyle = `hsla(${hue},80%,60%,0.12)`;
+          ctx.fill();
+        }
       }
     }
   }
 
-  // nodes
+  /* -------- nodes -------- */
   for (let n of nodes) {
     n.x += n.vx;
     n.y += n.vy;
@@ -282,7 +329,7 @@ function draw() {
     if (n.x < 0 || n.x > w) n.vx *= -1;
     if (n.y < 0 || n.y > h) n.vy *= -1;
 
-    ctx.fillStyle = "rgba(120,200,255,0.9)";
+    ctx.fillStyle = "rgba(200,220,255,0.9)";
     ctx.beginPath();
     ctx.arc(n.x, n.y, 2.3, 0, Math.PI * 2);
     ctx.fill();
