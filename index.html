@@ -152,32 +152,50 @@ a {
 </div>
 
 <script>
-/* --------------------------
-   ABSTRACT GRAPH BACKGROUND
---------------------------- */
-
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
-let w, h;
+let w, h, dpr;
+
 function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+  dpr = window.devicePixelRatio || 1;
+
+  w = window.innerWidth;
+  h = window.innerHeight;
+
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
+
 window.addEventListener("resize", resize);
 resize();
+
+/* ---------------- nodes ---------------- */
 
 const NODES = 80;
 const nodes = [];
 
-for (let i = 0; i < NODES; i++) {
-  nodes.push({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    vx: (Math.random() - 0.5) * 0.6,
-    vy: (Math.random() - 0.5) * 0.6
-  });
+function initNodes() {
+  nodes.length = 0;
+
+  for (let i = 0; i < NODES; i++) {
+    nodes.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6
+    });
+  }
 }
+
+initNodes();
+
+/* ---------------- animation ---------------- */
 
 function draw() {
   ctx.clearRect(0, 0, w, h);
@@ -193,8 +211,9 @@ function draw() {
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       if (dist < 140) {
-        ctx.strokeStyle = `rgba(255,255,255,${1 - dist / 140})`;
+        ctx.strokeStyle = `rgba(120,200,255,${1 - dist / 140})`;
         ctx.lineWidth = 1;
+
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
@@ -211,9 +230,9 @@ function draw() {
     if (n.x < 0 || n.x > w) n.vx *= -1;
     if (n.y < 0 || n.y > h) n.vy *= -1;
 
-    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.fillStyle = "rgba(120,200,255,0.9)";
     ctx.beginPath();
-    ctx.arc(n.x, n.y, 2.2, 0, Math.PI * 2);
+    ctx.arc(n.x, n.y, 2.3, 0, Math.PI * 2);
     ctx.fill();
   }
 
