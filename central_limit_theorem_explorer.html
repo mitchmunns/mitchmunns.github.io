@@ -10,8 +10,15 @@
 .db{font-size:28px;padding:4px 11px;border-radius:20px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .db:hover{background:var(--color-background-secondary);}
 .db.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500;}
-.charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
-.cc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:10px 10px 8px;transition:border-color .3s;}
+/*.charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;} */
+.charts{display:grid;grid-template-columns:repeat(3, minmax(260px, 1fr));gap:18px;align-items:stretch;}
+.cc{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:16px 14px 12px;}
+
+/* MAKE HISTOGRAMS BIG */
+.cc div[style*="height:150px"]{height:320px !important;}
+  
+/*.cc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:10px 10px 8px;transition:border-color .3s;}*/
+  
 .ct{font-size:28px;font-weight:500;color:var(--color-text-primary);margin:0 0 2px;}
 .cs{font-size:28px;color:var(--color-text-secondary);margin:0 0 6px;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:6px;}
