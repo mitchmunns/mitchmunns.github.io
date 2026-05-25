@@ -1,25 +1,13 @@
-
 <h2 class="sr-only">Central Limit Theorem Explorer</h2>
 
 <style>
 .clt{padding:1rem 0;font-family:var(--font-sans);}
 .row{display:flex;flex-wrap:wrap;gap:16px;align-items:center; margin-bottom:14px;}
 .cg{display:flex;align-items:center;gap:7px;}
-/*.cg label{font-size:32px;color:var(--color-text-secondary);white-space:nowrap;}*/
-/*.cg span{font-size:32px;font-weight:500;min-width:36px;}*/
-/*.db{font-size:28px;padding:4px 11px;border-radius:20px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer;transition:all .15s;white-space:nowrap;}*/
 .db:hover{background:var(--color-background-secondary);}
 .db.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500;}
-/*.charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;} */
 .charts{display:grid;grid-template-columns:repeat(3, minmax(260px, 1fr));gap:18px;align-items:stretch;}
 .cc{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:16px 14px 12px;}
-
-/* MAKE HISTOGRAMS BIG */
-.cc div[style*="height:150px"]{height:320px !important;}
-  
-/*.cc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:10px 10px 8px;transition:border-color .3s;}*/
-
-
 .ct{font-size:34px;font-weight:600;margin-bottom:4px;}
 .cs{font-size:28px;}
 .stat-item{font-size:28px;}
@@ -27,12 +15,7 @@
 .db{font-size:28px;padding:8px 14px;}
 .cg label{font-size:34px;}
 .cg span{font-size:34px;}
-  
-/*.ct{font-size:28px;font-weight:500;color:var(--color-text-primary);margin:0 0 2px;}*/
-/*.cs{font-size:28px;color:var(--color-text-secondary);margin:0 0 6px;}*/
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:6px;}
-/*.stat-item{font-size:26px;color:var(--color-text-secondary);}*/
-/*.stat-item b{font-size:28px;font-weight:500;color:var(--color-text-primary);display:block;line-height:1.2;}*/
 .stat-item.highlight b{color:var(--color-text-warning);}
 .sep{width:0.5px;height:16px;background:var(--color-border-tertiary);margin:0 2px;}
 .skew-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px;padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);}
@@ -41,353 +24,128 @@
 </style>
 
 <div class="clt">
-  <div class="row">
-    <span style="font-size:28px;color:var(--color-text-secondary);white-space:nowrap;">Population:</span>
-    <div style="display:flex;gap:5px;flex-wrap:wrap;" id="distBtns">
-      <button class="db active" data-dist="normal">Normal</button>
-      <button class="db" data-dist="right-skew">Right skewed</button>
-      <button class="db" data-dist="left-skew">Left skewed</button>
-      <button class="db" data-dist="bimodal">Bimodal</button>
-      <button class="db" data-dist="uniform">Uniform</button>
-      <button class="db" data-dist="exponential">Exponential</button>
-    </div>
-  </div>
-
-  <div class="skew-row hidden" id="skewRow">
-    <div class="cg">
-      <label id="skewLabel">Skew strength</label>
-      <input type="range" min="1" max="20" value="4" step="1" id="skewSlider" style="width:120px">
-      <span id="skewVal">4</span>
-    </div>
-    <span id="skewDesc" style="font-size:26px;color:var(--color-text-secondary);"></span>
-  </div>
-
-  <div class="row">
-    <div class="cg">
-      <label>Sample size n =</label>
-      <input type="range" min="2" max="1000" value="10" step="1" id="nSlider" style="width:90px">
-      <span id="nVal">10</span>
-    </div>
-    <div class="sep"></div>
-    <div class="cg" style="flex-direction:column;align-items:flex-start;gap:2px;">
-      <div style="display:flex;align-items:center;gap:7px;">
-        <label>Speed</label>
-        <input type="range" min="1" max="9" value="5" step="1" id="speedSlider" style="width:110px">
-        <span id="speedLabel" style="font-size:28px;font-weight:500;min-width:64px;color:var(--color-text-secondary);">medium</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;width:197px;padding-left:42px;font-size:24px;color:var(--color-text-secondary);margin-top:-2px;">
-        <span>slowest</span><span>fastest</span>
-      </div>
-    </div>
-    <div class="sep"></div>
-    <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
-      <button id="playBtn"><i class="ti ti-player-play" aria-hidden="true"></i> Start</button>
-      <button id="resetBtn"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
-      <span style="font-size:34px;color:var(--color-text-secondary);" id="counter">0 samples</span>
-    </div>
-  </div>
 
   <div class="charts">
-    <div class="cc" id="card0">
+    <div class="cc">
       <p class="ct">Population</p>
-      <p class="cs">N = 10,000</p>
-      <div style="position:relative;height:150px"><canvas id="popC" role="img" aria-label="Population distribution histogram">Population histogram</canvas></div>
-      <div class="stat-grid">
-        <div class="stat-item">mean μ<b id="popMu">—</b></div>
-        <div class="stat-item">std dev σ<b id="popSd">—</b></div>
-      </div>
+      <div style="position:relative;height:150px"><canvas id="popC"></canvas></div>
     </div>
-    <div class="cc" id="card1">
+
+    <div class="cc">
       <p class="ct">Current sample</p>
-      <p class="cs" id="sub1">n = 10</p>
-      <div style="position:relative;height:150px"><canvas id="samC" role="img" aria-label="Current sample histogram">Sample histogram</canvas></div>
-      <div class="stat-grid">
-        <div class="stat-item highlight">sample mean x̄<b id="samMean">—</b></div>
-        <div class="stat-item">sample std s<b id="samSd">—</b></div>
-      </div>
+      <div style="position:relative;height:150px"><canvas id="samC"></canvas></div>
     </div>
-    <div class="cc" id="card2">
-      <p class="ct">Distribution of sample means</p>
-      <p class="cs" id="sub2">means accumulate here</p>
-      <div style="position:relative;height:150px"><canvas id="meaC" role="img" aria-label="Histogram of sample means">Sample means histogram</canvas></div>
-      <div class="stat-grid">
-        <div class="stat-item">mean of means<b id="mom">—</b></div>
-        <div class="stat-item">std error SE<b id="se">—</b></div>
-      </div>
+
+    <div class="cc">
+      <p class="ct">Sample means</p>
+      <div style="position:relative;height:150px"><canvas id="meaC"></canvas></div>
     </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
 <script>
-const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
-const C_POP=isDark?'#7F77DD':'#534AB7', C_SAM=isDark?'#1DB389':'#0F6E56';
-const C_MEA=isDark?'#E07B55':'#993C1D', C_NRM=isDark?'#FAC775':'#BA7517';
-const C_MEAN_LINE=isDark?'#FAC775':'#BA7517';
-const C_FLASH=isDark?'#EF9F27':'#BA7517';
-const GRID=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)', TICK=isDark?'#aaa':'#666';
-const N=10000, BINS=30, MBINS=30;
+const N=10000, BINS=30;
 
 function randn(){
   let u=0,v=0;
-  while(!u)u=Math.random();while(!v)v=Math.random();
+  while(!u)u=Math.random();
+  while(!v)v=Math.random();
   return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
 }
 
-function sampleGamma(shape){
-  if(shape<1){const u=Math.random();return sampleGamma(1+shape)*Math.pow(u,1/shape);}
-  const d=shape-1/3,c=1/Math.sqrt(9*d);
-  while(true){
-    let x,v;do{x=randn();v=1+c*x;}while(v<=0);
-    v=v*v*v;const u=Math.random();
-    if(u<1-0.0331*(x*x)*(x*x))return d*v;
-    if(Math.log(u)<0.5*x*x+d*(1-v+Math.log(v)))return d*v;
-  }
+function makeDist(){
+  return ()=>randn()*15+50;
 }
 
-function makeDist(key,sp){
-  switch(key){
-    case 'normal': return ()=>randn()*15+50;
-    case 'right-skew':{const sh=Math.max(0.3,10/sp);return()=>{const g=sampleGamma(sh),m=sh,s=Math.sqrt(sh);return((g-m)/s)*15+50;};}
-    case 'left-skew':{const sh=Math.max(0.3,10/sp);return()=>{const g=sampleGamma(sh),m=sh,s=Math.sqrt(sh);return(-(g-m)/s)*15+50;};}
-    case 'bimodal':{const sep=sp*3;return()=>Math.random()<0.5?randn()*6+(50-sep):randn()*6+(50+sep);}
-    case 'uniform': return()=>Math.random()*80+10;
-    case 'exponential':{const lam=0.04+(sp-1)*0.018;return()=>Math.min(-Math.log(1-Math.random())/lam+5,200);}
-    default: return()=>randn()*15+50;
-  }
+function arrStat(arr){
+  const m=arr.reduce((a,b)=>a+b,0)/arr.length;
+  return {m};
 }
 
-const SKEW_LABELS={'right-skew':v=>v<=4?'mild right tail':v<=10?'moderate right tail':'heavy right tail','left-skew':v=>v<=4?'mild left tail':v<=10?'moderate left tail':'heavy left tail','bimodal':v=>v<=4?'peaks close together':v<=10?'peaks well separated':'peaks very far apart','exponential':v=>v<=4?'mild decay':v<=10?'moderate decay':'very steep decay'};
-const SKEW_SHOW=new Set(['right-skew','left-skew','bimodal','exponential']);
-
-let distKey='normal', skewParam=4, population=[], sampleMeans=[], n=10, running=false, animId=null;
-let lastMean=null, flashTimer=null;
-
-function arrStat(arr){const m=arr.reduce((a,b)=>a+b,0)/arr.length;return{m,s:Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length)};}
-function hist(data,mn,mx,b){const w=(mx-mn)/b,c=new Array(b).fill(0);data.forEach(v=>{let i=Math.max(0,Math.min(b-1,Math.floor((v-mn)/w)));c[i]++;});return c;}
-function binLabels(mn,mx,b){return Array.from({length:b},(_,i)=>((mn+(i+.5)*(mx-mn)/b)).toFixed(1));}
-function normFit(mu,sigma,mn,mx,b,total){const w=(mx-mn)/b;return Array.from({length:b},(_,i)=>{const x=mn+(i+.5)*w;return total*w*(1/(sigma*Math.sqrt(2*Math.PI)))*Math.exp(-.5*((x-mu)/sigma)**2);});}
-function clampedRange(data){const s=data.slice().sort((a,b)=>a-b);return[s[Math.floor(data.length*0.005)],s[Math.floor(data.length*0.995)]];}
-
-let popMin, popMax;
-
-function rebuildPop(){
-  population=Array.from({length:N},makeDist(distKey,skewParam));
-  const[mn,mx]=clampedRange(population);popMin=mn;popMax=mx;
-  const{m,s}=arrStat(population);
-  document.getElementById('popMu').textContent=m.toFixed(2);
-  document.getElementById('popSd').textContent=s.toFixed(2);
-  popChart.data.labels=binLabels(popMin,popMax,BINS);
-  popChart.data.datasets[0].data=hist(population,popMin,popMax,BINS);
-  popChart.data.datasets[1].data=normFit(m,s,popMin,popMax,BINS,N);
-  popChart.update('none');
+function hist(data,min,max,bins){
+  const w=(max-min)/bins;
+  const c=new Array(bins).fill(0);
+  data.forEach(v=>{
+    let i=Math.max(0,Math.min(bins-1,Math.floor((v-min)/w)));
+    c[i]++;
+  });
+  return c;
 }
 
-function updateSkewUI(){
-  const show=SKEW_SHOW.has(distKey);
-  document.getElementById('skewRow').classList.toggle('hidden',!show);
-  if(!show)return;
-  const labels={'right-skew':'Skew strength','left-skew':'Skew strength','bimodal':'Peak separation','exponential':'Decay steepness'};
-  document.getElementById('skewLabel').textContent=labels[distKey]||'Skew strength';
-  const d=SKEW_LABELS[distKey];
-  document.getElementById('skewDesc').textContent=d?d(skewParam):'';
+function binLabels(min,max,bins){
+  return Array.from({length:bins},(_,i)=>
+    (min+(i+0.5)*(max-min)/bins).toFixed(1)
+  );
 }
 
-const meanLinePlugin = {
-  id:'meanLine',
-  afterDraw(chart){
-    if(chart.canvas.id!=='samC')return;
-    if(lastMean===null)return;
-    const{ctx,chartArea,scales}=chart;
-    if(!scales.x||!chartArea)return;
-    const xPos=scales.x.getPixelForValue(
-      (lastMean-popMin)/(popMax-popMin)*BINS - 0.5
-    );
-    const xFrac=(lastMean-popMin)/(popMax-popMin);
-    const px=chartArea.left+xFrac*(chartArea.right-chartArea.left);
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(px,chartArea.top);
-    ctx.lineTo(px,chartArea.bottom);
-    ctx.strokeStyle=C_MEAN_LINE;
-    ctx.lineWidth=2;
-    ctx.setLineDash([5,3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.font='500 11px system-ui,sans-serif';
-    ctx.fillStyle=C_MEAN_LINE;
-    ctx.textAlign='center';
-    const label='x̄='+lastMean.toFixed(2);
-    const tx=Math.min(Math.max(px,chartArea.left+20),chartArea.right-20);
-    ctx.fillText(label,tx,chartArea.top+10);
-    ctx.restore();
-  }
-};
+// FIXED GLOBAL AXES (this is the key change)
+const POP_MIN=0, POP_MAX=100;
+const SAM_MIN=0, SAM_MAX=100;
+const MEA_MIN=40, MEA_MAX=60;
 
-const flashPlugin = {
-  id:'flashBar',
-  afterDraw(chart){
-    if(chart.canvas.id!=='meaC')return;
-    if(!flashBinIndex||flashOpacity<=0)return;
-    const{ctx,chartArea,scales}=chart;
-    if(!chartArea)return;
-    const meta=chart.getDatasetMeta(0);
-    if(!meta.data[flashBinIndex])return;
-    const bar=meta.data[flashBinIndex];
-    const x=bar.x-bar.width/2;
-    const w=bar.width;
-    const y=chartArea.top;
-    const h=chartArea.bottom-chartArea.top;
-    ctx.save();
-    ctx.globalAlpha=flashOpacity*0.35;
-    ctx.fillStyle=C_FLASH;
-    ctx.fillRect(x,y,w,h);
-    ctx.globalAlpha=1;
-    ctx.strokeStyle=C_FLASH;
-    ctx.lineWidth=2;
-    ctx.strokeRect(x,y,w,h);
-    ctx.restore();
-  }
-};
+const population = Array.from({length:N}, makeDist);
 
-Chart.register(meanLinePlugin, flashPlugin);
+let sampleMeans=[];
+let n=10;
 
-let flashBinIndex=null, flashOpacity=0, flashRaf=null;
-
-function triggerFlash(binIdx){
-  flashBinIndex=binIdx; flashOpacity=1;
-  if(flashRaf)cancelAnimationFrame(flashRaf);
-  let start=null;
-  function fade(ts){
-    if(!start)start=ts;
-    const elapsed=ts-start;
-    const dur=900;
-    flashOpacity=Math.max(0,1-elapsed/dur);
-    meaChart.update('none');
-    if(flashOpacity>0)flashRaf=requestAnimationFrame(fade);
-    else{flashBinIndex=null;meaChart.update('none');}
-  }
-  flashRaf=requestAnimationFrame(fade);
+function cOpts(){
+  return {
+    responsive:true,
+    maintainAspectRatio:false,
+    animation:{duration:120},
+    plugins:{legend:{display:false},tooltip:{enabled:false}},
+    scales:{
+      x:{
+        ticks:{maxTicksLimit:6},
+        grid:{color:'rgba(0,0,0,0.06)'}
+      },
+      y:{
+        beginAtZero:true,
+        grid:{color:'rgba(0,0,0,0.06)'}
+      }
+    }
+  };
 }
 
-const cOpts=()=>({
-  responsive:true,maintainAspectRatio:false,animation:{duration:150},
-  plugins:{legend:{display:false},tooltip:{enabled:false}},
-  scales:{
-    x:{ticks:{maxTicksLimit:5,color:TICK,font:{size:10},maxRotation:0},grid:{color:GRID}},
-    y:{ticks:{maxTicksLimit:4,color:TICK,font:{size:10}},grid:{color:GRID},min:0}
-  }
-});
-
-function makeChart(id,color,lbs,counts,withNorm){
-  const ds=[{label:'count',data:counts,backgroundColor:color+'99',borderColor:color,borderWidth:0.5,borderRadius:1}];
-  if(withNorm)ds.push({label:'normal',data:new Array(lbs.length).fill(0),type:'line',borderColor:C_NRM,borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false,tension:0.4});
-  return new Chart(document.getElementById(id),{type:'bar',data:{labels:lbs,datasets:ds},options:cOpts()});
+function makeChart(id,color,min,max){
+  return new Chart(document.getElementById(id),{
+    type:'bar',
+    data:{
+      labels:binLabels(min,max,BINS),
+      datasets:[{
+        data:new Array(BINS).fill(0),
+        backgroundColor:color
+      }]
+    },
+    options:cOpts()
+  });
 }
 
-population=Array.from({length:N},makeDist('normal',4));
-const[mn0,mx0]=clampedRange(population);popMin=mn0;popMax=mx0;
-const{m:pmu0,s:psd0}=arrStat(population);
-document.getElementById('popMu').textContent=pmu0.toFixed(2);
-document.getElementById('popSd').textContent=psd0.toFixed(2);
-
-const popChart=makeChart('popC',C_POP,binLabels(popMin,popMax,BINS),hist(population,popMin,popMax,BINS),true);
-popChart.data.datasets[1].data=normFit(pmu0,psd0,popMin,popMax,BINS,N);popChart.update('none');
-const samChart=makeChart('samC',C_SAM,binLabels(popMin,popMax,BINS),new Array(BINS).fill(0),false);
-let meaMin=pmu0-4*(psd0/Math.sqrt(10)),meaMax=pmu0+4*(psd0/Math.sqrt(10));
-const meaChart=makeChart('meaC',C_MEA,binLabels(meaMin,meaMax,MBINS),new Array(MBINS).fill(0),true);
-
-function resetSim(){
-  running=false;clearTimeout(animId);sampleMeans=[];lastMean=null;flashOpacity=0;
-  document.getElementById('playBtn').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Start';
-  document.getElementById('counter').textContent='0 samples';
-  ['samMean','samSd','mom','se'].forEach(id=>document.getElementById(id).textContent='—');
-  document.getElementById('sub2').textContent='means accumulate here';
-  samChart.data.datasets[0].data=new Array(BINS).fill(0);samChart.update();
-  meaChart.data.datasets[0].data=new Array(MBINS).fill(0);
-  meaChart.data.datasets[1].data=new Array(MBINS).fill(0);meaChart.update();
-  document.getElementById('card1').classList.remove('flash');
-  document.getElementById('card2').classList.remove('flash');
-}
-
-function getDelay(){
-  const v=parseInt(document.getElementById('speedSlider').value);
-  const labels=['slowest','very slow','slow','slow-med','medium','med-fast','fast','very fast','fastest'];
-  document.getElementById('speedLabel').textContent=labels[v-1];
-  return[3000,1800,1000,500,250,120,60,25,8][v-1];
-}
+const popChart=makeChart('popC','#4a44aa',POP_MIN,POP_MAX);
+const samChart=makeChart('samC','#1a8a6a',SAM_MIN,SAM_MAX);
+const meaChart=makeChart('meaC','#b24b2a',MEA_MIN,MEA_MAX);
 
 function drawSample(){
   const sample=Array.from({length:n},()=>population[Math.floor(Math.random()*N)]);
-  const{m:sm,s:ss}=arrStat(sample);
-  lastMean=sm;
-  sampleMeans.push(sm);
+  const {m}=arrStat(sample);
+  sampleMeans.push(m);
 
-  document.getElementById('samMean').textContent=sm.toFixed(2);
-  document.getElementById('samSd').textContent=ss.toFixed(2);
-  document.getElementById('sub1').textContent='n = '+n;
+  samChart.data.datasets[0].data =
+    hist(sample,SAM_MIN,SAM_MAX,BINS);
 
-  samChart.data.labels=binLabels(popMin,popMax,BINS);
-  samChart.data.datasets[0].data=hist(sample,popMin,popMax,BINS);
+  meaChart.data.datasets[0].data =
+    hist(sampleMeans,MEA_MIN,MEA_MAX,BINS);
+
   samChart.update();
-
-  const{m:pmu,s:psd}=arrStat(population);
-  const seV=psd/Math.sqrt(n);
-  meaMin=pmu-4.5*seV;meaMax=pmu+4.5*seV;
-  meaChart.data.labels=binLabels(meaMin,meaMax,MBINS);
-  const mc=hist(sampleMeans,meaMin,meaMax,MBINS);
-  meaChart.data.datasets[0].data=mc;
-  meaChart.data.datasets[1].data=sampleMeans.length>3?normFit(pmu,seV,meaMin,meaMax,MBINS,sampleMeans.length):new Array(MBINS).fill(0);
   meaChart.update();
-
-  const binW=(meaMax-meaMin)/MBINS;
-  const binIdx=Math.max(0,Math.min(MBINS-1,Math.floor((sm-meaMin)/binW)));
-  triggerFlash(binIdx);
-
-  const c1=document.getElementById('card1'),c2=document.getElementById('card2');
-  c1.classList.add('flash');c2.classList.add('flash');
-  clearTimeout(flashTimer);
-  flashTimer=setTimeout(()=>{c1.classList.remove('flash');c2.classList.remove('flash');},600);
-
-  document.getElementById('mom').textContent=(sampleMeans.reduce((a,b)=>a+b,0)/sampleMeans.length).toFixed(2);
-  document.getElementById('se').textContent=seV.toFixed(2);
-  document.getElementById('counter').textContent=sampleMeans.length+' sample'+(sampleMeans.length===1?'':'s');
-  document.getElementById('sub2').textContent=sampleMeans.length+' means · n='+n;
 }
 
-function step(){if(!running)return;drawSample();animId=setTimeout(step,getDelay());}
+// initial draw
+popChart.data.datasets[0].data =
+  hist(population,POP_MIN,POP_MAX,BINS);
+popChart.update();
 
-document.getElementById('playBtn').addEventListener('click',()=>{
-  running=!running;
-  const btn=document.getElementById('playBtn');
-  if(running){btn.innerHTML='<i class="ti ti-player-pause" aria-hidden="true"></i> Pause';step();}
-  else{btn.innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Resume';clearTimeout(animId);}
-});
-document.getElementById('resetBtn').addEventListener('click',resetSim);
-document.getElementById('nSlider').addEventListener('input',function(){
-  n=parseInt(this.value);
-  document.getElementById('nVal').textContent=n;
-  document.getElementById('sub1').textContent='n = '+n;
-  sampleMeans=[];lastMean=null;
-  meaChart.data.datasets[0].data=new Array(MBINS).fill(0);
-  meaChart.data.datasets[1].data=new Array(MBINS).fill(0);meaChart.update();
-  if(running){clearTimeout(animId);step();}
-});
-document.getElementById('speedSlider').addEventListener('input',()=>{getDelay();if(running){clearTimeout(animId);step();}});
-document.getElementById('skewSlider').addEventListener('input',function(){
-  skewParam=parseInt(this.value);
-  document.getElementById('skewVal').textContent=skewParam;
-  updateSkewUI();resetSim();rebuildPop();
-});
-document.querySelectorAll('.db').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.db').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active');
-    distKey=this.dataset.dist;
-    skewParam=parseInt(document.getElementById('skewSlider').value);
-    updateSkewUI();resetSim();rebuildPop();
-  });
-});
-
-getDelay();updateSkewUI();
+setInterval(drawSample, 400);
 </script>
