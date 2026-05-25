@@ -1,263 +1,350 @@
 
-<h2 class="sr-only">Central Limit Theorem Explorer: animated visualization showing population distribution, sample distribution, and sampling distribution of means side by side</h2>
+<h2 class="sr-only">Central Limit Theorem Explorer with adjustable skew, sample size, and animation speed</h2>
 
 <style>
-  .clt-wrap { padding: 1rem 0; font-family: var(--font-sans); }
-  .controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 1.25rem; }
-  .ctrl-group { display: flex; align-items: center; gap: 8px; }
-  .ctrl-group label { font-size: 13px; color: var(--color-text-secondary); white-space: nowrap; }
-  .ctrl-group span { font-size: 13px; font-weight: 500; min-width: 28px; }
-  .charts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .chart-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 12px 8px; }
-  .chart-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 2px; }
-  .chart-sub { font-size: 11px; color: var(--color-text-secondary); margin: 0 0 8px; }
-  .stat-row { display: flex; gap: 12px; margin-top: 6px; }
-  .stat { font-size: 11px; color: var(--color-text-secondary); }
-  .stat b { color: var(--color-text-primary); font-weight: 500; }
-  .btn-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .counter { font-size: 12px; color: var(--color-text-secondary); margin-left: 4px; }
-  .speed-label { font-size: 12px; color: var(--color-text-secondary); }
-  .normal-curve { stroke-width: 1.5px; fill: none; stroke-dasharray: 4 3; opacity: 0.7; }
+.clt{padding:1rem 0;font-family:var(--font-sans);}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px;}
+.cg{display:flex;align-items:center;gap:7px;}
+.cg label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap;}
+.cg span{font-size:12px;font-weight:500;min-width:36px;}
+.db{font-size:11px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.db:hover{background:var(--color-background-secondary);}
+.db.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500;}
+.charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.cc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:10px 10px 6px;}
+.ct{font-size:12px;font-weight:500;color:var(--color-text-primary);margin:0 0 1px;}
+.cs{font-size:11px;color:var(--color-text-secondary);margin:0 0 6px;}
+.cst{font-size:11px;color:var(--color-text-secondary);margin-top:4px;}
+.cst b{color:var(--color-text-primary);font-weight:500;}
+.sep{width:0.5px;height:16px;background:var(--color-border-tertiary);margin:0 2px;}
+.skew-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px;padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);}
+.skew-row.hidden{display:none;}
 </style>
 
-<div class="clt-wrap">
-  <div class="controls">
-    <div class="ctrl-group">
+<div class="clt">
+  <div class="row">
+    <span style="font-size:12px;color:var(--color-text-secondary);white-space:nowrap;">Population shape:</span>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;" id="distBtns">
+      <button class="db active" data-dist="normal">Normal</button>
+      <button class="db" data-dist="right-skew">Right skewed</button>
+      <button class="db" data-dist="left-skew">Left skewed</button>
+      <button class="db" data-dist="bimodal">Bimodal</button>
+      <button class="db" data-dist="uniform">Uniform</button>
+      <button class="db" data-dist="exponential">Exponential</button>
+    </div>
+  </div>
+
+  <div class="skew-row hidden" id="skewRow">
+    <div class="cg">
+      <label id="skewLabel">Skew strength</label>
+      <input type="range" min="1" max="20" value="4" step="1" id="skewSlider" style="width:120px">
+      <span id="skewVal">4</span>
+    </div>
+    <span id="skewDesc" style="font-size:11px;color:var(--color-text-secondary);"></span>
+  </div>
+
+  <div class="row">
+    <div class="cg">
       <label>Sample size n =</label>
-      <input type="range" min="2" max="100" value="10" step="1" id="nSlider" style="width:100px">
+      <input type="range" min="2" max="100" value="10" step="1" id="nSlider" style="width:90px">
       <span id="nVal">10</span>
     </div>
-    <div class="ctrl-group">
-      <label>Speed</label>
-      <input type="range" min="1" max="5" value="3" step="1" id="speedSlider" style="width:80px">
+    <div class="sep"></div>
+    <div class="cg" style="flex-direction:column;align-items:flex-start;gap:2px;">
+      <div style="display:flex;align-items:center;gap:7px;">
+        <label>Speed</label>
+        <input type="range" min="1" max="9" value="5" step="1" id="speedSlider" style="width:110px">
+        <span id="speedLabel" style="font-size:12px;font-weight:500;min-width:60px;color:var(--color-text-secondary);">medium</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;width:197px;padding-left:42px;font-size:10px;color:var(--color-text-secondary);margin-top:-2px;">
+        <span>slowest</span><span>fastest</span>
+      </div>
     </div>
-    <div class="btn-row">
+    <div class="sep"></div>
+    <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
       <button id="playBtn"><i class="ti ti-player-play" aria-hidden="true"></i> Start</button>
       <button id="resetBtn"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
-      <span class="counter" id="counter">0 samples drawn</span>
+      <span style="font-size:11px;color:var(--color-text-secondary);" id="counter">0 samples</span>
     </div>
   </div>
 
   <div class="charts">
-    <div class="chart-card">
-      <p class="chart-title">Population</p>
-      <p class="chart-sub">N = 10,000 · roughly normal</p>
-      <div style="position:relative;height:160px"><canvas id="popChart" role="img" aria-label="Histogram of the population distribution"></canvas></div>
-      <div class="stat-row">
-        <span class="stat">μ = <b id="popMean">—</b></span>
-        <span class="stat">σ = <b id="popSd">—</b></span>
-      </div>
+    <div class="cc">
+      <p class="ct">Population</p>
+      <p class="cs" id="sub0">N = 10,000</p>
+      <div style="position:relative;height:155px"><canvas id="popC" role="img" aria-label="Population distribution histogram">Population histogram</canvas></div>
+      <div class="cst">μ = <b id="popMu">—</b> · σ = <b id="popSd">—</b></div>
     </div>
-    <div class="chart-card">
-      <p class="chart-title">Current sample</p>
-      <p class="chart-sub" id="sampleSub">n = 10 values</p>
-      <div style="position:relative;height:160px"><canvas id="sampleChart" role="img" aria-label="Histogram of the current random sample"></canvas></div>
-      <div class="stat-row">
-        <span class="stat">x̄ = <b id="sampleMean">—</b></span>
-        <span class="stat">s = <b id="sampleSd">—</b></span>
-      </div>
+    <div class="cc">
+      <p class="ct">Current sample</p>
+      <p class="cs" id="sub1">n = 10</p>
+      <div style="position:relative;height:155px"><canvas id="samC" role="img" aria-label="Current sample histogram">Sample histogram</canvas></div>
+      <div class="cst">x̄ = <b id="samMean">—</b> · s = <b id="samSd">—</b></div>
     </div>
-    <div class="chart-card">
-      <p class="chart-title">Sampling distribution of x̄</p>
-      <p class="chart-sub" id="sdSub">sample means accumulate here</p>
-      <div style="position:relative;height:160px"><canvas id="meansChart" role="img" aria-label="Histogram of sample means, which should approach a normal distribution"></canvas></div>
-      <div class="stat-row">
-        <span class="stat">mean of means = <b id="meanOfMeans">—</b></span>
-        <span class="stat">SE = <b id="seVal">—</b></span>
-      </div>
+    <div class="cc">
+      <p class="ct">Sampling distribution of x̄</p>
+      <p class="cs" id="sub2">sample means accumulate here</p>
+      <div style="position:relative;height:155px"><canvas id="meaC" role="img" aria-label="Histogram of sample means">Sample means histogram</canvas></div>
+      <div class="cst">mean of means = <b id="mom">—</b> · SE = <b id="se">—</b></div>
     </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const N_POP = 10000;
-const N_BINS = 30;
-
-function randn() {
-  let u = 0, v = 0;
-  while (!u) u = Math.random();
-  while (!v) v = Math.random();
-  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-}
-
-function generatePopulation() {
-  const pop = [];
-  for (let i = 0; i < N_POP; i++) {
-    pop.push(randn() * 15 + 50);
-  }
-  return pop;
-}
-
-function mean(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
-function std(arr) {
-  const m = mean(arr);
-  return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length);
-}
-
-function histogram(data, min, max, bins) {
-  const width = (max - min) / bins;
-  const counts = new Array(bins).fill(0);
-  data.forEach(v => {
-    let b = Math.floor((v - min) / width);
-    b = Math.max(0, Math.min(bins-1, b));
-    counts[b]++;
-  });
-  return counts;
-}
-
-function binLabels(min, max, bins) {
-  const w = (max - min) / bins;
-  return Array.from({length: bins}, (_,i) => (min + (i+0.5)*w).toFixed(1));
-}
-
-function normalCurveCounts(mu, sigma, min, max, bins, totalCount) {
-  const w = (max - min) / bins;
-  return Array.from({length: bins}, (_,i) => {
-    const x = min + (i+0.5)*w;
-    return totalCount * w * (1/(sigma*Math.sqrt(2*Math.PI))) * Math.exp(-0.5*((x-mu)/sigma)**2);
-  });
-}
-
 const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
-const popColor = isDark ? '#6C63D6' : '#534AB7';
-const sampleColor = isDark ? '#1DB389' : '#0F6E56';
-const meansColor = isDark ? '#E07B55' : '#993C1D';
-const normalColor = isDark ? '#FAC775' : '#BA7517';
-const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
-const labelColor = isDark ? '#aaa' : '#666';
+const C_POP=isDark?'#7F77DD':'#534AB7', C_SAM=isDark?'#1DB389':'#0F6E56';
+const C_MEA=isDark?'#E07B55':'#993C1D', C_NRM=isDark?'#FAC775':'#BA7517';
+const GRID=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)', TICK=isDark?'#999':'#777';
+const N=10000, BINS=30, MBINS=30;
 
-function makeChart(id, color, labels, data) {
-  return new Chart(document.getElementById(id), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: 'count', data, backgroundColor: color + 'BB', borderColor: color, borderWidth: 0.5, borderRadius: 1 },
-        { label: 'normal fit', data: new Array(labels.length).fill(0), type: 'line', borderColor: normalColor, borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.4 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      animation: { duration: 180 },
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: {
-        x: { display: true, ticks: { maxTicksLimit: 6, color: labelColor, font: { size: 10 }, autoSkip: true, maxRotation: 0 }, grid: { color: gridColor } },
-        y: { display: true, ticks: { maxTicksLimit: 5, color: labelColor, font: { size: 10 } }, grid: { color: gridColor } }
-      }
+function randn(){
+  let u=0,v=0;
+  while(!u)u=Math.random();while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+
+function sampleGamma(shape){
+  if(shape<1){
+    const u=Math.random();
+    return sampleGamma(1+shape)*Math.pow(u,1/shape);
+  }
+  const d=shape-1/3, c=1/Math.sqrt(9*d);
+  while(true){
+    let x,v;
+    do{x=randn();v=1+c*x;}while(v<=0);
+    v=v*v*v;
+    const u=Math.random();
+    if(u<1-0.0331*(x*x)*(x*x)) return d*v;
+    if(Math.log(u)<0.5*x*x+d*(1-v+Math.log(v))) return d*v;
+  }
+}
+
+function makeDist(key, skewParam) {
+  switch(key) {
+    case 'normal':
+      return () => randn()*15+50;
+    case 'right-skew': {
+      const shape = Math.max(0.3, 10/skewParam);
+      return () => {
+        const g = sampleGamma(shape);
+        const mean = shape, sd = Math.sqrt(shape);
+        return ((g - mean)/sd)*15 + 50;
+      };
     }
+    case 'left-skew': {
+      const shape = Math.max(0.3, 10/skewParam);
+      return () => {
+        const g = sampleGamma(shape);
+        const mean = shape, sd = Math.sqrt(shape);
+        return (-(g - mean)/sd)*15 + 50;
+      };
+    }
+    case 'bimodal': {
+      const sep = skewParam * 3;
+      return () => Math.random()<0.5 ? randn()*6+(50-sep) : randn()*6+(50+sep);
+    }
+    case 'uniform':
+      return () => Math.random()*80+10;
+    case 'exponential': {
+      const lambda = 0.04 + (skewParam-1)*0.018;
+      return () => {
+        const raw = -Math.log(1-Math.random())/lambda;
+        return Math.min(raw+5, 200);
+      };
+    }
+    default:
+      return () => randn()*15+50;
+  }
+}
+
+const SKEW_LABELS = {
+  'right-skew': (v) => v<=4 ? 'mild right tail' : v<=10 ? 'moderate right tail' : 'heavy right tail',
+  'left-skew':  (v) => v<=4 ? 'mild left tail'  : v<=10 ? 'moderate left tail'  : 'heavy left tail',
+  'bimodal':    (v) => v<=4 ? 'peaks close together' : v<=10 ? 'peaks well separated' : 'peaks very far apart',
+  'exponential':(v) => v<=4 ? 'mild decay' : v<=10 ? 'moderate decay' : 'very steep decay',
+};
+
+const SKEW_SHOW = new Set(['right-skew','left-skew','bimodal','exponential']);
+
+let distKey='normal', skewParam=4, population=[], sampleMeans=[], n=10, running=false, animId=null;
+
+function arrStat(arr){
+  const m=arr.reduce((a,b)=>a+b,0)/arr.length;
+  const s=Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length);
+  return {m,s};
+}
+
+function hist(data,mn,mx,b){
+  const w=(mx-mn)/b,c=new Array(b).fill(0);
+  data.forEach(v=>{let i=Math.max(0,Math.min(b-1,Math.floor((v-mn)/w)));c[i]++;});
+  return c;
+}
+
+function binLabels(mn,mx,b){
+  return Array.from({length:b},(_,i)=>((mn+(i+.5)*(mx-mn)/b)).toFixed(1));
+}
+
+function normFit(mu,sigma,mn,mx,b,total){
+  const w=(mx-mn)/b;
+  return Array.from({length:b},(_,i)=>{
+    const x=mn+(i+.5)*w;
+    return total*w*(1/(sigma*Math.sqrt(2*Math.PI)))*Math.exp(-.5*((x-mu)/sigma)**2);
   });
 }
 
-const population = generatePopulation();
-const popMu = mean(population);
-const popSigma = std(population);
-const popMin = popMu - 4*popSigma;
-const popMax = popMu + 4*popSigma;
-const popLabels = binLabels(popMin, popMax, N_BINS);
-const popCounts = histogram(population, popMin, popMax, N_BINS);
+function clampedRange(data){
+  const sorted=data.slice().sort((a,b)=>a-b);
+  return [sorted[Math.floor(data.length*0.005)], sorted[Math.floor(data.length*0.995)]];
+}
 
-document.getElementById('popMean').textContent = popMu.toFixed(2);
-document.getElementById('popSd').textContent = popSigma.toFixed(2);
+let popMin, popMax;
 
-const popChart = makeChart('popChart', popColor, popLabels, popCounts);
-popChart.data.datasets[1].data = normalCurveCounts(popMu, popSigma, popMin, popMax, N_BINS, N_POP);
+function rebuildPop(){
+  const fn = makeDist(distKey, skewParam);
+  population = Array.from({length:N}, fn);
+  const [mn,mx] = clampedRange(population);
+  popMin=mn; popMax=mx;
+  const {m,s} = arrStat(population);
+  document.getElementById('popMu').textContent = m.toFixed(2);
+  document.getElementById('popSd').textContent = s.toFixed(2);
+  popChart.data.labels = binLabels(popMin,popMax,BINS);
+  popChart.data.datasets[0].data = hist(population,popMin,popMax,BINS);
+  popChart.data.datasets[1].data = normFit(m,s,popMin,popMax,BINS,N);
+  popChart.update('none');
+}
+
+function updateSkewUI(){
+  const show = SKEW_SHOW.has(distKey);
+  document.getElementById('skewRow').classList.toggle('hidden', !show);
+  if(!show) return;
+  const labels = {
+    'right-skew':'Skew strength','left-skew':'Skew strength',
+    'bimodal':'Peak separation','exponential':'Decay steepness'
+  };
+  document.getElementById('skewLabel').textContent = labels[distKey]||'Skew strength';
+  const desc = SKEW_LABELS[distKey];
+  document.getElementById('skewDesc').textContent = desc ? desc(skewParam) : '';
+}
+
+const chartOpts = () => ({
+  responsive:true, maintainAspectRatio:false, animation:{duration:150},
+  plugins:{legend:{display:false},tooltip:{enabled:false}},
+  scales:{
+    x:{ticks:{maxTicksLimit:5,color:TICK,font:{size:9},maxRotation:0},grid:{color:GRID}},
+    y:{ticks:{maxTicksLimit:4,color:TICK,font:{size:9}},grid:{color:GRID},min:0}
+  }
+});
+
+function makeChart(id,color,lbs,counts,withNorm){
+  const ds=[{label:'count',data:counts,backgroundColor:color+'99',borderColor:color,borderWidth:0.5,borderRadius:1}];
+  if(withNorm) ds.push({label:'normal',data:new Array(lbs.length).fill(0),type:'line',borderColor:C_NRM,borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false,tension:0.4});
+  return new Chart(document.getElementById(id),{type:'bar',data:{labels:lbs,datasets:ds},options:chartOpts()});
+}
+
+population = Array.from({length:N}, makeDist('normal',4));
+const [mn0,mx0]=clampedRange(population); popMin=mn0; popMax=mx0;
+const {m:pmu0,s:psd0}=arrStat(population);
+document.getElementById('popMu').textContent=pmu0.toFixed(2);
+document.getElementById('popSd').textContent=psd0.toFixed(2);
+
+const popChart = makeChart('popC',C_POP,binLabels(popMin,popMax,BINS),hist(population,popMin,popMax,BINS),true);
+popChart.data.datasets[1].data=normFit(pmu0,psd0,popMin,popMax,BINS,N);
 popChart.update('none');
 
-const sampleLabels = binLabels(popMin, popMax, N_BINS);
-const sampleChart = makeChart('sampleChart', sampleColor, sampleLabels, new Array(N_BINS).fill(0));
+const samChart = makeChart('samC',C_SAM,binLabels(popMin,popMax,BINS),new Array(BINS).fill(0),false);
+let meaMin=pmu0-4*(psd0/Math.sqrt(10)), meaMax=pmu0+4*(psd0/Math.sqrt(10));
+const meaChart = makeChart('meaC',C_MEA,binLabels(meaMin,meaMax,MBINS),new Array(MBINS).fill(0),true);
 
-const meansBins = 40;
-let meansMin = popMu - 4*(popSigma/Math.sqrt(10));
-let meansMax = popMu + 4*(popSigma/Math.sqrt(10));
-let meansLabels = binLabels(meansMin, meansMax, meansBins);
-const meansChart = makeChart('meansChart', meansColor, meansLabels, new Array(meansBins).fill(0));
+function resetSim(){
+  running=false; clearTimeout(animId); sampleMeans=[];
+  document.getElementById('playBtn').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Start';
+  document.getElementById('counter').textContent='0 samples';
+  document.getElementById('samMean').textContent='—';
+  document.getElementById('samSd').textContent='—';
+  document.getElementById('mom').textContent='—';
+  document.getElementById('se').textContent='—';
+  document.getElementById('sub2').textContent='sample means accumulate here';
+  samChart.data.datasets[0].data=new Array(BINS).fill(0); samChart.update();
+  meaChart.data.datasets[0].data=new Array(MBINS).fill(0);
+  meaChart.data.datasets[1].data=new Array(MBINS).fill(0); meaChart.update();
+}
 
-let sampleMeans = [];
-let running = false;
-let animId = null;
-let n = 10;
+function getDelay(){
+  const v=parseInt(document.getElementById('speedSlider').value);
+  const labels=['slowest','very slow','slow','slow-med','medium','med-fast','fast','very fast','fastest'];
+  document.getElementById('speedLabel').textContent=labels[v-1];
+  return [3000,1800,1000,500,250,120,60,25,8][v-1];
+}
 
-const speedMap = [600, 350, 200, 100, 40];
-
-function drawSample() {
-  const sample = Array.from({length: n}, () => population[Math.floor(Math.random()*N_POP)]);
-  const sm = mean(sample);
-  const ss = std(sample);
+function drawSample(){
+  const sample=Array.from({length:n},()=>population[Math.floor(Math.random()*N)]);
+  const {m:sm,s:ss}=arrStat(sample);
   sampleMeans.push(sm);
-
-  document.getElementById('sampleMean').textContent = sm.toFixed(2);
-  document.getElementById('sampleSd').textContent = ss.toFixed(2);
-
-  const sc = histogram(sample, popMin, popMax, N_BINS);
-  sampleChart.data.datasets[0].data = sc;
-  const fittedNorm = normalCurveCounts(sm, ss > 0 ? ss : 0.01, popMin, popMax, N_BINS, n);
-  sampleChart.data.datasets[1].data = fittedNorm;
-  sampleChart.update();
-
-  const dynamicSE = popSigma / Math.sqrt(n);
-  meansMin = popMu - 4*dynamicSE;
-  meansMax = popMu + 4*dynamicSE;
-  meansLabels = binLabels(meansMin, meansMax, meansBins);
-  meansChart.data.labels = meansLabels;
-
-  const mc = histogram(sampleMeans, meansMin, meansMax, meansBins);
-  meansChart.data.datasets[0].data = mc;
-
-  const mom = mean(sampleMeans);
-  const theoreticSE = popSigma / Math.sqrt(n);
-  meansChart.data.datasets[1].data = normalCurveCounts(popMu, theoreticSE, meansMin, meansMax, meansBins, sampleMeans.length);
-  meansChart.update();
-
-  document.getElementById('meanOfMeans').textContent = mom.toFixed(2);
-  document.getElementById('seVal').textContent = theoreticSE.toFixed(2);
-  document.getElementById('counter').textContent = `${sampleMeans.length} sample${sampleMeans.length===1?'':'s'} drawn`;
-  document.getElementById('sdSub').textContent = `${sampleMeans.length} sample means · n=${n}`;
+  document.getElementById('samMean').textContent=sm.toFixed(2);
+  document.getElementById('samSd').textContent=ss.toFixed(2);
+  document.getElementById('sub1').textContent='n = '+n;
+  samChart.data.labels=binLabels(popMin,popMax,BINS);
+  samChart.data.datasets[0].data=hist(sample,popMin,popMax,BINS);
+  samChart.update();
+  const {m:pmu,s:psd}=arrStat(population);
+  const seV=psd/Math.sqrt(n);
+  meaMin=pmu-4.5*seV; meaMax=pmu+4.5*seV;
+  meaChart.data.labels=binLabels(meaMin,meaMax,MBINS);
+  meaChart.data.datasets[0].data=hist(sampleMeans,meaMin,meaMax,MBINS);
+  meaChart.data.datasets[1].data=sampleMeans.length>3?normFit(pmu,seV,meaMin,meaMax,MBINS,sampleMeans.length):new Array(MBINS).fill(0);
+  meaChart.update();
+  document.getElementById('mom').textContent=(sampleMeans.reduce((a,b)=>a+b,0)/sampleMeans.length).toFixed(2);
+  document.getElementById('se').textContent=seV.toFixed(2);
+  document.getElementById('counter').textContent=sampleMeans.length+' sample'+(sampleMeans.length===1?'':'s');
+  document.getElementById('sub2').textContent=sampleMeans.length+' means · n='+n;
 }
 
-function step() {
-  if (!running) return;
-  drawSample();
-  const speed = speedMap[parseInt(document.getElementById('speedSlider').value) - 1];
-  animId = setTimeout(step, speed);
-}
+function step(){if(!running)return;drawSample();animId=setTimeout(step,getDelay());}
 
-document.getElementById('playBtn').addEventListener('click', () => {
-  running = !running;
-  const btn = document.getElementById('playBtn');
-  if (running) {
-    btn.innerHTML = '<i class="ti ti-player-pause" aria-hidden="true"></i> Pause';
-    step();
-  } else {
-    btn.innerHTML = '<i class="ti ti-player-play" aria-hidden="true"></i> Resume';
-    clearTimeout(animId);
-  }
+document.getElementById('playBtn').addEventListener('click',()=>{
+  running=!running;
+  const btn=document.getElementById('playBtn');
+  if(running){btn.innerHTML='<i class="ti ti-player-pause" aria-hidden="true"></i> Pause';step();}
+  else{btn.innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Resume';clearTimeout(animId);}
 });
 
-document.getElementById('resetBtn').addEventListener('click', () => {
-  running = false;
-  clearTimeout(animId);
-  sampleMeans = [];
-  document.getElementById('playBtn').innerHTML = '<i class="ti ti-player-play" aria-hidden="true"></i> Start';
-  document.getElementById('counter').textContent = '0 samples drawn';
-  document.getElementById('sampleMean').textContent = '—';
-  document.getElementById('sampleSd').textContent = '—';
-  document.getElementById('meanOfMeans').textContent = '—';
-  document.getElementById('seVal').textContent = '—';
-  sampleChart.data.datasets[0].data = new Array(N_BINS).fill(0);
-  sampleChart.data.datasets[1].data = new Array(N_BINS).fill(0);
-  sampleChart.update();
-  meansChart.data.datasets[0].data = new Array(meansBins).fill(0);
-  meansChart.data.datasets[1].data = new Array(meansBins).fill(0);
-  meansChart.update();
-  document.getElementById('sdSub').textContent = 'sample means accumulate here';
+document.getElementById('resetBtn').addEventListener('click',resetSim);
+
+document.getElementById('nSlider').addEventListener('input',function(){
+  n=parseInt(this.value);
+  document.getElementById('nVal').textContent=n;
+  document.getElementById('sub1').textContent='n = '+n;
+  sampleMeans=[];
+  meaChart.data.datasets[0].data=new Array(MBINS).fill(0);
+  meaChart.data.datasets[1].data=new Array(MBINS).fill(0); meaChart.update();
+  if(running){clearTimeout(animId);step();}
 });
 
-document.getElementById('nSlider').addEventListener('input', function() {
-  n = parseInt(this.value);
-  document.getElementById('nVal').textContent = n;
-  document.getElementById('sampleSub').textContent = `n = ${n} values`;
-  if (running) { clearTimeout(animId); sampleMeans = []; step(); }
-  else { sampleMeans = []; meansChart.data.datasets[0].data = new Array(meansBins).fill(0); meansChart.update(); }
+document.getElementById('speedSlider').addEventListener('input',()=>{
+  getDelay();if(running){clearTimeout(animId);step();}
 });
+
+document.getElementById('skewSlider').addEventListener('input',function(){
+  skewParam=parseInt(this.value);
+  document.getElementById('skewVal').textContent=skewParam;
+  updateSkewUI();
+  resetSim();
+  rebuildPop();
+});
+
+document.querySelectorAll('.db').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.db').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    distKey=this.dataset.dist;
+    skewParam=parseInt(document.getElementById('skewSlider').value);
+    updateSkewUI();
+    resetSim();
+    rebuildPop();
+  });
+});
+
+getDelay();
+updateSkewUI();
 </script>
