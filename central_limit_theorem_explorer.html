@@ -1,0 +1,263 @@
+
+<h2 class="sr-only">Central Limit Theorem Explorer: animated visualization showing population distribution, sample distribution, and sampling distribution of means side by side</h2>
+
+<style>
+  .clt-wrap { padding: 1rem 0; font-family: var(--font-sans); }
+  .controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 1.25rem; }
+  .ctrl-group { display: flex; align-items: center; gap: 8px; }
+  .ctrl-group label { font-size: 13px; color: var(--color-text-secondary); white-space: nowrap; }
+  .ctrl-group span { font-size: 13px; font-weight: 500; min-width: 28px; }
+  .charts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .chart-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 12px 8px; }
+  .chart-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 2px; }
+  .chart-sub { font-size: 11px; color: var(--color-text-secondary); margin: 0 0 8px; }
+  .stat-row { display: flex; gap: 12px; margin-top: 6px; }
+  .stat { font-size: 11px; color: var(--color-text-secondary); }
+  .stat b { color: var(--color-text-primary); font-weight: 500; }
+  .btn-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .counter { font-size: 12px; color: var(--color-text-secondary); margin-left: 4px; }
+  .speed-label { font-size: 12px; color: var(--color-text-secondary); }
+  .normal-curve { stroke-width: 1.5px; fill: none; stroke-dasharray: 4 3; opacity: 0.7; }
+</style>
+
+<div class="clt-wrap">
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Sample size n =</label>
+      <input type="range" min="2" max="100" value="10" step="1" id="nSlider" style="width:100px">
+      <span id="nVal">10</span>
+    </div>
+    <div class="ctrl-group">
+      <label>Speed</label>
+      <input type="range" min="1" max="5" value="3" step="1" id="speedSlider" style="width:80px">
+    </div>
+    <div class="btn-row">
+      <button id="playBtn"><i class="ti ti-player-play" aria-hidden="true"></i> Start</button>
+      <button id="resetBtn"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+      <span class="counter" id="counter">0 samples drawn</span>
+    </div>
+  </div>
+
+  <div class="charts">
+    <div class="chart-card">
+      <p class="chart-title">Population</p>
+      <p class="chart-sub">N = 10,000 · roughly normal</p>
+      <div style="position:relative;height:160px"><canvas id="popChart" role="img" aria-label="Histogram of the population distribution"></canvas></div>
+      <div class="stat-row">
+        <span class="stat">μ = <b id="popMean">—</b></span>
+        <span class="stat">σ = <b id="popSd">—</b></span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <p class="chart-title">Current sample</p>
+      <p class="chart-sub" id="sampleSub">n = 10 values</p>
+      <div style="position:relative;height:160px"><canvas id="sampleChart" role="img" aria-label="Histogram of the current random sample"></canvas></div>
+      <div class="stat-row">
+        <span class="stat">x̄ = <b id="sampleMean">—</b></span>
+        <span class="stat">s = <b id="sampleSd">—</b></span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <p class="chart-title">Sampling distribution of x̄</p>
+      <p class="chart-sub" id="sdSub">sample means accumulate here</p>
+      <div style="position:relative;height:160px"><canvas id="meansChart" role="img" aria-label="Histogram of sample means, which should approach a normal distribution"></canvas></div>
+      <div class="stat-row">
+        <span class="stat">mean of means = <b id="meanOfMeans">—</b></span>
+        <span class="stat">SE = <b id="seVal">—</b></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const N_POP = 10000;
+const N_BINS = 30;
+
+function randn() {
+  let u = 0, v = 0;
+  while (!u) u = Math.random();
+  while (!v) v = Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function generatePopulation() {
+  const pop = [];
+  for (let i = 0; i < N_POP; i++) {
+    pop.push(randn() * 15 + 50);
+  }
+  return pop;
+}
+
+function mean(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function std(arr) {
+  const m = mean(arr);
+  return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length);
+}
+
+function histogram(data, min, max, bins) {
+  const width = (max - min) / bins;
+  const counts = new Array(bins).fill(0);
+  data.forEach(v => {
+    let b = Math.floor((v - min) / width);
+    b = Math.max(0, Math.min(bins-1, b));
+    counts[b]++;
+  });
+  return counts;
+}
+
+function binLabels(min, max, bins) {
+  const w = (max - min) / bins;
+  return Array.from({length: bins}, (_,i) => (min + (i+0.5)*w).toFixed(1));
+}
+
+function normalCurveCounts(mu, sigma, min, max, bins, totalCount) {
+  const w = (max - min) / bins;
+  return Array.from({length: bins}, (_,i) => {
+    const x = min + (i+0.5)*w;
+    return totalCount * w * (1/(sigma*Math.sqrt(2*Math.PI))) * Math.exp(-0.5*((x-mu)/sigma)**2);
+  });
+}
+
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const popColor = isDark ? '#6C63D6' : '#534AB7';
+const sampleColor = isDark ? '#1DB389' : '#0F6E56';
+const meansColor = isDark ? '#E07B55' : '#993C1D';
+const normalColor = isDark ? '#FAC775' : '#BA7517';
+const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+const labelColor = isDark ? '#aaa' : '#666';
+
+function makeChart(id, color, labels, data) {
+  return new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'count', data, backgroundColor: color + 'BB', borderColor: color, borderWidth: 0.5, borderRadius: 1 },
+        { label: 'normal fit', data: new Array(labels.length).fill(0), type: 'line', borderColor: normalColor, borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 180 },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        x: { display: true, ticks: { maxTicksLimit: 6, color: labelColor, font: { size: 10 }, autoSkip: true, maxRotation: 0 }, grid: { color: gridColor } },
+        y: { display: true, ticks: { maxTicksLimit: 5, color: labelColor, font: { size: 10 } }, grid: { color: gridColor } }
+      }
+    }
+  });
+}
+
+const population = generatePopulation();
+const popMu = mean(population);
+const popSigma = std(population);
+const popMin = popMu - 4*popSigma;
+const popMax = popMu + 4*popSigma;
+const popLabels = binLabels(popMin, popMax, N_BINS);
+const popCounts = histogram(population, popMin, popMax, N_BINS);
+
+document.getElementById('popMean').textContent = popMu.toFixed(2);
+document.getElementById('popSd').textContent = popSigma.toFixed(2);
+
+const popChart = makeChart('popChart', popColor, popLabels, popCounts);
+popChart.data.datasets[1].data = normalCurveCounts(popMu, popSigma, popMin, popMax, N_BINS, N_POP);
+popChart.update('none');
+
+const sampleLabels = binLabels(popMin, popMax, N_BINS);
+const sampleChart = makeChart('sampleChart', sampleColor, sampleLabels, new Array(N_BINS).fill(0));
+
+const meansBins = 40;
+let meansMin = popMu - 4*(popSigma/Math.sqrt(10));
+let meansMax = popMu + 4*(popSigma/Math.sqrt(10));
+let meansLabels = binLabels(meansMin, meansMax, meansBins);
+const meansChart = makeChart('meansChart', meansColor, meansLabels, new Array(meansBins).fill(0));
+
+let sampleMeans = [];
+let running = false;
+let animId = null;
+let n = 10;
+
+const speedMap = [600, 350, 200, 100, 40];
+
+function drawSample() {
+  const sample = Array.from({length: n}, () => population[Math.floor(Math.random()*N_POP)]);
+  const sm = mean(sample);
+  const ss = std(sample);
+  sampleMeans.push(sm);
+
+  document.getElementById('sampleMean').textContent = sm.toFixed(2);
+  document.getElementById('sampleSd').textContent = ss.toFixed(2);
+
+  const sc = histogram(sample, popMin, popMax, N_BINS);
+  sampleChart.data.datasets[0].data = sc;
+  const fittedNorm = normalCurveCounts(sm, ss > 0 ? ss : 0.01, popMin, popMax, N_BINS, n);
+  sampleChart.data.datasets[1].data = fittedNorm;
+  sampleChart.update();
+
+  const dynamicSE = popSigma / Math.sqrt(n);
+  meansMin = popMu - 4*dynamicSE;
+  meansMax = popMu + 4*dynamicSE;
+  meansLabels = binLabels(meansMin, meansMax, meansBins);
+  meansChart.data.labels = meansLabels;
+
+  const mc = histogram(sampleMeans, meansMin, meansMax, meansBins);
+  meansChart.data.datasets[0].data = mc;
+
+  const mom = mean(sampleMeans);
+  const theoreticSE = popSigma / Math.sqrt(n);
+  meansChart.data.datasets[1].data = normalCurveCounts(popMu, theoreticSE, meansMin, meansMax, meansBins, sampleMeans.length);
+  meansChart.update();
+
+  document.getElementById('meanOfMeans').textContent = mom.toFixed(2);
+  document.getElementById('seVal').textContent = theoreticSE.toFixed(2);
+  document.getElementById('counter').textContent = `${sampleMeans.length} sample${sampleMeans.length===1?'':'s'} drawn`;
+  document.getElementById('sdSub').textContent = `${sampleMeans.length} sample means · n=${n}`;
+}
+
+function step() {
+  if (!running) return;
+  drawSample();
+  const speed = speedMap[parseInt(document.getElementById('speedSlider').value) - 1];
+  animId = setTimeout(step, speed);
+}
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  running = !running;
+  const btn = document.getElementById('playBtn');
+  if (running) {
+    btn.innerHTML = '<i class="ti ti-player-pause" aria-hidden="true"></i> Pause';
+    step();
+  } else {
+    btn.innerHTML = '<i class="ti ti-player-play" aria-hidden="true"></i> Resume';
+    clearTimeout(animId);
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  running = false;
+  clearTimeout(animId);
+  sampleMeans = [];
+  document.getElementById('playBtn').innerHTML = '<i class="ti ti-player-play" aria-hidden="true"></i> Start';
+  document.getElementById('counter').textContent = '0 samples drawn';
+  document.getElementById('sampleMean').textContent = '—';
+  document.getElementById('sampleSd').textContent = '—';
+  document.getElementById('meanOfMeans').textContent = '—';
+  document.getElementById('seVal').textContent = '—';
+  sampleChart.data.datasets[0].data = new Array(N_BINS).fill(0);
+  sampleChart.data.datasets[1].data = new Array(N_BINS).fill(0);
+  sampleChart.update();
+  meansChart.data.datasets[0].data = new Array(meansBins).fill(0);
+  meansChart.data.datasets[1].data = new Array(meansBins).fill(0);
+  meansChart.update();
+  document.getElementById('sdSub').textContent = 'sample means accumulate here';
+});
+
+document.getElementById('nSlider').addEventListener('input', function() {
+  n = parseInt(this.value);
+  document.getElementById('nVal').textContent = n;
+  document.getElementById('sampleSub').textContent = `n = ${n} values`;
+  if (running) { clearTimeout(animId); sampleMeans = []; step(); }
+  else { sampleMeans = []; meansChart.data.datasets[0].data = new Array(meansBins).fill(0); meansChart.update(); }
+});
+</script>
