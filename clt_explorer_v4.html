@@ -150,7 +150,8 @@ function clampedRange(data){const s=data.slice().sort((a,b)=>a-b);return[s[Math.
 function computeFixedMeaRange(){
   // Use σ directly: sample means at n=2 have SE = σ/√2 ≈ 0.71σ
   // ±3σ/√2 captures ~99.8% of means at n=2, and is much narrower than the population range
-  const halfWidth = popSd * 2.2;
+  // changing this to smaller so you can see the shape of the distribution of sample means
+  const halfWidth = popSd * 1.2;
   fixedMeaMin = popMu - halfWidth;
   fixedMeaMax = popMu + halfWidth;
 }
