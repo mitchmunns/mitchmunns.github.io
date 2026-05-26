@@ -58,7 +58,7 @@
   <div class="row">
     <div class="cg">
       <label>Sample size n =</label>
-      <input type="range" min="2" max="500" value="10" step="1" id="nSlider" style="width:200px">
+      <input type="range" min="2" max="500" value="10" step="1" id="nSlider" style="width:300px">
       <span id="nVal">10</span>
     </div>
     <div class="sep"></div>
@@ -68,7 +68,7 @@
         <input type="range" min="1" max="9" value="5" step="1" id="speedSlider" style="width:110px">
         <span id="speedLabel" style="font-size:13px;font-weight:500;min-width:64px;color:var(--color-text-secondary);">medium</span>
       </div>
-      <div style="display:flex;justify-content:space-between;width:197px;padding-left:42px;font-size:11px;color:var(--color-text-secondary);margin-top:-2px;">
+      <div style="display:flex;justify-content:space-between;width:100px;padding-left:42px;font-size:11px;color:var(--color-text-secondary);margin-top:-2px;">
         <span>slowest</span><span>fastest</span>
       </div>
     </div>
@@ -79,9 +79,7 @@
       <span style="font-size:14px;color:var(--color-text-secondary);" id="counter">0 samples</span>
     </div>
   </div>
-
-  <p class="axis-note"><i class="ti ti-lock" aria-hidden="true"></i> Means chart x-axis is fixed and narrower than the population — means can't be as extreme as individual values</p>
-
+  
   <div class="charts">
     <div class="cc" id="card0">
       <p class="ct">Population</p>
