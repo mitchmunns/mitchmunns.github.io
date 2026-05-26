@@ -155,7 +155,22 @@ let lastMean=null,flashTimer=null;
 let popMin,popMax,popMu,popSd,fixedMeaMin,fixedMeaMax;
 
 function arrStat(arr){const m=arr.reduce((a,b)=>a+b,0)/arr.length;return{m,s:Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length)};}
-function hist(data,mn,mx,b){const w=(mx-mn)/b,c=new Array(b).fill(0);data.forEach(v=>{let i=Math.max(0,Math.min(b-1,Math.floor((v-mn)/w)));c[i]++;});return c;}
+  
+function hist(data,mn,mx,b){
+  const w=(mx-mn)/b;
+  const c=new Array(b).fill(0);
+
+  data.forEach(v=>{
+    const i=Math.floor((v-mn)/w);
+
+    // Ignore values outside plotting range
+    if(i >= 0 && i < b){
+      c[i]++;
+    }
+  });
+
+  return c;}
+  
 function normFit(mu,sigma,mn,mx,b,total){const w=(mx-mn)/b;return Array.from({length:b},(_,i)=>{const x=mn+(i+.5)*w;return total*w*(1/(sigma*Math.sqrt(2*Math.PI)))*Math.exp(-.5*((x-mu)/sigma)**2);});}
 function clampedRange(data){const s=data.slice().sort((a,b)=>a-b);return[s[Math.floor(data.length*0.005)],s[Math.floor(data.length*0.995)]];}
 
