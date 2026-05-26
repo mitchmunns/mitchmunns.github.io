@@ -187,6 +187,10 @@ function hist(data,mn,mx,b){
 
   data.forEach(v=>{
     const i=Math.floor((v-mn)/w);
+    // Ignore values outside plotting range
+    if(i >= 0 && i < b){
+      c[i]++;
+    }
   });
 
   return c;}
