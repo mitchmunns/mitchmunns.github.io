@@ -1,20 +1,13 @@
-<h2 class="sr-only">Central Limit Theorem Explorer — sample means axis is narrower than population axis</h2>
+<h2 class="sr-only">Central Limit Theorem Explorer</h2>
 
 <style>
 .clt{padding:1rem 0;font-family:var(--font-sans);}
+.clt{padding:2rem;font-family:var(--font-sans);max-width:1600px;margin:0 auto;}
 .row{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:14px;}
 .cg{display:flex;align-items:center;gap:7px;}
 .db:hover{background:var(--color-background-secondary);}
 .db.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500;}
-/*.charts{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:18px;align-items:stretch;}*/
-/*.cc{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:16px 14px 12px;}*/
-/*.ct{font-size:18px;font-weight:500;margin-bottom:2px;}*/
-/*.cs{font-size:13px;color:var(--color-text-secondary);margin-bottom:6px;}*/
-/*.stat-item{font-size:13px;color:var(--color-text-secondary);}
-.stat-item b{font-size:15px;font-weight:500;color:var(--color-text-primary);display:block;line-height:1.2;}*/
 .db{font-size:14px;padding:6px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer;transition:all .15s;white-space:nowrap;}
-/*.cg label{font-size:14px;color:var(--color-text-secondary);}
-.cg span{font-size:14px;font-weight:500;min-width:36px;}*/
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:6px;}
 .stat-item.highlight b{color:var(--color-text-warning);}
 .sep{width:0.5px;height:20px;background:var(--color-border-tertiary);margin:0 4px;}
@@ -65,7 +58,7 @@
   <div class="row">
     <div class="cg">
       <label>Sample size n =</label>
-      <input type="range" min="2" max="1000" value="10" step="1" id="nSlider" style="width:100px">
+      <input type="range" min="2" max="500" value="10" step="1" id="nSlider" style="width:200px">
       <span id="nVal">10</span>
     </div>
     <div class="sep"></div>
