@@ -1,48 +1,49 @@
 <h2 class="sr-only">Central Limit Theorem Explorer with reliability and validity controls. Adjust sliders to see how measurement error and construct validity affect the distribution of sample means and required sample size.</h2>
 
 <style>
+html[data-theme="dark"] {--color-border-secondary: #444;}
 .clt{padding:1rem;font-family:var(--font-sans);max-width:1600px;margin:0 auto;}
 .row{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:14px;}
 .cg{display:flex;align-items:center;gap:7px;}
 .db:hover{background:var(--color-background-secondary);}
 .db.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500;}
-.db{font-size:14px;padding:6px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;}
+.db{font-size:20px;padding:6px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:6px;}
 .stat-item.highlight b{color:var(--color-text-warning);}
 .sep{width:0.5px;height:20px;background:var(--color-border-tertiary);margin:0 4px;}
 .skew-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px;padding:8px 10px;background:var(--color-background-secondary);border-radius:8px;border:0.5px solid var(--color-border-tertiary);}
 .skew-row.hidden{display:none;}
 .flash{border-color:var(--color-border-warning) !important;box-shadow:0 0 0 2px rgba(186,117,23,0.2);}
-.action-btn{font-size:14px;padding:8px 18px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500;transition:all .15s;}
+.action-btn{font-size:20px;padding:8px 18px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500;transition:all .15s;}
 .action-btn:hover{background:var(--color-background-secondary);transform:translateY(-1px);}
 .action-btn:active{transform:translateY(0);}
 .action-btn#playBtn{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);}
 .charts{display:grid;grid-template-columns:repeat(3, minmax(200px, 1fr));gap:14px;align-items:stretch;}
 .cc{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:14px 12px 10px;}
-.ct{font-size:15px;font-weight:500;margin:0 0 2px;}
-.cs{font-size:12px;color:var(--color-text-secondary);margin:0 0 6px;}
-.stat-item{font-size:12px;color:var(--color-text-secondary);}
-.stat-item b{font-size:13px;color:var(--color-text-primary);margin-left:3px;}
+.ct{font-size:22px;font-weight:500;margin:0 0 2px;}
+.cs{font-size:18px;color:var(--color-text-secondary);margin:0 0 6px;}
+.stat-item{font-size:18px;color:var(--color-text-secondary);}
+.stat-item b{font-size:20px;color:var(--color-text-primary);margin-left:3px;}
 .psych-panel{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 16px;margin-bottom:14px;}
-.psych-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin:0 0 10px;display:flex;align-items:center;gap:6px;}
+.psych-title{font-size:20px;font-weight:500;color:var(--color-text-secondary);margin:0 0 10px;display:flex;align-items:center;gap:6px;}
 .psych-row{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-start;}
 .psych-ctrl{display:flex;flex-direction:column;gap:4px;min-width:220px;}
-.psych-ctrl label{font-size:12px;color:var(--color-text-secondary);}
+.psych-ctrl label{font-size:18px;color:var(--color-text-secondary);}
 .psych-ctrl .lrow{display:flex;align-items:center;gap:8px;}
-.psych-ctrl .lrow span{font-size:13px;font-weight:500;min-width:32px;}
-.psych-desc{font-size:11px;color:var(--color-text-tertiary);margin-top:2px;}
-.n-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;}
+.psych-ctrl .lrow span{font-size:20px;font-weight:500;min-width:32px;}
+.psych-desc{font-size:26px;color:var(--color-text-tertiary);margin-top:2px;}
+.n-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:18px;font-weight:500;}
 .n-pill.good{background:var(--color-background-success);color:var(--color-text-success);border:0.5px solid var(--color-border-success);}
 .n-pill.warn{background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning);}
 .n-pill.bad{background:var(--color-background-danger);color:var(--color-text-danger);border:0.5px solid var(--color-border-danger);}
 .nreq-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);}
-.nreq-label{font-size:12px;color:var(--color-text-secondary);}
-cg label{font-size:13px;}
+.nreq-label{font-size:18px;color:var(--color-text-secondary);}
+cg label{font-size:20px;}
 </style>
 
 <div class="clt">
   <div class="row" style="margin-bottom:10px;">
-    <span style="font-size:13px;color:var(--color-text-secondary);white-space:nowrap;">Population:</span>
+    <span style="font-size:20px;color:var(--color-text-secondary);white-space:nowrap;">Population:</span>
     <div style="display:flex;gap:5px;flex-wrap:wrap;" id="distBtns">
       <button class="db active" data-dist="normal">Normal</button>
       <button class="db" data-dist="right-skew">Right skewed</button>
@@ -55,11 +56,11 @@ cg label{font-size:13px;}
 
   <div class="skew-row hidden" id="skewRow">
     <div class="cg">
-      <label id="skewLabel" style="font-size:13px;">Skew strength</label>
+      <label id="skewLabel" style="font-size:20px;">Skew strength</label>
       <input type="range" min="1" max="20" value="4" step="1" id="skewSlider" style="width:120px">
-      <span id="skewVal" style="font-size:13px;">4</span>
+      <span id="skewVal" style="font-size:20px;">4</span>
     </div>
-    <span id="skewDesc" style="font-size:11px;color:var(--color-text-secondary);"></span>
+    <span id="skewDesc" style="font-size:26px;color:var(--color-text-secondary);"></span>
   </div>
 
   <div class="psych-panel">
@@ -85,27 +86,27 @@ cg label{font-size:13px;}
     <div class="nreq-row">
       <span class="nreq-label">To detect the true effect with the same power as perfect measurement, you need</span>
       <span class="n-pill good" id="nMultPill"><i class="ti ti-users" aria-hidden="true"></i> 1.0× n</span>
-      <span class="nreq-label" id="nMultDetail" style="font-size:11px;color:var(--color-text-tertiary);"></span>
+      <span class="nreq-label" id="nMultDetail" style="font-size:26px;color:var(--color-text-tertiary);"></span>
     </div>
   </div>
 
   <div class="row">
     <div class="cg">
-      <label style="font-size:13px;">Sample size n =</label>
+      <label style="font-size:20px;">Sample size n =</label>
       <input type="range" min="2" max="500" value="10" step="1" id="nSlider" style="width:220px">
-      <span id="nVal" style="font-size:13px;">10</span>
+      <span id="nVal" style="font-size:20px;">10</span>
     </div>
     <div class="sep"></div>
     <div class="cg">
-      <label style="font-size:13px;">Speed</label>
+      <label style="font-size:20px;">Speed</label>
       <input type="range" min="1" max="9" value="5" step="1" id="speedSlider" style="width:110px">
-      <span id="speedLabel" style="font-size:12px;font-weight:500;min-width:64px;color:var(--color-text-secondary);">medium</span>
+      <span id="speedLabel" style="font-size:18px;font-weight:500;min-width:64px;color:var(--color-text-secondary);">medium</span>
     </div>
     <div class="sep"></div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <button class="action-btn" id="playBtn"><i class="ti ti-player-play" aria-hidden="true"></i> Start</button>
       <button class="action-btn" id="resetBtn"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
-      <span style="font-size:13px;color:var(--color-text-secondary);" id="counter">0 samples</span>
+      <span style="font-size:20px;color:var(--color-text-secondary);" id="counter">0 samples</span>
     </div>
   </div>
 
