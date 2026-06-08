@@ -1,0 +1,436 @@
+<h2 class="sr-only">Central Limit Theorem Explorer with reliability and validity controls. Adjust sliders to see how measurement error and construct validity affect the distribution of sample means and required sample size.</h2>
+
+<style>
+.clt{padding:1rem;font-family:var(--font-sans);max-width:1600px;margin:0 auto;}
+.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:14px;}
+.cg{display:flex;align-items:center;gap:7px;}
+.db:hover{background:var(--color-background-secondary);}
+.db.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500;}
+.db{font-size:14px;padding:6px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:6px;}
+.stat-item.highlight b{color:var(--color-text-warning);}
+.sep{width:0.5px;height:20px;background:var(--color-border-tertiary);margin:0 4px;}
+.skew-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px;padding:8px 10px;background:var(--color-background-secondary);border-radius:8px;border:0.5px solid var(--color-border-tertiary);}
+.skew-row.hidden{display:none;}
+.flash{border-color:var(--color-border-warning) !important;box-shadow:0 0 0 2px rgba(186,117,23,0.2);}
+.action-btn{font-size:14px;padding:8px 18px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500;transition:all .15s;}
+.action-btn:hover{background:var(--color-background-secondary);transform:translateY(-1px);}
+.action-btn:active{transform:translateY(0);}
+.action-btn#playBtn{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);}
+.charts{display:grid;grid-template-columns:repeat(3, minmax(200px, 1fr));gap:14px;align-items:stretch;}
+.cc{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:14px 12px 10px;}
+.ct{font-size:15px;font-weight:500;margin:0 0 2px;}
+.cs{font-size:12px;color:var(--color-text-secondary);margin:0 0 6px;}
+.stat-item{font-size:12px;color:var(--color-text-secondary);}
+.stat-item b{font-size:13px;color:var(--color-text-primary);margin-left:3px;}
+.psych-panel{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 16px;margin-bottom:14px;}
+.psych-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin:0 0 10px;display:flex;align-items:center;gap:6px;}
+.psych-row{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-start;}
+.psych-ctrl{display:flex;flex-direction:column;gap:4px;min-width:220px;}
+.psych-ctrl label{font-size:12px;color:var(--color-text-secondary);}
+.psych-ctrl .lrow{display:flex;align-items:center;gap:8px;}
+.psych-ctrl .lrow span{font-size:13px;font-weight:500;min-width:32px;}
+.psych-desc{font-size:11px;color:var(--color-text-tertiary);margin-top:2px;}
+.n-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;}
+.n-pill.good{background:var(--color-background-success);color:var(--color-text-success);border:0.5px solid var(--color-border-success);}
+.n-pill.warn{background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning);}
+.n-pill.bad{background:var(--color-background-danger);color:var(--color-text-danger);border:0.5px solid var(--color-border-danger);}
+.nreq-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);}
+.nreq-label{font-size:12px;color:var(--color-text-secondary);}
+cg label{font-size:13px;}
+</style>
+
+<div class="clt">
+  <div class="row" style="margin-bottom:10px;">
+    <span style="font-size:13px;color:var(--color-text-secondary);white-space:nowrap;">Population:</span>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;" id="distBtns">
+      <button class="db active" data-dist="normal">Normal</button>
+      <button class="db" data-dist="right-skew">Right skewed</button>
+      <button class="db" data-dist="left-skew">Left skewed</button>
+      <button class="db" data-dist="bimodal">Bimodal</button>
+      <button class="db" data-dist="uniform">Uniform</button>
+      <button class="db" data-dist="exponential">Exponential</button>
+    </div>
+  </div>
+
+  <div class="skew-row hidden" id="skewRow">
+    <div class="cg">
+      <label id="skewLabel" style="font-size:13px;">Skew strength</label>
+      <input type="range" min="1" max="20" value="4" step="1" id="skewSlider" style="width:120px">
+      <span id="skewVal" style="font-size:13px;">4</span>
+    </div>
+    <span id="skewDesc" style="font-size:11px;color:var(--color-text-secondary);"></span>
+  </div>
+
+  <div class="psych-panel">
+    <p class="psych-title"><i class="ti ti-ruler-measure" aria-hidden="true"></i> Measurement quality</p>
+    <div class="psych-row">
+      <div class="psych-ctrl">
+        <label for="relSlider">Reliability (ρ<sub>xx</sub>) — proportion of observed variance that is true-score variance</label>
+        <div class="lrow">
+          <input type="range" min="0.1" max="1.0" step="0.01" value="1.0" id="relSlider" style="width:180px;">
+          <span id="relVal">1.00</span>
+        </div>
+        <div class="psych-desc" id="relDesc">Perfect reliability — no measurement error</div>
+      </div>
+      <div class="psych-ctrl">
+        <label for="valSlider">Validity (v²) — proportion of reliable variance due to the target construct</label>
+        <div class="lrow">
+          <input type="range" min="0.1" max="1.0" step="0.01" value="1.0" id="valSlider" style="width:180px;">
+          <span id="valVal">1.00</span>
+        </div>
+        <div class="psych-desc" id="valDesc">Perfect validity — reliable variance entirely construct-relevant</div>
+      </div>
+    </div>
+    <div class="nreq-row">
+      <span class="nreq-label">To detect the true effect with the same power as perfect measurement, you need</span>
+      <span class="n-pill good" id="nMultPill"><i class="ti ti-users" aria-hidden="true"></i> 1.0× n</span>
+      <span class="nreq-label" id="nMultDetail" style="font-size:11px;color:var(--color-text-tertiary);"></span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="cg">
+      <label style="font-size:13px;">Sample size n =</label>
+      <input type="range" min="2" max="500" value="10" step="1" id="nSlider" style="width:220px">
+      <span id="nVal" style="font-size:13px;">10</span>
+    </div>
+    <div class="sep"></div>
+    <div class="cg">
+      <label style="font-size:13px;">Speed</label>
+      <input type="range" min="1" max="9" value="5" step="1" id="speedSlider" style="width:110px">
+      <span id="speedLabel" style="font-size:12px;font-weight:500;min-width:64px;color:var(--color-text-secondary);">medium</span>
+    </div>
+    <div class="sep"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="action-btn" id="playBtn"><i class="ti ti-player-play" aria-hidden="true"></i> Start</button>
+      <button class="action-btn" id="resetBtn"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+      <span style="font-size:13px;color:var(--color-text-secondary);" id="counter">0 samples</span>
+    </div>
+  </div>
+
+  <div class="charts">
+    <div class="cc" id="card0">
+      <p class="ct">True-score population</p>
+      <p class="cs">N = 10,000 (latent)</p>
+      <div style="position:relative;height:200px"><canvas id="popC" role="img" aria-label="Population distribution histogram"></canvas></div>
+      <div class="stat-grid">
+        <div class="stat-item">mean μ<b id="popMu">—</b></div>
+        <div class="stat-item">std dev σ<b id="popSd">—</b></div>
+      </div>
+    </div>
+    <div class="cc" id="card1">
+      <p class="ct">Current observed sample</p>
+      <p class="cs" id="sub1">n = 10 · ρ=1.00 · v²=1.00</p>
+      <div style="position:relative;height:200px"><canvas id="samC" role="img" aria-label="Current sample histogram"></canvas></div>
+      <div class="stat-grid">
+        <div class="stat-item highlight">obs. mean x̄<b id="samMean">—</b></div>
+        <div class="stat-item">obs. std s<b id="samSd">—</b></div>
+      </div>
+    </div>
+    <div class="cc" id="card2">
+      <p class="ct">Distribution of sample means</p>
+      <p class="cs" id="sub2">means accumulate here</p>
+      <div style="position:relative;height:200px"><canvas id="meaC" role="img" aria-label="Histogram of sample means"></canvas></div>
+      <div class="stat-grid">
+        <div class="stat-item">mean of means<b id="mom">—</b></div>
+        <div class="stat-item">obs. SE<b id="se">—</b></div>
+        <div class="stat-item" style="grid-column:span 2;margin-top:2px;">true SE (no error)<b id="trueSeDisplay" style="color:var(--color-text-success);margin-left:3px;">—</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const C_POP=isDark?'#7F77DD':'#534AB7', C_SAM=isDark?'#1DB389':'#0F6E56';
+const C_MEA=isDark?'#E07B55':'#993C1D', C_NRM=isDark?'#FAC775':'#BA7517';
+const C_MEAN_LINE=isDark?'#FAC775':'#BA7517', C_FLASH=isDark?'#EF9F27':'#BA7517';
+const GRID=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)', TICK=isDark?'#aaa':'#666';
+const N=10000, BINS=30, MBINS=30;
+
+function randn(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function sampleGamma(shape){
+  if(shape<1){const u=Math.random();return sampleGamma(1+shape)*Math.pow(u,1/shape);}
+  const d=shape-1/3,c=1/Math.sqrt(9*d);
+  while(true){let x,v;do{x=randn();v=1+c*x;}while(v<=0);v=v*v*v;const u=Math.random();
+    if(u<1-0.0331*(x*x)*(x*x))return d*v;if(Math.log(u)<0.5*x*x+d*(1-v+Math.log(v)))return d*v;}
+}
+function makeDist(key,sp){
+  switch(key){
+    case 'normal':return()=>randn()*15+50;
+    case 'right-skew':{const sh=Math.max(0.3,10/sp);return()=>{const g=sampleGamma(sh),m=sh,s=Math.sqrt(sh);return((g-m)/s)*15+50;};}
+    case 'left-skew':{const sh=Math.max(0.3,10/sp);return()=>{const g=sampleGamma(sh),m=sh,s=Math.sqrt(sh);return(-(g-m)/s)*15+50;};}
+    case 'bimodal':{const sep=sp*3;return()=>Math.random()<0.5?randn()*6+(50-sep):randn()*6+(50+sep);}
+    case 'uniform':return()=>Math.random()*80+10;
+    case 'exponential':{const lam=0.04+(sp-1)*0.018;return()=>Math.min(-Math.log(1-Math.random())/lam+5,200);}
+    default:return()=>randn()*15+50;
+  }
+}
+const SKEW_LABELS={'right-skew':v=>v<=4?'mild right tail':v<=10?'moderate right tail':'heavy right tail','left-skew':v=>v<=4?'mild left tail':v<=10?'moderate left tail':'heavy left tail','bimodal':v=>v<=4?'peaks close together':v<=10?'peaks well separated':'peaks very far apart','exponential':v=>v<=4?'mild decay':v<=10?'moderate decay':'very steep decay'};
+const SKEW_SHOW=new Set(['right-skew','left-skew','bimodal','exponential']);
+
+let distKey='normal',skewParam=4,population=[],sampleMeans=[],n=10,running=false,animId=null;
+let lastMean=null,flashTimer=null;
+let popMin,popMax,popMu,popSd,fixedMeaMin,fixedMeaMax;
+let reliability=1.0, validity=1.0;
+
+function arrStat(arr){const m=arr.reduce((a,b)=>a+b,0)/arr.length;return{m,s:Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length)};}
+
+function applyMeasurementError(trueScore){
+  // Observed score = sqrt(rho)*T + sqrt(1-rho)*E, scaled so mean stays at popMu
+  // Then validity: observed = sqrt(v2)*observed_reliable + sqrt(1-v2)*confound
+  // Combined: observed SD = popSd * sqrt(rho*v2) signal part, but total observed SD inflated
+  // Implementation: add error noise proportional to (1-rho) and confound proportional to (1-v2)
+  const trueScaleSd = popSd;
+  // Error variance = (1-rho)/rho * true variance  (classical test theory)
+  const errorSd = trueScaleSd * Math.sqrt((1 - reliability) / Math.max(reliability, 0.001));
+  const errorNoise = randn() * errorSd;
+  const reliable = trueScore + errorNoise;
+  // Validity: portion of reliable variance unrelated to construct → adds confound noise
+  // confound SD such that var_confound/var_reliable = (1-v2)/v2
+  const reliableSd = trueScaleSd; // approximately
+  const confoundSd = reliableSd * Math.sqrt((1 - validity) / Math.max(validity, 0.001));
+  const confoundNoise = randn() * confoundSd;
+  return reliable + confoundNoise;
+}
+
+function observedSd(){
+  // Total observed SD = popSd * sqrt(1/rho * 1/v2) under CTT
+  return popSd * Math.sqrt(1 / Math.max(reliability, 0.001) / Math.max(validity, 0.001));
+}
+
+function nMultiplier(){
+  // To maintain same power, need n_obs = n_true / (rho * v2)
+  return 1 / (Math.max(reliability,0.001) * Math.max(validity,0.001));
+}
+
+function updateNPill(){
+  const mult = nMultiplier();
+  const pill = document.getElementById('nMultPill');
+  const detail = document.getElementById('nMultDetail');
+  pill.textContent = '';
+  const icon = document.createElement('i');
+  icon.className='ti ti-users';icon.setAttribute('aria-hidden','true');
+  pill.appendChild(icon);
+  pill.appendChild(document.createTextNode(' ' + mult.toFixed(2) + '× n'));
+  if(mult < 1.5){
+    pill.className='n-pill good';
+    detail.textContent='Low attenuation — measurement quality barely affects required sample size.';
+  } else if(mult < 3){
+    pill.className='n-pill warn';
+    detail.textContent=`e.g. a study needing n=50 with perfect measures now needs n≈${Math.round(50*mult)}.`;
+  } else {
+    pill.className='n-pill bad';
+    detail.textContent=`Severe attenuation — e.g. a study needing n=50 with perfect measures now needs n≈${Math.round(50*mult)}.`;
+  }
+}
+
+function updatePsychDescs(){
+  const relV = reliability;
+  const valV = validity;
+  const relDesc = relV>=0.99?'Perfect reliability — no measurement error':relV>=0.8?'Good reliability (e.g. well-validated psychometric scale)':relV>=0.6?'Moderate reliability — noticeable error variance':relV>=0.4?'Poor reliability — substantial measurement noise':'Very poor reliability — mostly noise';
+  const valDesc = valV>=0.99?'Perfect validity — reliable variance entirely construct-relevant':valV>=0.8?'Good validity — most reliable variance is on-target':valV>=0.6?'Moderate validity — notable confound or method variance':valV>=0.4?'Poor validity — large confound variance':'Very poor validity — measure mostly captures something else';
+  document.getElementById('relDesc').textContent=relDesc;
+  document.getElementById('valDesc').textContent=valDesc;
+}
+
+function hist(data,mn,mx,b){
+  const w=(mx-mn)/b;
+  const c=new Array(b).fill(0);
+  data.forEach(v=>{const i=Math.floor((v-mn)/w);if(i>=0&&i<b)c[i]++;});
+  return c;
+}
+function normFit(mu,sigma,mn,mx,b,total){const w=(mx-mn)/b;return Array.from({length:b},(_,i)=>{const x=mn+(i+.5)*w;return total*w*(1/(sigma*Math.sqrt(2*Math.PI)))*Math.exp(-.5*((x-mu)/sigma)**2);});}
+function clampedRange(data){const s=data.slice().sort((a,b)=>a-b);return[s[Math.floor(data.length*0.005)],s[Math.floor(data.length*0.995)]];}
+
+function computeFixedMeaRange(){
+  const halfWidth=popSd*1.2;
+  fixedMeaMin=popMu-halfWidth;
+  fixedMeaMax=popMu+halfWidth;
+}
+
+function rebuildPop(){
+  population=Array.from({length:N},makeDist(distKey,skewParam));
+  const[mn,mx]=clampedRange(population);popMin=mn;popMax=mx;
+  const{m,s}=arrStat(population);popMu=m;popSd=s;
+  computeFixedMeaRange();
+  document.getElementById('popMu').textContent=m.toFixed(2);
+  document.getElementById('popSd').textContent=s.toFixed(2);
+  updateChartData(popChart,popMin,popMax,BINS,hist(population,popMin,popMax,BINS),normFit(m,s,popMin,popMax,BINS,N));
+  updateChartData(samChart,popMin,popMax,BINS,new Array(BINS).fill(0),null);
+  updateChartData(meaChart,fixedMeaMin,fixedMeaMax,MBINS,new Array(MBINS).fill(0),new Array(MBINS).fill(0));
+  updateNPill();
+  updatePsychDescs();
+}
+
+function updateSkewUI(){
+  const show=SKEW_SHOW.has(distKey);
+  document.getElementById('skewRow').classList.toggle('hidden',!show);
+  if(!show)return;
+  const labels={'right-skew':'Skew strength','left-skew':'Skew strength','bimodal':'Peak separation','exponential':'Decay steepness'};
+  document.getElementById('skewLabel').textContent=labels[distKey]||'Skew strength';
+  document.getElementById('skewDesc').textContent=(SKEW_LABELS[distKey]||(_=>''))(skewParam);
+}
+
+const meanLinePlugin={id:'meanLine',afterDraw(chart){
+  if(chart.canvas.id!=='samC'||lastMean===null)return;
+  const{ctx,chartArea}=chart;if(!chartArea)return;
+  const obsMin=popMin-(popMax-popMin)*0.5,obsMax=popMax+(popMax-popMin)*0.5;
+  const px=chartArea.left+(lastMean-obsMin)/(obsMax-obsMin)*(chartArea.right-chartArea.left);
+  ctx.save();ctx.beginPath();ctx.moveTo(px,chartArea.top);ctx.lineTo(px,chartArea.bottom);
+  ctx.strokeStyle=C_MEAN_LINE;ctx.lineWidth=2;ctx.setLineDash([5,3]);ctx.stroke();ctx.setLineDash([]);
+  ctx.font='500 11px system-ui,sans-serif';ctx.fillStyle=C_MEAN_LINE;ctx.textAlign='center';
+  ctx.fillText('x̄='+lastMean.toFixed(2),Math.min(Math.max(px,chartArea.left+20),chartArea.right-20),chartArea.top+10);
+  ctx.restore();
+}};
+
+let flashBinIndex=null,flashOpacity=0,flashRaf=null;
+const flashPlugin={id:'flashBar',afterDraw(chart){
+  if(chart.canvas.id!=='meaC'||flashBinIndex===null||flashOpacity<=0)return;
+  const{ctx,chartArea}=chart;if(!chartArea)return;
+  const meta=chart.getDatasetMeta(0);if(!meta.data[flashBinIndex])return;
+  const bar=meta.data[flashBinIndex];
+  ctx.save();ctx.globalAlpha=flashOpacity*0.35;ctx.fillStyle=C_FLASH;
+  ctx.fillRect(bar.x-bar.width/2,chartArea.top,bar.width,chartArea.bottom-chartArea.top);
+  ctx.globalAlpha=1;ctx.strokeStyle=C_FLASH;ctx.lineWidth=2;
+  ctx.strokeRect(bar.x-bar.width/2,chartArea.top,bar.width,chartArea.bottom-chartArea.top);ctx.restore();
+}};
+Chart.register(meanLinePlugin,flashPlugin);
+
+function triggerFlash(binIdx){
+  flashBinIndex=binIdx;flashOpacity=1;
+  if(flashRaf)cancelAnimationFrame(flashRaf);
+  let start=null;
+  function fade(ts){if(!start)start=ts;flashOpacity=Math.max(0,1-(ts-start)/900);meaChart.update('none');
+    if(flashOpacity>0)flashRaf=requestAnimationFrame(fade);else{flashBinIndex=null;meaChart.update('none');}}
+  flashRaf=requestAnimationFrame(fade);
+}
+
+function cOpts(xMin,xMax){
+  return{responsive:true,maintainAspectRatio:false,animation:{duration:150},plugins:{legend:{display:false},tooltip:{enabled:false}},
+    scales:{x:{type:'linear',min:xMin,max:xMax,ticks:{maxTicksLimit:5,color:TICK,font:{size:10},maxRotation:0},grid:{color:GRID}},
+            y:{ticks:{maxTicksLimit:4,color:TICK,font:{size:10}},grid:{color:GRID},min:0}}};
+}
+
+function makeChartLinear(id,color,xMin,xMax,withNorm){
+  const ds=[{label:'count',data:[],backgroundColor:color+'99',borderColor:color,borderWidth:0.5,borderRadius:1,barPercentage:1,categoryPercentage:1}];
+  if(withNorm)ds.push({label:'normal',data:[],type:'line',borderColor:C_NRM,borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false,tension:0.4});
+  return new Chart(document.getElementById(id),{type:'bar',data:{labels:[],datasets:ds},options:cOpts(xMin,xMax)});
+}
+
+function updateChartData(chart,xMin,xMax,bins,counts,normData){
+  const w=(xMax-xMin)/bins;
+  chart.data.datasets[0].data=counts.map((v,i)=>({x:xMin+(i+0.5)*w,y:v}));
+  if(normData&&chart.data.datasets[1])chart.data.datasets[1].data=normData.map((v,i)=>({x:xMin+(i+0.5)*w,y:v}));
+  chart.options.scales.x.min=xMin;chart.options.scales.x.max=xMax;
+  chart.update('none');
+}
+
+population=Array.from({length:N},makeDist('normal',4));
+const[mn0,mx0]=clampedRange(population);popMin=mn0;popMax=mx0;
+const{m:pmu0,s:psd0}=arrStat(population);
+popMu=pmu0;popSd=psd0;
+computeFixedMeaRange();
+document.getElementById('popMu').textContent=pmu0.toFixed(2);
+document.getElementById('popSd').textContent=psd0.toFixed(2);
+
+const popChart=makeChartLinear('popC',C_POP,popMin,popMax,true);
+const samChart=makeChartLinear('samC',C_SAM,popMin-(popMax-popMin)*0.5,popMax+(popMax-popMin)*0.5,false);
+const meaChart=makeChartLinear('meaC',C_MEA,fixedMeaMin,fixedMeaMax,true);
+
+updateChartData(popChart,popMin,popMax,BINS,hist(population,popMin,popMax,BINS),normFit(pmu0,psd0,popMin,popMax,BINS,N));
+updateChartData(samChart,popMin-(popMax-popMin)*0.5,popMax+(popMax-popMin)*0.5,BINS,new Array(BINS).fill(0),null);
+updateChartData(meaChart,fixedMeaMin,fixedMeaMax,MBINS,new Array(MBINS).fill(0),new Array(MBINS).fill(0));
+
+function resetSim(){
+  running=false;clearTimeout(animId);sampleMeans=[];lastMean=null;flashOpacity=0;
+  document.getElementById('playBtn').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Start';
+  document.getElementById('counter').textContent='0 samples';
+  ['samMean','samSd','mom','se','trueSeDisplay'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('sub2').textContent='means accumulate here';
+  const obsMin=popMin-(popMax-popMin)*0.5,obsMax=popMax+(popMax-popMin)*0.5;
+  updateChartData(samChart,obsMin,obsMax,BINS,new Array(BINS).fill(0),null);
+  updateChartData(meaChart,fixedMeaMin,fixedMeaMax,MBINS,new Array(MBINS).fill(0),new Array(MBINS).fill(0));
+  document.getElementById('card1').classList.remove('flash');document.getElementById('card2').classList.remove('flash');
+}
+
+function getDelay(){
+  const v=parseInt(document.getElementById('speedSlider').value);
+  const labels=['slowest','very slow','slow','slow-med','medium','med-fast','fast','very fast','fastest'];
+  document.getElementById('speedLabel').textContent=labels[v-1];
+  return[3000,1800,1000,500,250,120,60,25,8][v-1];
+}
+
+function drawSample(){
+  const trueSample=Array.from({length:n},()=>population[Math.floor(Math.random()*N)]);
+  const obsSample=trueSample.map(applyMeasurementError);
+  const{m:sm,s:ss}=arrStat(obsSample);
+  lastMean=sm;sampleMeans.push(sm);
+  document.getElementById('samMean').textContent=sm.toFixed(2);
+  document.getElementById('samSd').textContent=ss.toFixed(2);
+  document.getElementById('sub1').textContent=`n=${n} · ρ=${reliability.toFixed(2)} · v²=${validity.toFixed(2)}`;
+  const obsMin=popMin-(popMax-popMin)*0.5,obsMax=popMax+(popMax-popMin)*0.5;
+  updateChartData(samChart,obsMin,obsMax,BINS,hist(obsSample,obsMin,obsMax,BINS),null);
+
+  const obsSdTotal=observedSd();
+  const obsSE=obsSdTotal/Math.sqrt(n);
+  const trueSE=popSd/Math.sqrt(n);
+
+  const mc=hist(sampleMeans,fixedMeaMin,fixedMeaMax,MBINS);
+  const nf=sampleMeans.length>3?normFit(popMu,obsSE,fixedMeaMin,fixedMeaMax,MBINS,sampleMeans.length):new Array(MBINS).fill(0);
+  updateChartData(meaChart,fixedMeaMin,fixedMeaMax,MBINS,mc,nf);
+  const binW=(fixedMeaMax-fixedMeaMin)/MBINS;
+  const binIdx=Math.max(0,Math.min(MBINS-1,Math.floor((sm-fixedMeaMin)/binW)));
+  triggerFlash(binIdx);
+  const c1=document.getElementById('card1'),c2=document.getElementById('card2');
+  c1.classList.add('flash');c2.classList.add('flash');
+  clearTimeout(flashTimer);flashTimer=setTimeout(()=>{c1.classList.remove('flash');c2.classList.remove('flash');},600);
+  document.getElementById('mom').textContent=(sampleMeans.reduce((a,b)=>a+b,0)/sampleMeans.length).toFixed(2);
+  document.getElementById('se').textContent=obsSE.toFixed(2);
+  document.getElementById('trueSeDisplay').textContent=trueSE.toFixed(2);
+  document.getElementById('counter').textContent=sampleMeans.length+' sample'+(sampleMeans.length===1?'':'s');
+  document.getElementById('sub2').textContent=sampleMeans.length+' means · n='+n;
+}
+
+function step(){if(!running)return;drawSample();animId=setTimeout(step,getDelay());}
+
+document.getElementById('playBtn').addEventListener('click',()=>{
+  running=!running;const btn=document.getElementById('playBtn');
+  if(running){btn.innerHTML='<i class="ti ti-player-pause" aria-hidden="true"></i> Pause';step();}
+  else{btn.innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Resume';clearTimeout(animId);}
+});
+document.getElementById('resetBtn').addEventListener('click',resetSim);
+document.getElementById('nSlider').addEventListener('input',function(){
+  n=parseInt(this.value);document.getElementById('nVal').textContent=n;
+  document.getElementById('sub1').textContent=`n=${n} · ρ=${reliability.toFixed(2)} · v²=${validity.toFixed(2)}`;
+  sampleMeans=[];lastMean=null;
+  updateChartData(meaChart,fixedMeaMin,fixedMeaMax,MBINS,new Array(MBINS).fill(0),new Array(MBINS).fill(0));
+  if(running){clearTimeout(animId);step();}
+});
+document.getElementById('speedSlider').addEventListener('input',()=>{getDelay();if(running){clearTimeout(animId);step();}});
+document.getElementById('skewSlider').addEventListener('input',function(){
+  skewParam=parseInt(this.value);document.getElementById('skewVal').textContent=skewParam;
+  updateSkewUI();resetSim();rebuildPop();
+});
+document.getElementById('relSlider').addEventListener('input',function(){
+  reliability=parseFloat(this.value);
+  document.getElementById('relVal').textContent=reliability.toFixed(2);
+  updatePsychDescs();updateNPill();resetSim();
+});
+document.getElementById('valSlider').addEventListener('input',function(){
+  validity=parseFloat(this.value);
+  document.getElementById('valVal').textContent=validity.toFixed(2);
+  updatePsychDescs();updateNPill();resetSim();
+});
+document.querySelectorAll('.db').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.db').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');distKey=this.dataset.dist;
+    skewParam=parseInt(document.getElementById('skewSlider').value);
+    updateSkewUI();resetSim();rebuildPop();
+  });
+});
+getDelay();updateSkewUI();updateNPill();updatePsychDescs();
+</script>
