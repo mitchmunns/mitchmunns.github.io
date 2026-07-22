@@ -38,10 +38,12 @@ body {
 
   background:rgba(180,210,255,0.08);
   backdrop-filter:blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border:1px solid rgba(200,220,255,.22);
 
   box-shadow:
-  0 25px 70px rgba(0,0,0,.5);
+    0 25px 70px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.2);
 
   border-radius:20px;
   padding:40px 50px;
@@ -53,7 +55,7 @@ h1 {
 }
 
 h2 {
- color:rgba(255,255,255,.7);
+ color:rgba(255,255,255,.5);
  font-size:18px;
 }
 
@@ -67,7 +69,7 @@ h2 {
 
 .card {
 
- background:rgba(255,255,255,.65);
+ background:rgba(255,255,255,.25);
 
  padding:20px;
  border-radius:12px;
