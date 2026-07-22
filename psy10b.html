@@ -17,7 +17,18 @@ body {
   align-items:center;
 }
 
+#bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height:100%;
+  z-index:0;
+}
+  
 .wrapper {
+  position: relative;
+  z-index: 1;
   width:100%;
   max-width:900px;
   padding:40px 20px;
@@ -103,6 +114,8 @@ a {
 
 <body>
 
+<canvas id="bg"></canvas>
+  
 <div class="wrapper">
 
 <div class="glass">
@@ -213,5 +226,171 @@ Introduction to statistical reasoning, data analysis, and research methods in ps
 
 </div>
 
+<script>
+
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+let w, h, dpr;
+
+function resize(){
+
+  dpr = window.devicePixelRatio || 1;
+
+  w = window.innerWidth;
+  h = window.innerHeight;
+
+  canvas.width = w*dpr;
+  canvas.height = h*dpr;
+
+  canvas.style.width = w+"px";
+  canvas.style.height = h+"px";
+
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+window.addEventListener("resize",resize);
+resize();
+
+
+
+const formulas = [
+
+"z = (X - μ) / σ",
+
+"σ = √Σ(X-μ)²/N",
+
+"M = ΣX/N",
+
+"r = cov(X,Y)/(σxσy)",
+
+"R² = SS₍model₎ / SS₍total₎",
+
+"ŷ = b₀ + b₁X",
+
+"t = (M-μ)/SE",
+
+"F = MSbetween / MSwithin",
+
+"p < .05",
+
+"α = .05",
+
+"CI = M ± 1.96(SE)",
+
+"SE = SD/√n",
+
+"χ² = Σ(O-E)²/E",
+
+"ANOVA",
+
+"ΣX",
+
+"df = n-1",
+
+"β₁ = ΔY/ΔX",
+
+"power = 1-β",
+
+"NHST",
+
+"sampling error",
+
+"normal distribution",
+
+"random variable",
+
+"effect size",
+
+"Cohen's d",
+
+"confidence interval"
+
+];
+
+
+const particles=[];
+
+
+for(let i=0;i<45;i++){
+
+ particles.push({
+
+  text: formulas[Math.floor(Math.random()*formulas.length)],
+
+  x: Math.random()*w,
+
+  y: Math.random()*h,
+
+  vx:(Math.random()-0.5)*0.15,
+
+  vy:(Math.random()-0.5)*0.15,
+
+  size:12+Math.random()*10,
+
+  opacity:0.08+Math.random()*0.15,
+
+  rotation:(Math.random()-0.5)*0.4
+
+ });
+
+}
+
+
+
+function draw(){
+
+ctx.clearRect(0,0,w,h);
+
+
+for(let p of particles){
+
+ p.x += p.vx;
+ p.y += p.vy;
+
+
+ if(p.x < -200) p.x=w+100;
+ if(p.x > w+200) p.x=-100;
+
+ if(p.y < -100) p.y=h+100;
+ if(p.y > h+100) p.y=-100;
+
+
+
+ ctx.save();
+
+ ctx.translate(p.x,p.y);
+
+ ctx.rotate(p.rotation);
+
+
+ ctx.font=`${p.size}px "Times New Roman"`;
+
+
+ ctx.fillStyle=
+ `rgba(180,210,255,${p.opacity})`;
+
+
+ ctx.fillText(
+   p.text,
+   0,
+   0
+ );
+
+
+ ctx.restore();
+
+}
+
+
+requestAnimationFrame(draw);
+
+}
+
+
+draw();
+
+</script>
+  
 </body>
 </html>
