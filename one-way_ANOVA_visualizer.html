@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Score Stack — Distribution &amp; Variance Visualizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  :root{
+    --bg:#EEF1F0;
+    --panel:#FFFFFF;
+    --ink:#1B2430;
+    --muted:#5B6472;
+    --line:#DDE3E2;
+    --line-strong:#C4CCCA;
+    --accent:#2A9D8F;
+    --gA:#2A9D8F;
+    --gB:#E76F51;
+    --gC:#5B5FCF;
+    --gD:#E9A23B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    padding:22px 28px 40px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:26px;
+    letter-spacing:-0.01em;
+    margin:0 0 2px;
+  }
+  .subtitle{
+    color:var(--muted);
+    font-size:13.5px;
+    margin:0 0 18px;
+    max-width:700px;
+    line-height:1.5;
+  }
+  .topbar{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .count-select{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 12px;
+  }
+  .count-select .label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--muted);
+    font-weight:600;
+  }
+  .count-btns{display:flex;gap:6px;}
+  .count-btns button{
+    width:30px;height:30px;
+    border-radius:7px;
+    border:1px solid var(--line-strong);
+    background:#fff;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    cursor:pointer;
+    color:var(--ink);
+    transition:all .15s;
+  }
+  .count-btns button.active{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+  .global-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .action-btn{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:9px 14px;
+    border-radius:9px;
+    border:1px solid var(--line-strong);
+    background:#fff;
+    cursor:pointer;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    gap:7px;
+    transition:all .15s;
+  }
+  .action-btn .dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong);transition:.15s;}
+  .action-btn.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .action-btn.on .dot{background:#fff;}
+  .action-btn:hover{border-color:var(--ink);}
+
+  .f-readout{
+    display:none;
+    align-items:center;
+    gap:18px;
+    background:var(--ink);
+    color:#fff;
+    border-radius:10px;
+    padding:10px 16px;
+    font-family:'IBM Plex Mono',monospace;
+    margin-bottom:10px;
+  }
+  .f-readout.show{display:flex;}
+  .f-readout .f-main{font-size:20px;font-weight:600;}
+  .f-readout .f-sub{font-size:12px;opacity:.8;line-height:1.5;}
+
+  @keyframes blockFlash{
+    0%,100%{ fill-opacity:0.62; filter:none; transform:scale(1); }
+    50%{ fill-opacity:1; filter:drop-shadow(0 0 8px currentColor); transform:scale(1.18); }
+  }
+  .block.flash{
+    animation: blockFlash 0.8s ease-in-out 3;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .modal-overlay{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(20,24,28,.5);
+    align-items:center; justify-content:center;
+    z-index:50;
+    padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal{
+    background:#fff;
+    border-radius:14px;
+    width:100%; max-width:640px;
+    padding:22px 24px 20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal h3{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:0 0 6px;}
+  .modal p{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0 0 12px;}
+  .modal textarea{
+    width:100%; min-height:200px;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line-strong); border-radius:8px;
+    padding:10px; resize:vertical; color:var(--ink);
+  }
+  .modal-actions{display:flex; align-items:center; gap:8px; margin-top:12px;}
+  .modal-actions button{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    padding:8px 13px; border-radius:8px; border:1px solid var(--line-strong);
+    background:#fff; cursor:pointer; color:var(--ink);
+  }
+  .modal-actions button.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .modal-actions button.ghost{border-color:transparent;color:var(--muted);}
+  .parse-error{color:#C0392B;font-size:12px;margin-top:8px;min-height:16px;}
+
+  .layout{display:flex;gap:18px;align-items:flex-start;}
+  .cards{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:240px;
+    flex-shrink:0;
+  }
+  .dist-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:4px solid var(--c);
+    border-radius:10px;
+    padding:12px 13px;
+  }
+  .dist-card.active{box-shadow:0 0 0 2px var(--c) inset, 0 2px 8px rgba(0,0,0,.05);}
+  .card-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:9px;
+    cursor:pointer;
+  }
+  .card-head input{accent-color:var(--c);}
+  .card-head .swatch{width:11px;height:11px;border-radius:3px;background:var(--c);}
+  .card-head .dname{font-weight:600;font-size:13.5px;flex:1;}
+  .card-head .n{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    background:var(--bg);
+    padding:2px 6px;
+    border-radius:5px;
+  }
+  .arrow-toggle-group{display:flex;gap:3px;flex-shrink:0;}
+  .arrow-toggle{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    font-weight:600;
+    color:var(--c);
+    background:#fff;
+    border:1px solid var(--c);
+    border-radius:6px;
+    padding:2px 6px;
+    cursor:pointer;
+    line-height:1.4;
+  }
+  .arrow-toggle.on{background:var(--c);color:#fff;}
+  .arrow-toggle:hover{filter:brightness(0.95);}
+  .slider-row{margin-bottom:7px;}
+  .slider-row .srow-label{
+    display:flex;justify-content:space-between;
+    font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px;
+  }
+  .slider-row .srow-label span.val{font-family:'IBM Plex Mono',monospace;color:var(--ink);}
+  .slider-row input[type=range]{
+    width:100%;accent-color:var(--c);height:14px;
+  }
+  .card-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;}
+  .card-actions button{
+    flex:1;
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    font-weight:600;
+    padding:6px 4px;
+    border-radius:6px;
+    border:1px solid var(--line-strong);
+    background:#fdfdfd;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .card-actions button:hover{background:var(--c);color:#fff;border-color:var(--c);}
+  .hint{
+    font-size:11px;color:var(--muted);margin-top:8px;
+    line-height:1.4;
+    border-top:1px dashed var(--line);
+    padding-top:8px;
+  }
+
+  .chart-wrap{
+    flex:1;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:8px 14px 4px;
+    min-width:0;
+  }
+  #chart{width:100%;height:auto;display:block;cursor:crosshair;}
+  .axis-label{font-size:12px;fill:var(--muted);font-family:'Inter',sans-serif;font-weight:600;}
+  .tick text{font-family:'IBM Plex Mono',monospace;font-size:10.5px;fill:var(--muted);}
+  .tick line{stroke:var(--line);}
+  .domain{stroke:var(--line-strong);}
+  .gridline{stroke:var(--line);stroke-width:1;}
+  .block{pointer-events:none;}
+  .band-label{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;}
+  .arrow-line{fill:none;stroke-width:3.5;}
+
+  @keyframes arrowLinePulse{0%,100%{stroke-width:3.5;} 50%{stroke-width:7.5;}}
+  @keyframes arrowLabelPulse{0%,100%{opacity:1;} 50%{opacity:0.35;}}
+  .within-arrow-g.pulse .arrow-line, .between-arrow-g.pulse .arrow-line{ animation: arrowLinePulse 0.6s ease-in-out infinite; }
+  .within-arrow-g.pulse .band-label, .between-arrow-g.pulse .band-label{ animation: arrowLabelPulse 0.6s ease-in-out infinite; }
+  .between-arrow-g.pulse .mean-marker{ animation: arrowLabelPulse 0.6s ease-in-out infinite; }
+  .grand-line{stroke:var(--ink);stroke-width:1.6;stroke-dasharray:5,4;}
+  .grand-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;fill:var(--ink);}
+
+  .stats-strip{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+    flex-wrap:wrap;
+  }
+  .stat-chip{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:9px 13px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    min-width:118px;
+  }
+  .stat-chip .k{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:3px;}
+  .stat-chip .v{font-size:15px;font-weight:600;}
+  .stat-chip.sst{border-color:var(--ink);}
+
+  .action-btn.ghost-btn{background:transparent;border-color:transparent;color:var(--muted);text-decoration:underline;text-decoration-style:dotted;}
+  .action-btn.ghost-btn:hover{color:var(--ink);border-color:transparent;}
+
+  .anova-panel{
+    display:none;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 22px 16px;
+    margin-top:16px;
+  }
+  .anova-panel.show{display:block;}
+  .anova-head h3{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 4px;}
+  .anova-head p{font-size:12.5px;color:var(--muted);margin:0 0 14px;line-height:1.5;}
+  table.anova-table{border-collapse:collapse;width:100%;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  table.anova-table th, table.anova-table td{
+    border:1px solid var(--line);
+    padding:9px 12px;
+    text-align:left;
+  }
+  table.anova-table thead th{
+    background:var(--bg);
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--muted);
+    font-weight:700;
+  }
+  table.anova-table thead th abbr{text-decoration:underline dotted;cursor:help;color:var(--ink);}
+  table.anova-table td:first-child{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--ink);}
+  .src-sub{display:block;font-weight:400;color:var(--muted);font-size:11px;margin-top:1px;}
+  table.anova-table tr.total-row td:first-child{font-style:italic;color:var(--muted);font-weight:500;}
+  table.anova-table td.filled{animation: cellPop .5s ease-out;}
+  @keyframes cellPop{0%{transform:scale(0.6);opacity:0;} 55%{transform:scale(1.15);} 100%{transform:scale(1);opacity:1;}}
+  #f-cell.pulse{animation: fPulse 0.9s ease-in-out 3;}
+  @keyframes fPulse{0%,100%{background:transparent;} 50%{background:#FFE9A8;}}
+
+  .anova-chip{
+    position:fixed;
+    z-index:200;
+    background:var(--ink);
+    color:#fff;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    font-weight:700;
+    padding:6px 12px;
+    border-radius:9px;
+    box-shadow:0 6px 20px rgba(0,0,0,.35), 0 0 0 3px rgba(255,255,255,.5) inset;
+    pointer-events:none;
+    transition: left 1s cubic-bezier(.5,-0.2,.4,1.3), top 1s cubic-bezier(.5,-0.2,.4,1.3), opacity .45s;
+    transform: translate(-50%,-50%) scale(1);
+  }
+
+  .glossary-list{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow-y:auto;}
+  .glossary-item{display:flex;gap:12px;align-items:baseline;}
+  .glossary-item .sym{
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--ink);
+    background:var(--bg);border-radius:6px;padding:2px 8px;min-width:44px;text-align:center;flex-shrink:0;
+  }
+  .glossary-item .def{font-size:13px;line-height:1.5;color:var(--ink);}
+  .glossary-item .def b{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<h1>Score Stack</h1>
+<p class="subtitle">Every block is one raw score. Add scores by clicking the chart, or generate a sample from a mean and SD — watch it drop and stack into bins. Reveal within- and between-group spread on demand.</p>
+
+<div class="topbar">
+  <div class="count-select">
+    <span class="label">Distributions</span>
+    <div class="count-btns" id="countBtns"></div>
+  </div>
+  <div class="global-actions">
+    <button class="action-btn" id="loadDataBtn"><span class="dot"></span>Paste raw data</button>    <button class="action-btn" id="withinBtn"><span class="dot"></span>Show all within-group SS</button>
+    <button class="action-btn" id="betweenBtn"><span class="dot"></span>Show all between-group SS</button>
+    <button class="action-btn" id="grandBtn"><span class="dot"></span>Show grand mean &amp; SS<sub>total</sub></button>
+    <button class="action-btn" id="fBtn"><span class="dot"></span>Show F-ratio</button>
+    <button class="action-btn" id="anovaBtn"><span class="dot"></span>Build ANOVA table</button>
+    <button class="action-btn ghost-btn" id="glossaryBtn">? What do these symbols mean</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="cards" id="cards"></div>
+  <div class="chart-wrap">
+    <div class="f-readout" id="fReadout">
+      <div class="f-main" id="fMain">F = —</div>
+      <div class="f-sub" id="fSub"></div>
+    </div>
+    <svg id="chart" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet">
+      <g id="gridLayer"></g>
+      <g id="blocksLayer"></g>
+      <rect id="clickCapture" fill="transparent"></rect>
+      <g id="axisLayer"></g>
+      <g id="arrowLayer"></g>
+      <g id="grandMeanLayer"></g>
+    </svg>
+  </div>
+</div>
+
+<div class="stats-strip" id="statsStrip"></div>
+
+<div class="anova-panel" id="anovaWrap">
+  <div class="anova-head">
+    <h3>ANOVA Summary Table</h3>
+    <p>This is the standard table a one-way ANOVA reports. Watch each number travel from the chart into its cell — it's the same sums of squares you can see in the arrows above. Hover a column header for what it stands for.</p>
+  </div>
+  <table class="anova-table">
+    <thead>
+      <tr>
+        <th>Source of variation</th>
+        <th><abbr title="Sum of Squares: add up every deviation from a mean, squared, so pluses and minuses don't cancel out. Bigger SS = more spread.">SS</abbr></th>
+        <th><abbr title="Degrees of freedom: how many independent values could still vary once the relevant mean(s) are fixed.">df</abbr></th>
+        <th><abbr title="Mean Square: an SS converted into an average (a variance) by dividing by its df — MS = SS ÷ df.">MS</abbr></th>
+        <th><abbr title="F-ratio: MS-between ÷ MS-within. The bigger F is above 1, the more the group means differ compared to the noise inside each group.">F</abbr></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Between groups<span class="src-sub">the effect — do the group means differ?</span></td>
+        <td id="ssb-cell">—</td><td id="dfb-cell">—</td><td id="msb-cell">—</td><td id="f-cell">—</td>
+      </tr>
+      <tr>
+        <td>Within groups<span class="src-sub">the "error" — spread of scores inside each group</span></td>
+        <td id="ssw-cell">—</td><td id="dfw-cell">—</td><td id="msw-cell">—</td><td>—</td>
+      </tr>
+      <tr class="total-row">
+        <td>Total<span class="src-sub">Between + Within</span></td>
+        <td id="sst-cell">—</td><td id="dft-cell">—</td><td>—</td><td>—</td>
+      </tr>
+    </tbody>
+  </table>
+  <div id="anovaError" class="parse-error"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Paste raw scores</h3>
+    <p>One column per group (up to 4 columns), one row per score — paste straight from Excel or Sheets, tab/comma/space separated. An optional header row with group names is fine; non-numeric cells are ignored.</p>
+    <textarea id="pasteArea" spellcheck="false" placeholder="Group A	Group B	Group C	Group D
+14	22	9	31
+16	25	11	29
+..."></textarea>
+    <div id="parseError" class="parse-error"></div>
+    <div class="modal-actions">
+      <button class="ghost" id="loadExampleBtn">Insert example data</button>
+      <div style="flex:1"></div>
+      <button id="cancelLoadBtn">Cancel</button>
+      <button class="primary" id="applyLoadBtn">Plot this data</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="glossaryOverlay">
+  <div class="modal">
+    <h3>What do the symbols mean?</h3>
+    <p>Every bit of notation used on this page, plain and simple.</p>
+    <div class="glossary-list">
+      <div class="glossary-item"><span class="sym">x̄</span><span class="def"><b>"x-bar" — a mean.</b> The average of a set of scores: add them up, divide by how many there are.</span></div>
+      <div class="glossary-item"><span class="sym">x̄grand</span><span class="def"><b>Grand mean.</b> The average of every score from every active group, pooled together into one big list.</span></div>
+      <div class="glossary-item"><span class="sym">s</span><span class="def"><b>Standard deviation.</b> Roughly, how far a typical score sits from its own group's mean — the "spread" of one group.</span></div>
+      <div class="glossary-item"><span class="sym">n</span><span class="def"><b>Group size.</b> The number of scores in one particular group.</span></div>
+      <div class="glossary-item"><span class="sym">N</span><span class="def"><b>Total sample size.</b> The number of scores across every active group combined.</span></div>
+      <div class="glossary-item"><span class="sym">k</span><span class="def"><b>Number of groups.</b> How many distributions are currently active (1–4 here).</span></div>
+      <div class="glossary-item"><span class="sym">Σ</span><span class="def"><b>"Sigma" — sum of.</b> Add up whatever comes after it, once for every score.</span></div>
+      <div class="glossary-item"><span class="sym">SS</span><span class="def"><b>Sum of Squares.</b> Take each score's deviation from a mean, square it (so negatives don't cancel positives), then add all those squares up. It's the raw amount of "spread-out-ness."</span></div>
+      <div class="glossary-item"><span class="sym">SSw</span><span class="def"><b>Within-group SS.</b> Add up (score − its own group's mean)² for every score, in every group. This is variability that has nothing to do with group membership — just noise.</span></div>
+      <div class="glossary-item"><span class="sym">SSb</span><span class="def"><b>Between-group SS.</b> For each group, take n × (that group's mean − the grand mean)², then add those up across groups. This is variability that comes from the groups being different.</span></div>
+      <div class="glossary-item"><span class="sym">SSt</span><span class="def"><b>Total SS.</b> Add up (score − grand mean)² for every score, ignoring which group it's in. It always equals SSw + SSb — the total spread splits perfectly into "because of group" and "just noise."</span></div>
+      <div class="glossary-item"><span class="sym">df</span><span class="def"><b>Degrees of freedom.</b> How many values were actually free to vary. df-between = k − 1, df-within = N − k, df-total = N − 1.</span></div>
+      <div class="glossary-item"><span class="sym">MS</span><span class="def"><b>Mean Square.</b> An SS turned into an average — a proper variance estimate — by dividing by its df: MS = SS ÷ df.</span></div>
+      <div class="glossary-item"><span class="sym">F</span><span class="def"><b>F-ratio.</b> MS-between ÷ MS-within. If the groups' means are truly different, the between-group variance tends to dwarf the within-group noise, so F climbs well above 1.</span></div>
+    </div>
+    <div class="modal-actions">
+      <div style="flex:1"></div>
+      <button class="primary" id="closeGlossaryBtn">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS = ['#2A9D8F','#E76F51','#5B5FCF','#E9A23B'];
+const NAMES = ['Group A','Group B','Group C','Group D'];
+const DEFAULT_MEAN = [35, 65, 50, 50];
+const DEFAULT_SD = [8, 8, 12, 5];
+
+let numDist = 2;
+let activeDistIndex = 0;
+let withinShown = new Set();   // indices of groups currently showing the within-group SS arrow
+let betweenShown = new Set();  // indices of groups currently showing the between-group SS arrow
+let lastArrowPositions = {within:[], between:[]};
+let showGrandMean = false;
+let showF = false;
+let scoreIdCounter = 1;
+
+let distributions = COLORS.map((c,i)=>({
+  color:c, name:NAMES[i], mean:DEFAULT_MEAN[i], sd:DEFAULT_SD[i], scores:[]
+}));
+
+// ---- layout geometry ----
+const svgW = 1000, svgH = 700;
+const arrowBandTop = 46, arrowBandBottom = 172;
+const plotLeft = 66, plotRight = 970, plotTop = 190, plotBottom = 636;
+let xMin=0, xMax=100, binWidth=5;
+const numBins = 20;
+const binPx = (plotRight-plotLeft)/numBins;
+const blockH = 13;
+
+const xScale = v => plotLeft + (v-xMin)/(xMax-xMin)*(plotRight-plotLeft);
+const xInvert = px => xMin + (px-plotLeft)/(plotRight-plotLeft)*(xMax-xMin);
+const binIndexOf = v => Math.min(numBins-1, Math.max(0, Math.floor((v-xMin)/binWidth)));
+
+function setDomainFromValues(vals){
+  if(!vals || vals.length===0) return;
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  const span = (hi-lo) || 10;
+  const pad = Math.max(1, span*0.12);
+  xMin = Math.floor(lo-pad);
+  xMax = Math.ceil(hi+pad);
+  if(xMax<=xMin) xMax = xMin+10;
+  binWidth = (xMax-xMin)/numBins;
+}
+
+function randNormal(mean, sd){
+  let u=0,v=0;
+  while(u===0)u=Math.random();
+  while(v===0)v=Math.random();
+  let z = Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+  return Math.min(xMax-0.01, Math.max(xMin+0.01, mean + z*sd));
+}
+
+function mean(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function sd(arr){
+  if(arr.length<2) return 0;
+  const m = mean(arr);
+  return Math.sqrt(arr.reduce((a,b)=>a+(b-m)*(b-m),0)/(arr.length-1));
+}
+
+function groupStats(dist){
+  if(dist.scores.length>0){
+    const vals = dist.scores.map(s=>s.value);
+    return {m: mean(vals), s: dist.scores.length>1?sd(vals):dist.sd, n: dist.scores.length, empirical:true};
+  }
+  return {m: dist.mean, s: dist.sd, n:0, empirical:false};
+}
+
+// Full one-way ANOVA sum-of-squares decomposition over the currently visible groups.
+function ssCalculations(){
+  const visible = distributions.slice(0, numDist);
+  let allVals = [];
+  visible.forEach(d=> d.scores.forEach(s=>allVals.push(s.value)));
+  if(allVals.length===0) return null;
+
+  const grand = mean(allVals);
+  let ssw = 0, ssb = 0;
+  const perGroup = visible.map(d=>{
+    if(d.scores.length===0) return {n:0, m:d.mean, ssw:0, ssb:0};
+    const vals = d.scores.map(s=>s.value);
+    const gm = mean(vals);
+    const groupSSw = vals.reduce((a,b)=>a+(b-gm)*(b-gm),0);   // Σ(x - x̄_group)²
+    const groupSSb = vals.length*(gm-grand)*(gm-grand);        // n(x̄_group - x̄_grand)²
+    ssw += groupSSw; ssb += groupSSb;
+    return {n:vals.length, m:gm, ssw:groupSSw, ssb:groupSSb};
+  });
+  const sst = allVals.reduce((a,b)=>a+(b-grand)*(b-grand),0);  // Σ(x - x̄_grand)²  ( = SSw + SSb )
+
+  const k = visible.filter(d=>d.scores.length>0).length;
+  const N = allVals.length;
+  const dfB = k-1, dfW = N-k;
+  const msB = dfB>0 ? ssb/dfB : NaN;
+  const msW = dfW>0 ? ssw/dfW : NaN;
+  const F = (dfW>0 && msW>0) ? msB/msW : NaN;
+
+  return {grandMean: grand, ssw, ssb, sst, n:N, k, dfB, dfW, msB, msW, F, perGroup};
+}
+
+// ---------------- Controls ----------------
+function buildCountButtons(){
+  const wrap = d3.select('#countBtns');
+  wrap.selectAll('button').data([1,2,3,4]).join('button')
+    .text(d=>d)
+    .attr('class', d=> d===numDist ? 'active':'')
+    .on('click', (e,d)=>{
+      numDist = d;
+      if(activeDistIndex >= numDist) activeDistIndex = 0;
+      buildCountButtons();
+      buildCards();
+      renderAll();
+    });
+}
+
+function buildCards(){
+  const wrap = d3.select('#cards');
+  const cards = wrap.selectAll('.dist-card').data(distributions.slice(0,numDist), (d,i)=>i);
+  cards.exit().remove();
+  const enter = cards.enter().append('div').attr('class','dist-card');
+
+  enter.append('div').attr('class','card-head').html(d=>`
+      <input type="radio" name="active" class="pick">
+      <span class="swatch"></span>
+      <span class="dname"></span>
+      <span class="n">n = 0</span>
+      <span class="arrow-toggle-group">
+        <button class="arrow-toggle within-toggle" title="Show this group's within-group SS arrow">SSw</button>
+        <button class="arrow-toggle between-toggle" title="Show this group's between-group SS arrow (and its mean)">SSb</button>
+      </span>
+  `);
+  const sliders = enter.append('div');
+  sliders.append('div').attr('class','slider-row mean-row').html(`
+      <div class="srow-label"><span>Mean</span><span class="val mean-val"></span></div>
+      <input type="range" class="mean-slider" min="5" max="95" step="1">
+  `);
+  sliders.append('div').attr('class','slider-row sd-row').html(`
+      <div class="srow-label"><span>SD</span><span class="val sd-val"></span></div>
+      <input type="range" class="sd-slider" min="1" max="25" step="1">
+  `);
+  enter.append('div').attr('class','card-actions').html(`
+      <button class="gen">Generate</button>
+      <button class="plot">Plot</button>
+      <button class="addmean">+ Add</button>
+      <button class="clr">Clear</button>
+  `);
+  enter.append('div').attr('class','hint').html('Click the chart to drop a score into this distribution.').style('display','none');
+
+  const merged = enter.merge(cards);
+  merged.style('--c', (d,i)=> distributions[i].color);
+  merged.classed('active', (d,i)=> i===activeDistIndex);
+  merged.select('.dname').text((d,i)=> distributions[i].name);
+  merged.select('.n').text((d,i)=> 'n = ' + distributions[i].scores.length);
+  merged.select('.pick').property('checked', (d,i)=> i===activeDistIndex)
+    .on('change', (event, dat)=>{ activeDistIndex = distributions.indexOf(dat); buildCards(); });
+  merged.each(function(d,i){
+    const dist = distributions[i];
+    const card = d3.select(this);
+    card.select('.mean-slider').property('value', dist.mean);
+    card.select('.mean-val').text(dist.mean.toFixed(0));
+    card.select('.sd-slider').property('value', dist.sd);
+    card.select('.sd-val').text(dist.sd.toFixed(0));
+    card.select('.hint').style('display', i===activeDistIndex ? 'block':'none');
+
+    card.select('.within-toggle').classed('on', withinShown.has(i));
+    card.select('.within-toggle').on('click', function(event){
+      event.stopPropagation();
+      if(withinShown.has(i)){ withinShown.delete(i); }
+      else { withinShown.add(i); flashGroup(i); }
+      d3.select(this).classed('on', withinShown.has(i));
+      updateGlobalArrowBtns();
+      renderArrows();
+    });
+
+    card.select('.between-toggle').classed('on', betweenShown.has(i));
+    card.select('.between-toggle').on('click', function(event){
+      event.stopPropagation();
+      if(betweenShown.has(i)){ betweenShown.delete(i); }
+      else { betweenShown.add(i); flashGroup(i); }
+      d3.select(this).classed('on', betweenShown.has(i));
+      updateGlobalArrowBtns();
+      renderArrows();
+    });
+
+    card.select('.card-head').on('click', ()=>{
+      activeDistIndex = i;
+      buildCards();
+    });
+    card.select('.mean-slider').on('input', function(){
+      dist.mean = +this.value;
+      card.select('.mean-val').text(dist.mean.toFixed(0));
+      if(withinShown.has(i) || betweenShown.has(i)) renderArrows();
+    });
+    card.select('.sd-slider').on('input', function(){
+      dist.sd = +this.value;
+      card.select('.sd-val').text(dist.sd.toFixed(0));
+      if(withinShown.has(i) || betweenShown.has(i)) renderArrows();
+    });
+    card.select('.gen').on('click', ()=> generateSample(i));
+    card.select('.plot').on('click', ()=> plotDist(i));
+    card.select('.addmean').on('click', ()=> addScore(i, dist.mean));
+    card.select('.clr').on('click', ()=> clearDist(i));
+  });
+}
+
+function generateSample(i){
+  const dist = distributions[i];
+  const N = dist.scores.length>0 ? dist.scores.length : 15;
+  dist.scores = [];
+  for(let k=0;k<N;k++){
+    dist.scores.push({id: scoreIdCounter++, value: randNormal(dist.mean, dist.sd)});
+  }
+  renderAll();
+}
+function plotDist(i){
+  const dist = distributions[i];
+  if(dist.scores.length===0){
+    // nothing loaded yet for this group — generate a sample so there's something to plot
+    generateSample(i);
+    return;
+  }
+  // give every existing score a fresh id so D3 treats it as newly-entering and replays the drop
+  dist.scores = dist.scores.map(s=> ({id: scoreIdCounter++, value: s.value}));
+  renderAll();
+}
+function addScore(i, value){
+  distributions[i].scores.push({id: scoreIdCounter++, value: Math.min(xMax-0.01,Math.max(xMin+0.01,value))});
+  renderAll();
+}
+function clearDist(i){
+  distributions[i].scores = [];
+  renderAll();
+}
+
+// ---------------- Chart: static axes / grid ----------------
+function drawStaticChrome(){
+  const grid = d3.select('#gridLayer');
+  const axis = d3.select('#axisLayer');
+
+  // horizontal gridlines every 5 blocks (frequency axis - independent of x-domain)
+  const gridTicks = d3.range(0, 31, 5);
+  grid.selectAll('.gridline').data(gridTicks).join('line')
+    .attr('class','gridline')
+    .attr('x1', plotLeft).attr('x2', plotRight)
+    .attr('y1', d=> plotBottom - d*blockH)
+    .attr('y2', d=> plotBottom - d*blockH);
+
+  grid.selectAll('.gcount').data(gridTicks).join('text')
+    .attr('class','gcount').attr('x', plotLeft-10).attr('y', d=> plotBottom - d*blockH + 3)
+    .attr('text-anchor','end').attr('font-size',10).attr('font-family','IBM Plex Mono, monospace')
+    .attr('fill','var(--muted)').text(d=>d);
+
+  axis.append('line').attr('class','xdomain').attr('x1',plotLeft).attr('x2',plotRight).attr('y1',plotBottom).attr('y2',plotBottom).attr('stroke','var(--line-strong)');
+  axis.append('line').attr('x1',plotLeft).attr('x2',plotLeft).attr('y1',plotTop).attr('y2',plotBottom).attr('stroke','var(--line-strong)');
+
+  axis.append('text').attr('class','axis-label').attr('x', (plotLeft+plotRight)/2).attr('y', plotBottom+42)
+    .attr('text-anchor','middle').text('Raw score');
+  axis.append('text').attr('class','axis-label')
+    .attr('transform', `translate(${plotLeft-46},${(plotTop+plotBottom)/2}) rotate(-90)`)
+    .attr('text-anchor','middle').text('Stacked frequency');
+
+  d3.select('#clickCapture')
+    .attr('x', plotLeft).attr('y', plotTop).attr('width', plotRight-plotLeft).attr('height', plotBottom-plotTop)
+    .on('click', function(event){
+      const [mx] = d3.pointer(event);
+      const val = Math.min(xMax-0.01, Math.max(xMin+0.01, xInvert(mx)));
+      addScore(activeDistIndex, val);
+    });
+
+  drawXAxis();
+}
+
+// redraws just the x-axis ticks/labels — called again whenever the x-domain changes (e.g. pasted data)
+function drawXAxis(){
+  const axis = d3.select('#axisLayer');
+  const xt = d3.scaleLinear().domain([xMin,xMax]).ticks(9);
+  const fmt = d3.format('~g');
+
+  const ticks = axis.selectAll('.xtick').data(xt, d=>d);
+  ticks.exit().remove();
+  const enter = ticks.enter().append('g').attr('class','xtick');
+  enter.append('line').attr('y2',6).attr('stroke','var(--line-strong)');
+  enter.append('text').attr('y',19).attr('text-anchor','middle')
+    .attr('font-family','IBM Plex Mono, monospace').attr('font-size',10.5).attr('fill','var(--muted)');
+
+  enter.merge(ticks)
+    .attr('transform', d=> `translate(${xScale(d)},${plotBottom})`);
+  enter.merge(ticks).select('text').text(d=>fmt(d));
+}
+
+function renderBlocks(){
+  const visible = distributions.slice(0, numDist);
+  const blocks = [];
+  visible.forEach((dist, dIndex)=>{
+    const binCounts = {};
+    dist.scores.forEach(s=>{
+      const bin = binIndexOf(s.value);
+      const stackIndex = binCounts[bin] || 0;
+      binCounts[bin] = stackIndex+1;
+      blocks.push({id:'b'+s.id, dIndex, bin, stackIndex, color:dist.color});
+    });
+  });
+
+  const subW = binPx / numDist;
+  const pad = Math.max(1, subW*0.08);
+
+  const sel = d3.select('#blocksLayer').selectAll('rect.block')
+    .data(blocks, d=>d.id);
+
+  sel.exit()
+    .transition().duration(220)
+    .attr('y', d=> plotBottom - (d.stackIndex+1)*blockH - 14)
+    .attr('opacity', 0)
+    .remove();
+
+  const finalX = d => plotLeft + d.bin*binPx + d.dIndex*subW + pad;
+  const finalY = d => plotBottom - (d.stackIndex+1)*blockH;
+  const w = subW - 2*pad;
+
+  const entered = sel.enter().append('rect')
+    .attr('class', d=> 'block d-block-'+d.dIndex)
+    .attr('rx', 2)
+    .attr('x', finalX)
+    .attr('width', w)
+    .attr('height', blockH-2)
+    .attr('y', plotTop-30)
+    .attr('opacity', 1)
+    .attr('fill-opacity', 0.62)
+    .attr('fill', d=>d.color)
+    .attr('stroke', d=> d3.color(d.color).darker(0.6))
+    .attr('stroke-width', 0.7);
+
+  // blocks fall one at a time: stagger the newly-entering blocks
+  entered.transition()
+    .delay((d,i)=> i*110)
+    .duration(680).ease(d3.easeBackOut.overshoot(1.35))
+    .attr('x', finalX)
+    .attr('width', w)
+    .attr('y', finalY);
+
+  // existing blocks just settle into any new position (e.g. group count changed)
+  sel.transition()
+    .duration(400).ease(d3.easeCubicOut)
+    .attr('x', finalX)
+    .attr('width', w)
+    .attr('y', finalY)
+    .attr('opacity', 1);
+}
+
+// ---------------- Variance arrows ----------------
+function arrowMarkers(){
+  const defs = d3.select('#chart').selectAll('defs').data([0]).join('defs');
+  ['within','between'].forEach(kind=>{
+    COLORS.forEach((c,i)=>{
+      const id = `arrow-${kind}-${i}`;
+      if(!document.getElementById(id)){
+        defs.append('marker').attr('id',id)
+          .attr('viewBox','0 0 10 10').attr('refX',5).attr('refY',5)
+          .attr('markerWidth',7).attr('markerHeight',7).attr('orient','auto-start-reverse')
+          .append('path').attr('d','M0,0 L10,5 L0,10 Z').attr('fill',c);
+      }
+    });
+  });
+}
+
+// y-pixel of the top of a group's tallest stacked bin (so arrows sit right above its own bars)
+function groupTopY(dIndex){
+  const dist = distributions[dIndex];
+  let maxCount = 0;
+  const binCounts = {};
+  dist.scores.forEach(s=>{
+    const bin = binIndexOf(s.value);
+    binCounts[bin] = (binCounts[bin]||0)+1;
+    if(binCounts[bin]>maxCount) maxCount = binCounts[bin];
+  });
+  return plotBottom - maxCount*blockH;
+}
+
+// assigns each arrow to the lowest vertical "lane" whose existing arrows don't overlap it on x
+function layoutLanes(items, baseline, gap, padding){
+  const sorted = items.slice().sort((a,b)=> a.x1-b.x1);
+  const laneEdge = []; // rightmost x2 used so far, per lane
+  sorted.forEach(a=>{
+    let lane = laneEdge.findIndex(edge => edge + padding < a.x1);
+    if(lane===-1){ lane = laneEdge.length; laneEdge.push(a.x2); }
+    else { laneEdge[lane] = a.x2; }
+    a.lane = lane;
+    a.y = baseline - lane*gap;
+  });
+  const lanesUsed = laneEdge.length;
+  return {items: sorted, lanesUsed};
+}
+
+function renderArrows(){
+  const layer = d3.select('#arrowLayer');
+
+  const visible = distributions.slice(0, numDist);
+  const withinIdx = visible.map((_,i)=>i).filter(i=> withinShown.has(i));
+  const betweenIdx = visible.map((_,i)=>i).filter(i=> betweenShown.has(i));
+  arrowMarkers();
+
+  const ss = ssCalculations();
+  const grand = ss ? ss.grandMean : mean(visible.map(d=>d.mean));
+  const gx = xScale(grand);
+
+  // global top of the tallest bar among the groups whose arrows are shown, so arrows sit right above them
+  const allIdx = Array.from(new Set([...withinIdx, ...betweenIdx]));
+  const globalTop = allIdx.length ? Math.min(...allIdx.map(i=>groupTopY(i))) : plotBottom;
+  const gap = 24, padding = 14;
+
+  // ---- within-group arrows: laned so overlapping spans never collide ----
+  const withinItems = withinIdx.map(i=>{
+    const dist = distributions[i];
+    const st = groupStats(dist);
+    const x1 = xScale(Math.max(xMin, st.m - st.s));
+    const x2 = xScale(Math.min(xMax, st.m + st.s));
+    const contrib = ss ? ss.perGroup[i] : {ssw:0};
+    return {i, dist, st, x1, x2, cx: xScale(st.m), label:`within: Σ(x−x̄)² = ${contrib.ssw.toFixed(1)}`};
+  });
+  const withinBaseline = Math.max(plotTop+40, globalTop-20);
+  const withinLayout = layoutLanes(withinItems, withinBaseline, gap, padding);
+
+  // ---- between-group arrows: their own lane pool, stacked above every within arrow ----
+  const betweenItems = betweenIdx.map(i=>{
+    const dist = distributions[i];
+    const st = groupStats(dist);
+    const contrib = ss ? ss.perGroup[i] : {ssb:0};
+    const x1 = Math.min(gx, xScale(st.m)), x2 = Math.max(gx, xScale(st.m));
+    return {i, dist, st, x1, x2, cx:(x1+x2)/2, meanX: xScale(st.m), label:`between: n(x̄−x̄grand)² = ${contrib.ssb.toFixed(1)}  ·  x̄group = ${st.m.toFixed(1)}`};
+  });
+  const betweenBaseline = withinBaseline - withinLayout.lanesUsed*gap - gap*0.6;
+  const betweenLayout = layoutLanes(betweenItems, Math.max(plotTop+16, betweenBaseline), gap, padding);
+
+  const withinData = withinLayout.items.map(a=> Object.assign({}, a, {key:'w'+a.i, type:'within'}));
+  const betweenData = betweenLayout.items.map(a=> Object.assign({}, a, {key:'b'+a.i, type:'between'}));
+  const allData = withinData.concat(betweenData);
+
+  const join = layer.selectAll('g.arrow-g').data(allData, d=>d.key);
+
+  join.exit()
+    .transition().duration(280).attr('opacity',0).remove();
+
+  const entered = join.enter().append('g')
+    .attr('class', d=> 'arrow-g ' + (d.type==='within' ? 'within-arrow-g' : 'between-arrow-g'))
+    .attr('opacity', 0);
+
+  entered.each(function(d){
+    const g = d3.select(this);
+    if(d.type==='within'){
+      g.append('line').attr('class','arrow-line')
+        .attr('x1', d.cx).attr('x2', d.cx).attr('y1', d.y).attr('y2', d.y)
+        .attr('stroke', d.dist.color)
+        .attr('marker-start', `url(#arrow-within-${d.i})`).attr('marker-end', `url(#arrow-within-${d.i})`);
+      g.append('text').attr('class','band-label').attr('x', d.cx).attr('y', d.y-5)
+        .attr('text-anchor','middle').attr('fill', d.dist.color).text(d.label);
+    } else {
+      g.append('line').attr('class','arrow-line')
+        .attr('x1', d.cx).attr('x2', d.cx).attr('y1', d.y).attr('y2', d.y)
+        .attr('stroke', d.dist.color).attr('stroke-dasharray','5,3')
+        .attr('marker-start', `url(#arrow-between-${d.i})`).attr('marker-end', `url(#arrow-between-${d.i})`);
+      g.append('circle').attr('class','mean-marker')
+        .attr('cx', d.meanX).attr('cy', d.y).attr('r', 5).attr('opacity', 0)
+        .attr('fill', d.dist.color).attr('stroke', '#fff').attr('stroke-width', 1.6);
+      g.append('text').attr('class','band-label').attr('x', d.cx).attr('y', d.y-5)
+        .attr('text-anchor','middle').attr('fill', d.dist.color).text(d.label);
+    }
+  });
+
+  // ---- new arrows only: fade the group in, grow the line out, pop the mean marker in ----
+  entered.transition().duration(350).attr('opacity',1);
+  entered.each(function(d){
+    const g = d3.select(this);
+    g.select('.arrow-line').transition().duration(1100).ease(d3.easeCubicOut)
+      .attr('x1', d.x1).attr('x2', d.x2);
+    if(d.type==='between'){
+      g.select('.mean-marker').transition().delay(250).duration(400).attr('opacity',1);
+    }
+  });
+
+  // ---- previously-existing arrows: reposition smoothly if layout shifted, no re-grow / re-fade ----
+  join.each(function(d){
+    const g = d3.select(this);
+    g.select('.arrow-line').transition().duration(500).ease(d3.easeCubicOut)
+      .attr('x1', d.x1).attr('x2', d.x2).attr('y1', d.y).attr('y2', d.y);
+    g.select('.band-label').transition().duration(450)
+      .attr('x', d.cx).attr('y', d.y-5).text(d.label);
+    if(d.type==='between'){
+      g.select('.mean-marker').transition().duration(500).attr('cx', d.meanX).attr('cy', d.y);
+    }
+  });
+
+  lastArrowPositions = {
+    within: withinData.map(a=>({i:a.i, x:a.cx, y:a.y, color:a.dist.color, name:a.dist.name})),
+    between: betweenData.map(a=>({i:a.i, x:a.cx, y:a.y, color:a.dist.color, name:a.dist.name}))
+  };
+}
+
+// ---------------- Grand mean & SST ----------------
+function renderGrandMean(){
+  const layer = d3.select('#grandMeanLayer');
+  layer.selectAll('*').transition().duration(180).attr('opacity',0).remove();
+  if(!showGrandMean) return;
+
+  const ss = ssCalculations();
+  if(!ss){
+    layer.append('text').attr('class','grand-label').attr('x', plotLeft).attr('y', plotTop-14)
+      .attr('fill','var(--muted)').text('Add scores to compute the grand mean and SSₜ.');
+    return;
+  }
+  const gx = xScale(ss.grandMean);
+  const g = layer.append('g').attr('opacity',0);
+  g.append('line').attr('class','grand-line').attr('x1',gx).attr('x2',gx).attr('y1',plotTop).attr('y2',plotBottom);
+  g.append('text').attr('class','grand-label').attr('x', gx+6).attr('y', plotTop-30)
+    .text(`Grand mean = ${ss.grandMean.toFixed(2)}`);
+  g.append('text').attr('class','grand-label').attr('x', gx+6).attr('y', plotTop-16)
+    .attr('fill','var(--muted)').text(`SSₜ = Σ(x − x̄grand)² = ${ss.sst.toFixed(1)}`);
+  g.append('text').attr('class','grand-label').attr('x', gx+6).attr('y', plotTop-2)
+    .attr('fill','var(--muted)').text(`= SSw (${ss.ssw.toFixed(1)}) + SSb (${ss.ssb.toFixed(1)})`);
+  g.transition().duration(300).attr('opacity',1);
+}
+
+function renderF(){
+  const box = d3.select('#fReadout');
+  box.classed('show', showF);
+  if(!showF) return;
+  const ss = ssCalculations();
+  if(!ss || ss.k<2 || ss.dfW<=0){
+    d3.select('#fMain').text('F = —');
+    d3.select('#fSub').text('Need scores in at least 2 groups (with more scores than groups) to compute F.');
+    return;
+  }
+  d3.select('#fMain').text(`F(${ss.dfB}, ${ss.dfW}) = ${ss.F.toFixed(2)}`);
+  d3.select('#fSub').html(
+    `MS<sub>between</sub> = SSb/df<sub>b</sub> = ${ss.ssb.toFixed(1)}/${ss.dfB} = ${ss.msB.toFixed(2)}<br>`+
+    `MS<sub>within</sub> = SSw/df<sub>w</sub> = ${ss.ssw.toFixed(1)}/${ss.dfW} = ${ss.msW.toFixed(2)}`
+  );
+}
+
+function flashGroup(i){
+  d3.selectAll('.d-block-'+i).classed('flash', true);
+  setTimeout(()=> d3.selectAll('.d-block-'+i).classed('flash', false), 2500);
+}
+
+function updateGlobalArrowBtns(){
+  const visible = distributions.slice(0, numDist);
+  const allWithin = visible.length>0 && visible.every((_,i)=> withinShown.has(i));
+  const allBetween = visible.length>0 && visible.every((_,i)=> betweenShown.has(i));
+  d3.select('#withinBtn').classed('on', allWithin);
+  d3.select('#betweenBtn').classed('on', allBetween);
+}
+
+// ---------------- Stats strip ----------------
+function renderStats(){
+  const strip = d3.select('#statsStrip');
+  const visible = distributions.slice(0, numDist);
+  const chips = [];
+  visible.forEach(d=>{
+    const st = groupStats(d);
+    chips.push({k:d.name, v: st.n>0 ? `n=${st.n}  x̄=${st.m.toFixed(1)}  s=${st.s.toFixed(1)}` : 'no scores yet', color:d.color});
+  });
+  const ss = ssCalculations();
+  if(showGrandMean && ss){
+    chips.push({k:'Grand mean / SSₜ', v:`x̄=${ss.grandMean.toFixed(2)}  SSₜ=${ss.sst.toFixed(1)} (SSw+SSb)`, sst:true});
+  }
+  if(showF && ss && ss.k>=2 && ss.dfW>0){
+    chips.push({k:'F-ratio', v:`F(${ss.dfB},${ss.dfW}) = ${ss.F.toFixed(2)}`, sst:true});
+  }
+
+  const sel = strip.selectAll('.stat-chip').data(chips);
+  sel.exit().remove();
+  const enter = sel.enter().append('div').attr('class','stat-chip');
+  enter.append('div').attr('class','k');
+  enter.append('div').attr('class','v');
+  const merged = enter.merge(sel);
+  merged.classed('sst', d=>!!d.sst);
+  merged.style('border-left', d=> d.color ? `4px solid ${d.color}` : null);
+  merged.select('.k').text(d=>d.k);
+  merged.select('.v').text(d=>d.v);
+}
+
+function renderAll(){
+  buildCards();
+  renderBlocks();
+  renderArrows();
+  renderGrandMean();
+  renderF();
+  renderStats();
+  updateGlobalArrowBtns();
+}
+
+// ---------------- wire up toggle buttons ----------------
+d3.select('#withinBtn').on('click', function(){
+  const visible = distributions.slice(0, numDist);
+  const allShown = visible.length>0 && visible.every((_,i)=> withinShown.has(i));
+  if(allShown){
+    withinShown.clear();
+  } else {
+    visible.forEach((_,i)=>{
+      if(!withinShown.has(i)){ withinShown.add(i); flashGroup(i); }
+    });
+  }
+  updateGlobalArrowBtns();
+  buildCards();
+  renderArrows();
+});
+d3.select('#betweenBtn').on('click', function(){
+  const visible = distributions.slice(0, numDist);
+  const allShown = visible.length>0 && visible.every((_,i)=> betweenShown.has(i));
+  if(allShown){
+    betweenShown.clear();
+  } else {
+    visible.forEach((_,i)=>{
+      if(!betweenShown.has(i)){ betweenShown.add(i); flashGroup(i); }
+    });
+  }
+  updateGlobalArrowBtns();
+  buildCards();
+  renderArrows();
+});
+d3.select('#grandBtn').on('click', function(){
+  showGrandMean = !showGrandMean;
+  d3.select(this).classed('on', showGrandMean);
+  renderGrandMean();
+  renderStats();
+});
+d3.select('#fBtn').on('click', function(){
+  showF = !showF;
+  d3.select(this).classed('on', showF);
+  renderF();
+  renderStats();
+});
+
+// ---------------- Animated ANOVA table ----------------
+function svgPointToPage(svgX, svgY){
+  const svg = document.getElementById('chart');
+  const rect = svg.getBoundingClientRect();
+  const scale = rect.width / svgW; // uniform since aspect ratio is preserved
+  return { x: rect.left + svgX*scale, y: rect.top + svgY*scale };
+}
+function pageCenterOf(el){
+  const r = el.getBoundingClientRect();
+  return { x: r.left + r.width/2, y: r.top + r.height/2 };
+}
+
+function resetAnovaTable(){
+  ['ssb-cell','ssw-cell','sst-cell','dfb-cell','dfw-cell','dft-cell','msb-cell','msw-cell','f-cell']
+    .forEach(id=>{
+      const el = document.getElementById(id);
+      el.textContent = '—';
+      el.classList.remove('filled','pulse');
+    });
+  d3.selectAll('.anova-chip').remove();
+}
+
+function makeChip(pagePt, label, color){
+  const chip = document.createElement('div');
+  chip.className = 'anova-chip';
+  chip.textContent = label;
+  chip.style.left = pagePt.x+'px';
+  chip.style.top = pagePt.y+'px';
+  chip.style.opacity = '0';
+  if(color) chip.style.background = color;
+  document.body.appendChild(chip);
+  requestAnimationFrame(()=> requestAnimationFrame(()=>{ chip.style.opacity='1'; }));
+  return chip;
+}
+function moveChip(chip, pagePt){
+  requestAnimationFrame(()=> requestAnimationFrame(()=>{
+    chip.style.left = pagePt.x+'px';
+    chip.style.top = pagePt.y+'px';
+  }));
+}
+function killChip(chip){
+  chip.style.opacity='0';
+  setTimeout(()=> chip.remove(), 320);
+}
+function landInCell(cellId, value){
+  const el = document.getElementById(cellId);
+  d3.select(el).text(value).classed('filled', true);
+  setTimeout(()=> d3.select(el).classed('filled', false), 400);
+}
+function fillCell(cellId, value, withPop){
+  const el = document.getElementById(cellId);
+  d3.select(el).text(value);
+  if(withPop){ el.classList.remove('filled'); void el.offsetWidth; el.classList.add('filled'); }
+}
+
+// Spawns one mini chip per group at that group's own arrow position, flies them together
+// to a shared merge point (visually "combining" the separate group variances), then the
+// merged total chip travels down into its table cell.
+function combineIntoCell(groupPositionsSvg, mergePointSvg, cellId, finalValue, travelMs, mergeMs, cb){
+  if(groupPositionsSvg.length===0){
+    // no arrows currently on screen for this source — just drop the value straight in
+    const cellEl = document.getElementById(cellId);
+    const start = svgPointToPage(mergePointSvg.x, mergePointSvg.y);
+    const chip = makeChip(start, finalValue);
+    setTimeout(()=>{
+      moveChip(chip, pageCenterOf(cellEl));
+      setTimeout(()=>{ killChip(chip); landInCell(cellId, finalValue); if(cb) cb(); }, travelMs);
+    }, 60);
+    return;
+  }
+
+  const mergePagePt = svgPointToPage(mergePointSvg.x, mergePointSvg.y);
+  const chips = groupPositionsSvg.map(g=> makeChip(svgPointToPage(g.x, g.y), g.short, g.color));
+
+  setTimeout(()=>{ chips.forEach(c=> moveChip(c, mergePagePt)); }, 80);
+
+  setTimeout(()=>{
+    chips.forEach(killChip);
+    const merged = makeChip(mergePagePt, finalValue);
+    setTimeout(()=>{
+      const cellEl = document.getElementById(cellId);
+      moveChip(merged, pageCenterOf(cellEl));
+      setTimeout(()=>{
+        killChip(merged);
+        landInCell(cellId, finalValue);
+        if(cb) cb();
+      }, travelMs);
+    }, mergeMs);
+  }, travelMs);
+}
+
+function runAnovaAnimation(){
+  const ss = ssCalculations();
+  const errBox = d3.select('#anovaError');
+  d3.select('#anovaWrap').classed('show', true);
+  resetAnovaTable();
+
+  if(!ss || ss.k<2 || ss.dfW<=0){
+    errBox.text('Add scores to at least two groups (with more total scores than groups) to build the table.');
+    return;
+  }
+  errBox.text('');
+
+  // make sure every active group's arrows are on screen and briefly highlighted,
+  // so there's something real for the chips to fly out of
+  const visible = distributions.slice(0, numDist);
+  visible.forEach((_,i)=>{ withinShown.add(i); betweenShown.add(i); flashGroup(i); });
+  buildCards();
+  renderArrows();
+
+  const travelMs = 1150, mergeMs = 520;
+  const arrowDrawWait = 1450; // let the (possibly newly-shown) arrows finish animating in first
+
+  setTimeout(()=>{
+    // highlight the within-group arrows while their SS is being combined
+    d3.selectAll('.within-arrow-g').classed('pulse', true);
+
+    const withinSrc = lastArrowPositions.within.map(p=>({x:p.x, y:p.y, color:p.color, short:'s²'}));
+    combineIntoCell(withinSrc, {x:(plotLeft+plotRight)/2, y: plotTop+40}, 'ssw-cell', ss.ssw.toFixed(2), travelMs, mergeMs, ()=>{
+      d3.selectAll('.within-arrow-g').classed('pulse', false);
+
+      // then highlight the between-group arrows while their SS is being combined
+      d3.selectAll('.between-arrow-g').classed('pulse', true);
+
+      const betweenSrc = lastArrowPositions.between.map(p=>({x:p.x, y:p.y, color:p.color, short:'Δ'}));
+      combineIntoCell(betweenSrc, {x:(plotLeft+plotRight)/2, y: plotTop+16}, 'ssb-cell', ss.ssb.toFixed(2), travelMs, mergeMs, ()=>{
+        d3.selectAll('.between-arrow-g').classed('pulse', false);
+
+        // Total = Within + Between: pull the two cells' own chips together into the Total cell
+        const ssbEl = document.getElementById('ssb-cell'), sswEl = document.getElementById('ssw-cell'), sstEl = document.getElementById('sst-cell');
+        const c1 = makeChip(pageCenterOf(ssbEl), ss.ssb.toFixed(1), '#5B5FCF');
+        const c2 = makeChip(pageCenterOf(sswEl), ss.ssw.toFixed(1), '#2A9D8F');
+        const mid = { x:(pageCenterOf(ssbEl).x+pageCenterOf(sswEl).x)/2, y: pageCenterOf(ssbEl).y - 60 };
+        setTimeout(()=>{ moveChip(c1, mid); moveChip(c2, mid); }, 80);
+        setTimeout(()=>{
+          killChip(c1); killChip(c2);
+          const merged = makeChip(mid, ss.sst.toFixed(2));
+          setTimeout(()=>{
+            moveChip(merged, pageCenterOf(sstEl));
+            setTimeout(()=>{
+              killChip(merged);
+              landInCell('sst-cell', ss.sst.toFixed(2));
+
+              // ---- df / MS / F, in order ----
+              let t = 500;
+              const steps = [
+                ()=> fillCell('dfb-cell', ss.dfB, true),
+                ()=> fillCell('dfw-cell', ss.dfW, true),
+                ()=> fillCell('dft-cell', ss.n-1, true),
+                ()=> fillCell('msb-cell', ss.msB.toFixed(2), true),
+                ()=> fillCell('msw-cell', ss.msW.toFixed(2), true),
+                ()=> {
+                  fillCell('f-cell', ss.F.toFixed(2), true);
+                  setTimeout(()=> document.getElementById('f-cell').classList.add('pulse'), 500);
+                }
+              ];
+              const gaps = [500,500,600, 600,600, 750];
+              steps.forEach((step,i)=>{ setTimeout(step, t); t += gaps[i]; });
+            }, travelMs);
+          }, mergeMs);
+        }, travelMs);
+      });
+    });
+  }, arrowDrawWait);
+}
+
+d3.select('#anovaBtn').on('click', runAnovaAnimation);
+
+d3.select('#glossaryBtn').on('click', ()=> d3.select('#glossaryOverlay').classed('show', true));
+d3.select('#closeGlossaryBtn').on('click', ()=> d3.select('#glossaryOverlay').classed('show', false));
+d3.select('#glossaryOverlay').on('click', function(event){
+  if(event.target.id==='glossaryOverlay') d3.select('#glossaryOverlay').classed('show', false);
+});
+
+// ---------------- Paste raw data ----------------
+const EXAMPLE_DATA =
+`Condition A	Condition B	Condition C	Condition D
+14	21	19	9
+17	23	22	12
+15	19	18	11
+19	25	20	14
+16	22	24	8
+18	20	17	13
+13	24	21	10
+20	26	19	15
+17	21	23	9
+15	23	18	12
+16	19	20	11
+18	22	22	13`;
+
+function isNumericCell(s){
+  return s!=='' && !isNaN(parseFloat(s)) && isFinite(s.replace(',','.'));
+}
+
+function parsePastedTable(text){
+  const lines = text.replace(/\r/g,'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  if(lines.length===0) return {error:'Paste some data first.'};
+
+  let rows = lines.map(l=> l.includes('\t') || l.includes(',') ? l.split(/\t|,/).map(c=>c.trim()) : l.trim().split(/\s+/));
+
+  let headers = null;
+  if(rows[0].every(c=> !isNumericCell(c))){
+    headers = rows[0];
+    rows = rows.slice(1);
+  }
+  if(rows.length===0) return {error:'No numeric rows found below the header.'};
+
+  const numCols = Math.max(...rows.map(r=>r.length));
+  if(numCols===0) return {error:'Could not find any columns of numbers.'};
+
+  const cols = Array.from({length:numCols}, ()=>[]);
+  rows.forEach(r=>{
+    r.forEach((c,i)=>{ if(isNumericCell(c)) cols[i].push(parseFloat(c.replace(',','.'))); });
+  });
+
+  const usableCols = cols.filter(c=>c.length>0);
+  if(usableCols.length===0) return {error:'No numeric values found. Check the separators (tab, comma, or space).'};
+
+  return {cols, headers};
+}
+
+function applyPastedData(text){
+  const errBox = d3.select('#parseError');
+  const result = parsePastedTable(text);
+  if(result.error){ errBox.text(result.error); return false; }
+
+  let {cols, headers} = result;
+  let note = '';
+  if(cols.length>4){ note = ` (showing first 4 of ${cols.length} columns)`; cols = cols.slice(0,4); }
+
+  const n = Math.min(4, cols.filter(c=>c.length>0).length) || 1;
+  numDist = n;
+
+  const allVals = [];
+  cols.slice(0,n).forEach(c=>allVals.push(...c));
+  setDomainFromValues(allVals);
+
+  cols.slice(0,4).forEach((c,i)=>{
+    if(i>=distributions.length) return;
+    distributions[i].scores = c.map(v=>({id:scoreIdCounter++, value:v}));
+    if(headers && headers[i]) distributions[i].name = headers[i];
+    if(c.length>0){
+      distributions[i].mean = Math.round(mean(c));
+      distributions[i].sd = Math.max(1, Math.round(c.length>1 ? sd(c) : distributions[i].sd));
+    }
+  });
+
+  activeDistIndex = 0;
+  drawXAxis();
+  buildCountButtons();
+  errBox.text('Loaded ' + allVals.length + ' scores across ' + n + ' group(s).' + note);
+  renderAll();
+  return true;
+}
+
+function openModal(){ d3.select('#modalOverlay').classed('show', true); d3.select('#parseError').text(''); }
+function closeModal(){ d3.select('#modalOverlay').classed('show', false); }
+
+d3.select('#loadDataBtn').on('click', openModal);
+d3.select('#cancelLoadBtn').on('click', closeModal);
+d3.select('#loadExampleBtn').on('click', ()=> d3.select('#pasteArea').property('value', EXAMPLE_DATA));
+d3.select('#applyLoadBtn').on('click', ()=>{
+  const text = d3.select('#pasteArea').property('value');
+  const ok = applyPastedData(text);
+  if(ok) setTimeout(closeModal, 550);
+});
+d3.select('#modalOverlay').on('click', function(event){
+  if(event.target.id==='modalOverlay') closeModal();
+});
+
+// ---------------- init ----------------
+buildCountButtons();
+drawStaticChrome();
+distributions[0].scores = Array.from({length:12}, ()=>({id:scoreIdCounter++, value: randNormal(distributions[0].mean, distributions[0].sd)}));
+distributions[1].scores = Array.from({length:12}, ()=>({id:scoreIdCounter++, value: randNormal(distributions[1].mean, distributions[1].sd)}));
+renderAll();
+</script>
+</body>
+</html>
