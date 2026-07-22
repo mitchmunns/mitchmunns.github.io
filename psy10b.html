@@ -259,55 +259,42 @@ resize();
 const formulas = [
 
 "z = (X - μ) / σ",
-
 "σ = √Σ(X-μ)²/N",
-
 "M = ΣX/N",
-
 "r = cov(X,Y)/(σxσy)",
-
 "R² = SS₍model₎ / SS₍total₎",
-
 "ŷ = b₀ + b₁X",
-
 "t = (M-μ)/SE",
-
 "F = MSbetween / MSwithin",
-
 "p < .05",
-
 "α = .05",
-
 "CI = M ± 1.96(SE)",
-
 "SE = SD/√n",
-
 "χ² = Σ(O-E)²/E",
-
 "ANOVA",
-
 "ΣX",
-
 "df = n-1",
-
 "β₁ = ΔY/ΔX",
-
 "power = 1-β",
-
 "NHST",
-
 "sampling error",
-
 "normal distribution",
-
 "random variable",
-
 "effect size",
-
 "Cohen's d",
-
 "confidence interval"
 
+];
+
+
+// colors: blue, cyan, purple, pink, green
+const colors = [
+  [90,180,255],
+  [80,240,255],
+  [170,120,255],
+  [255,120,220],
+  [120,255,180],
+  [255,210,100]
 ];
 
 
@@ -316,25 +303,31 @@ const particles=[];
 
 for(let i=0;i<45;i++){
 
- particles.push({
+  let color =
+    colors[Math.floor(Math.random()*colors.length)];
 
-  text: formulas[Math.floor(Math.random()*formulas.length)],
+  particles.push({
 
-  x: Math.random()*w,
+    text:
+      formulas[Math.floor(Math.random()*formulas.length)],
 
-  y: Math.random()*h,
+    x: Math.random()*w,
+    y: Math.random()*h,
 
-  vx:(Math.random()-0.5)*0.15,
+    vx:(Math.random()-0.5)*0.18,
+    vy:(Math.random()-0.5)*0.18,
 
-  vy:(Math.random()-0.5)*0.15,
+    size:14+Math.random()*12,
 
-  size:12+Math.random()*10,
+    opacity:0.20+Math.random()*0.25,
 
-  opacity:0.08+Math.random()*0.15,
+    rotation:(Math.random()-0.5)*0.4,
 
-  rotation:(Math.random()-0.5)*0.4
+    color:color,
 
- });
+    pulse:Math.random()*Math.PI*2
+
+  });
 
 }
 
@@ -347,40 +340,65 @@ ctx.clearRect(0,0,w,h);
 
 for(let p of particles){
 
- p.x += p.vx;
- p.y += p.vy;
+
+  p.x += p.vx;
+  p.y += p.vy;
+
+  p.pulse += 0.03;
 
 
- if(p.x < -200) p.x=w+100;
- if(p.x > w+200) p.x=-100;
+  if(p.x < -200) p.x=w+100;
+  if(p.x > w+200) p.x=-100;
 
- if(p.y < -100) p.y=h+100;
- if(p.y > h+100) p.y=-100;
-
-
-
- ctx.save();
-
- ctx.translate(p.x,p.y);
-
- ctx.rotate(p.rotation);
+  if(p.y < -100) p.y=h+100;
+  if(p.y > h+100) p.y=-100;
 
 
- ctx.font=`${p.size}px "Times New Roman"`;
+
+  let glow =
+    10 + Math.sin(p.pulse)*8;
 
 
- ctx.fillStyle=
- `rgba(180,210,255,${p.opacity})`;
+  let opacity =
+    p.opacity +
+    Math.sin(p.pulse)*0.05;
 
 
- ctx.fillText(
-   p.text,
-   0,
-   0
- );
+
+  ctx.save();
 
 
- ctx.restore();
+  ctx.translate(p.x,p.y);
+  ctx.rotate(p.rotation);
+
+
+  ctx.font =
+    `${p.size}px "Times New Roman"`;
+
+
+  let [r,g,b] = p.color;
+
+
+  // glowing layer
+  ctx.shadowColor =
+    `rgb(${r},${g},${b})`;
+
+  ctx.shadowBlur =
+    glow;
+
+
+  ctx.fillStyle =
+    `rgba(${r},${g},${b},${opacity})`;
+
+
+  ctx.fillText(
+    p.text,
+    0,
+    0
+  );
+
+
+  ctx.restore();
 
 }
 
