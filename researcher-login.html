@@ -44,7 +44,16 @@
 
 <div id="message"></div>
 
+<h2>Researcher Profile</h2>
 
+<input id="name" placeholder="Full name">
+<input id="institution" placeholder="Institution">
+
+<button onclick="saveProfile()">
+Save Profile
+</button>
+
+    
 <script>
 
     // ----------------------------
@@ -165,7 +174,43 @@
         }
     
     });
-    
+
+    //--------------------------
+    // save profile details 
+    //--------------------------
+    async function saveProfile(){
+
+    const user = await supabaseClient.auth.getUser();
+
+    const id = user.data.user.id;
+
+    const name =
+        document.getElementById("name").value;
+
+    const institution =
+        document.getElementById("institution").value;
+
+    const lab =
+        document.getElementById("lab").value;
+
+
+    const {error} = await supabaseClient
+        .from("researchers")
+        .update({
+            name: name,
+            institution: institution,
+        })
+        .eq("id", id);
+
+
+    if(error){
+        show(error.message);
+    }
+    else{
+        show("Profile saved!");
+    }
+
+}
 </script>
 
 
