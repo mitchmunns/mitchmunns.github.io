@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stats Self-Quiz — Weeks 1–2 Checkpoint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF2ED;
+    --bg-grid: rgba(28,43,57,0.045);
+    --card:#FFFFFF;
+    --ink:#1C2B39;
+    --muted:#5B6B76;
+    --line:#DCE3DC;
+    --accent:#C77D2E;
+    --accent-ink:#7A4C15;
+    --good:#1E8F6F;
+    --good-bg:#E4F4EE;
+    --bad:#C1502E;
+    --bad-bg:#FBEAE3;
+    --card-shadow: 0 1px 0 rgba(28,43,57,0.06), 0 10px 24px -16px rgba(28,43,57,0.25);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0/100% 34px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0/34px 100%,
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:36px 20px 80px;}
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:30px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:clamp(28px,4vw,38px);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--accent-ink);
+    background:#F6E4CC;
+    padding:4px 9px;
+    border-radius:5px;
+    white-space:nowrap;
+  }
+  .sub{color:var(--muted);font-size:15px;line-height:1.55;max-width:60ch;margin:8px 0 0;}
+  .visualizer-note{
+    font-size:13px;
+    color:var(--muted);
+    border-left:3px solid var(--accent);
+    padding:6px 0 6px 12px;
+    margin-top:14px;
+    max-width:56ch;
+    line-height:1.5;
+  }
+  .visualizer-note b{color:var(--ink);}
+
+  /* ---------- shared card ---------- */
+  .card{
+    background:var(--card);
+    border-radius:10px;
+    box-shadow:var(--card-shadow);
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute; top:0; left:26px; width:1px; height:100%;
+    background:repeating-linear-gradient(to bottom, transparent 0 3px, rgba(199,125,46,0.14) 3px 4px);
+    pointer-events:none;
+  }
+
+  /* ---------- topic select screen ---------- */
+  .topics-head{display:flex;align-items:center;justify-content:space-between;margin:34px 0 14px;flex-wrap:wrap;gap:10px;}
+  .topics-head h2{font-family:'Fraunces',serif;font-size:20px;margin:0;font-weight:600;}
+  .selectall{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
+    color:var(--accent-ink); background:none; border:1px solid var(--accent); border-radius:6px;
+    padding:6px 10px; cursor:pointer;
+  }
+  .selectall:hover{background:#F6E4CC;}
+  .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
+  .topic-tile{
+    background:var(--card); border:1px solid var(--line); border-radius:9px; padding:14px 16px 14px 34px;
+    cursor:pointer; position:relative; transition:border-color .15s, transform .1s;
+    box-shadow:0 1px 0 rgba(28,43,57,0.05);
+  }
+  .topic-tile:hover{border-color:var(--accent);}
+  .topic-tile.on{border-color:var(--accent); background:#FDF7EE;}
+  .topic-tile .chk{
+    position:absolute; left:14px; top:16px; width:16px;height:16px; border-radius:4px;
+    border:1.6px solid var(--muted); background:#fff;
+  }
+  .topic-tile.on .chk{background:var(--accent); border-color:var(--accent);}
+  .topic-tile.on .chk::after{content:'✓'; color:#fff; font-size:11px; font-weight:800; position:absolute; left:2.5px; top:-1px;}
+  .topic-tile .name{font-weight:600; font-size:14.5px;}
+  .topic-tile .count{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:3px;}
+
+  .config-row{display:flex; align-items:center; gap:16px; margin-top:26px; flex-wrap:wrap;}
+  .config-row label{font-size:13px; font-weight:600; color:var(--muted); font-family:'IBM Plex Mono',monospace;}
+  .config-row input[type=range]{width:160px; accent-color:var(--accent);}
+  .config-val{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:14px;}
+
+  .start-row{margin-top:30px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; border:none; border-radius:8px;
+    padding:12px 22px; cursor:pointer; transition:filter .12s, transform .05s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--ink); color:#fff;}
+  .btn-primary:hover{filter:brightness(1.15);}
+  .btn-primary:disabled{background:#B9C2C4; cursor:not-allowed;}
+  .btn-ghost{background:transparent; color:var(--ink); border:1.4px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .picked-count{font-size:13px; color:var(--muted);}
+
+  /* ---------- ruler progress ---------- */
+  .ruler{position:relative; height:34px; margin:0 0 26px;}
+  .ruler-track{position:absolute; left:0; right:0; top:16px; height:2px; background:var(--line);}
+  .ruler-fill{position:absolute; left:0; top:16px; height:2px; background:var(--accent); transition:width .25s ease;}
+  .ruler-ticks{position:absolute; left:0; right:0; top:0; display:flex; justify-content:space-between;}
+  .ruler-tick{width:1px; height:10px; background:var(--line);}
+  .ruler-label{position:absolute; right:0; top:-2px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted);}
+
+  /* ---------- quiz screen ---------- */
+  .quiz-card{padding:30px 30px 26px 46px;}
+  .qmeta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .qtopic{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.05em; color:var(--accent-ink); background:#F6E4CC; padding:3px 8px; border-radius:5px;
+  }
+  .qscore{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted);}
+  .qtext{font-family:'Fraunces',serif; font-size:20px; font-weight:600; line-height:1.4; margin:0 0 20px;}
+  .choices{display:flex; flex-direction:column; gap:9px;}
+  .choice{
+    text-align:left; padding:12px 14px; border-radius:8px; border:1.4px solid var(--line); background:#fff;
+    cursor:pointer; font-size:14.5px; line-height:1.4; font-family:'Inter',sans-serif; color:var(--ink);
+    transition:border-color .12s, background .12s;
+  }
+  .choice:hover:not(.locked){border-color:var(--accent);}
+  .choice.correct{border-color:var(--good); background:var(--good-bg); font-weight:600;}
+  .choice.wrong{border-color:var(--bad); background:var(--bad-bg);}
+  .choice.dim{opacity:.55;}
+  .numeric-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .numeric-row input{
+    font-family:'IBM Plex Mono',monospace; font-size:15px; padding:10px 12px; border-radius:7px;
+    border:1.4px solid var(--line); width:140px;
+  }
+  .numeric-row input:focus{outline:none; border-color:var(--accent);}
+
+  .feedback{margin-top:16px; padding:12px 14px; border-radius:8px; font-size:14px; line-height:1.55; display:none;}
+  .feedback.show{display:block;}
+  .feedback.good{background:var(--good-bg); color:#0F5C46; border:1px solid #BFE4D6;}
+  .feedback.bad{background:var(--bad-bg); color:#8A3319; border:1px solid #EFC7B4;}
+  .feedback .verdict{font-weight:700; font-family:'IBM Plex Mono',monospace; font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:5px;}
+  .visualizer-hint{
+    margin-top:10px; font-size:12.5px; color:var(--accent-ink); font-style:italic;
+  }
+
+  .quiz-actions{display:flex; justify-content:space-between; align-items:center; margin-top:22px;}
+
+  /* ---------- results screen ---------- */
+  .results-card{padding:34px 34px 30px 48px;}
+  .score-hero{display:flex; align-items:baseline; gap:14px; margin-bottom:6px;}
+  .score-big{font-family:'Fraunces',serif; font-weight:700; font-size:56px; line-height:1;}
+  .score-label{color:var(--muted); font-size:15px;}
+  .breakdown{margin-top:28px; display:flex; flex-direction:column; gap:12px;}
+  .bd-row{display:grid; grid-template-columns:170px 1fr 54px; align-items:center; gap:12px;}
+  .bd-name{font-size:13.5px; font-weight:600;}
+  .bd-bar-track{background:#EDEFEA; border-radius:5px; height:10px; overflow:hidden;}
+  .bd-bar-fill{height:100%; border-radius:5px;}
+  .bd-pct{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted); text-align:right;}
+
+  footer{margin-top:40px; text-align:center; color:var(--muted); font-size:12.5px;}
+  .hidden{display:none !important;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+  @media (max-width:600px){
+    .quiz-card{padding:24px 18px 20px 34px;}
+    .results-card{padding:26px 18px 24px 30px;}
+    .bd-row{grid-template-columns:1fr; gap:4px;}
+    .bd-pct{text-align:left;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <h1>Self-Quiz</h1>
+      <span class="tag">Weeks 1&ndash;2 checkpoint</span>
+    </div>
+  </div>
+  <p class="sub">Pick the topics you want to practice, answer at your own pace, and see exactly where to focus before Quiz&nbsp;1. This is separate from the Population&rarr;Sample&rarr;Measure&rarr;Distribution visualizer &mdash; but several questions are easiest to reason through if you actually run the scenario there first.</p>
+  <div class="visualizer-note">Stuck on a calculation question? <b>Open the visualizer</b> and build the small dataset described &mdash; watching the deviation arrows, SS, or sampling animation play out is usually faster than doing it in your head.</div>
+
+  <!-- ================= SCREEN 1: TOPIC SELECT ================= -->
+  <div id="screenSelect">
+    <div class="topics-head">
+      <h2>Choose your topics</h2>
+      <button class="selectall" id="selectAllBtn">Select all</button>
+    </div>
+    <div class="topic-grid" id="topicGrid"></div>
+
+    <div class="config-row">
+      <label for="countSlider">Questions per topic</label>
+      <input type="range" id="countSlider" min="2" max="12" step="1" value="6">
+      <span class="config-val" id="countVal">6</span>
+    </div>
+
+    <div class="start-row">
+      <button class="btn btn-primary" id="startBtn" disabled>Start quiz</button>
+      <span class="picked-count" id="pickedCount">No topics selected yet</span>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 2: QUIZ ================= -->
+  <div id="screenQuiz" class="hidden">
+    <div class="ruler">
+      <div class="ruler-ticks" id="rulerTicks"></div>
+      <div class="ruler-track"></div>
+      <div class="ruler-fill" id="rulerFill"></div>
+      <div class="ruler-label" id="rulerLabel">1 / 1</div>
+    </div>
+    <div class="card quiz-card">
+      <div class="qmeta">
+        <span class="qtopic" id="qTopicLabel">Topic</span>
+        <span class="qscore" id="qScoreLabel">Score: 0 / 0</span>
+      </div>
+      <p class="qtext" id="qText"></p>
+      <div id="qBody"></div>
+      <div class="feedback" id="qFeedback">
+        <span class="verdict" id="fbVerdict"></span>
+        <span id="fbText"></span>
+        <div class="visualizer-hint hidden" id="fbHint"></div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-ghost" id="quitBtn">Quit to topics</button>
+        <button class="btn btn-primary" id="nextBtn" disabled>Check answer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 3: RESULTS ================= -->
+  <div id="screenResults" class="hidden">
+    <div class="card results-card">
+      <div class="score-hero">
+        <div class="score-big" id="resultScore">0%</div>
+        <div class="score-label" id="resultLabel">0 of 0 correct</div>
+      </div>
+      <div class="breakdown" id="breakdownList"></div>
+      <div class="start-row">
+        <button class="btn btn-primary" id="retryMissedBtn">Retry missed questions</button>
+        <button class="btn btn-ghost" id="backToTopicsBtn">Back to topics</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>Built as a companion to the sampling &amp; distribution visualizer &middot; covers material through Week 2, Lecture 5</footer>
+</div>
+
+<script>
+const TOPICS = [
+  {key:'pop-sample', name:'Populations, Samples & Variables'},
+  {key:'scales', name:'Scales of Measurement'},
+  {key:'visualizing', name:'Visualizing Data'},
+  {key:'central', name:'Central Tendency (Mean/Median/Mode)'},
+  {key:'variability', name:'Variability (Range/Variance/SD)'},
+  {key:'shape', name:'Distributions & Skew'},
+  {key:'zscores', name:'Z-Scores'},
+  {key:'sampling', name:'Sampling Distributions & CLT'},
+  {key:'nhst', name:'Hypothesis Testing Logic'},
+  {key:'design', name:'Research Design'}
+];
+
+// type: 'mc' (choices+answer index), 'tf' (True/False, answer boolean), 'numeric' (answer number, tolerance optional)
+const QUESTIONS = [
+// ---------------- pop-sample ----------------
+{topic:'pop-sample', type:'mc', q:"A population is best defined as:",
+ choices:["The complete set of individuals or scores a researcher is interested in","Any group of 30 or more people","The specific group of people actually tested","A group that has been randomly selected"],
+ answer:0, explain:"The population is the entire group of interest \u2014 it's a definition about scope, not size or how it was chosen."},
+{topic:'pop-sample', type:'mc', q:"A number that describes a characteristic of a population is called a:",
+ choices:["Statistic","Parameter","Variable","Sample"],
+ answer:1, explain:"Parameters describe populations; statistics describe samples. A useful trick: \u201cParameter\u201d and \u201cPopulation\u201d both start with P."},
+{topic:'pop-sample', type:'mc', q:"Which symbol represents a sample mean?",
+ choices:["\u03bc", "x\u0304 (x-bar)", "\u03c3", "N"],
+ answer:1, explain:"\u03bc (mu) is the population mean; x\u0304 is the sample mean. Greek letters generally mark population values, Roman letters mark sample values."},
+{topic:'pop-sample', type:'mc', q:"Why do researchers almost always work with samples instead of measuring an entire population?",
+ choices:["Samples are always more accurate than populations","Populations are usually too large, inaccessible, or impractical to measure completely","Statisticians prefer smaller numbers","Populations don't have a true mean"],
+ answer:1, explain:"Practicality is the whole reason inferential statistics exist \u2014 we use a manageable sample to estimate something about a population we can't fully measure."},
+{topic:'pop-sample', type:'mc', q:"In an experiment testing whether caffeine affects reaction time, the amount of caffeine given is the:",
+ choices:["Dependent variable","Confound","Independent variable","Control variable"],
+ answer:2, explain:"The independent variable (IV) is what the researcher manipulates; reaction time, what's measured as an outcome, is the dependent variable (DV)."},
+{topic:'pop-sample', type:'mc', q:"Which of these is a discrete variable?",
+ choices:["Height in centimeters","Number of siblings a person has","Reaction time in milliseconds","Body temperature"],
+ answer:1, explain:"Discrete variables can only take specific, separate values (you can't have 2.5 siblings). The others can, in principle, take any value along a continuum."},
+{topic:'pop-sample', type:'mc', q:"Which of these is a continuous variable?",
+ choices:["Number of pets owned","Letter grade (A, B, C...)","Time to complete a task, measured in seconds","Political party affiliation"],
+ answer:2, explain:"Time is continuous \u2014 between any two time values, another value is always possible (2.31 seconds, 2.315 seconds, and so on)."},
+{topic:'pop-sample', type:'tf', q:"A sample statistic is expected to exactly equal the population parameter every time a sample is drawn.",
+ answer:false, explain:"Sample statistics vary from sample to sample due to sampling error \u2014 they estimate the parameter but rarely match it exactly."},
+{topic:'pop-sample', type:'mc', q:"\u201cSampling error\u201d refers to:",
+ choices:["A mistake made while collecting data","The natural, expected discrepancy between a sample statistic and the population parameter, due to chance","Using the wrong formula for a statistic","A biased sampling method"],
+ answer:1, explain:"Sampling error isn't a mistake \u2014 it's the unavoidable, expected variability that comes from measuring a subset rather than the whole population."},
+{topic:'pop-sample', type:'mc', q:"If you drew several different samples of n\u202f=\u202f5 from the same population and calculated each sample's mean, you would expect the sample means to:",
+ choices:["Be identical every time","Vary somewhat from each other and from the population mean","Always exceed the population mean","Always be exactly half the population mean"],
+ answer:1, explain:"This variability across samples is sampling error in action \u2014 try drawing a few samples in the visualizer and watch the sample mean shift each time."},
+
+// ---------------- scales ----------------
+{topic:'scales', type:'mc', q:"Put the four scales of measurement in order from least to most information:",
+ choices:["Ordinal, nominal, ratio, interval","Nominal, ordinal, interval, ratio","Interval, ratio, nominal, ordinal","Ratio, interval, ordinal, nominal"],
+ answer:1, explain:"Nominal (labels only) \u2192 ordinal (ranked) \u2192 interval (ranked, equal spacing) \u2192 ratio (ranked, equal spacing, true zero)."},
+{topic:'scales', type:'mc', q:"Jersey numbers on a sports team are an example of which scale?",
+ choices:["Nominal","Ordinal","Interval","Ratio"],
+ answer:0, explain:"The numbers are just labels here \u2014 player #24 isn't \u201cmore\u201d than player #12 in any meaningful sense."},
+{topic:'scales', type:'mc', q:"Class rank (1st, 2nd, 3rd...) is an example of which scale?",
+ choices:["Nominal","Ordinal","Interval","Ratio"],
+ answer:1, explain:"Rank tells you order, but not that the gap between 1st and 2nd is the same size as the gap between 2nd and 3rd."},
+{topic:'scales', type:'mc', q:"Temperature in Celsius is usually treated as which scale?",
+ choices:["Nominal","Ordinal","Interval","Ratio"],
+ answer:2, explain:"Degrees are equally spaced, but 0\u00b0C doesn't mean \u201cno temperature\u201d \u2014 it's an arbitrary zero point, so it's interval, not ratio."},
+{topic:'scales', type:'mc', q:"Reaction time in milliseconds is an example of which scale?",
+ choices:["Nominal","Ordinal","Interval","Ratio"],
+ answer:3, explain:"Equal intervals, and 0\u202fms genuinely means \u201cno time elapsed\u201d \u2014 a true zero, which makes it ratio."},
+{topic:'scales', type:'mc', q:"What is the key feature that distinguishes a ratio scale from an interval scale?",
+ choices:["Ratio scales have more possible values","Ratio scales have a true, absolute zero point","Interval scales can't be added together","Ratio scales are always continuous"],
+ answer:1, explain:"A true zero means \u201cnone of the quantity exists,\u201d which is what allows ratio statements like \u201ctwice as much.\u201d"},
+{topic:'scales', type:'mc', q:"Why is it incorrect to say \u201c60\u00b0F is twice as hot as 30\u00b0F\u201d?",
+ choices:["Fahrenheit can't go below 32\u00b0","Temperature isn't a real variable","Fahrenheit's zero point is arbitrary, not a true absence of heat, so ratios aren't meaningful","60 isn't actually double 30"],
+ answer:2, explain:"Ratio statements (\u201ctwice as much\u201d) only make sense on a ratio scale, where zero means none of the quantity is present."},
+{topic:'scales', type:'mc', q:"On which scale(s) does it make the most sense to calculate a mean?",
+ choices:["Nominal only","Ordinal only","Interval and ratio","None of them"],
+ answer:2, explain:"Interval and ratio data have equal-sized units, so averaging them is meaningful. Averaging nominal codes (like 1=male, 2=female) produces a meaningless number."},
+
+// ---------------- visualizing ----------------
+{topic:'visualizing', type:'mc', q:"A histogram differs from a bar graph mainly in that:",
+ choices:["Histograms use color, bar graphs don't","Histogram bars touch (continuous data); bar graph bars have gaps (categorical/discrete data)","Bar graphs can only show two categories","Histograms are only for population data"],
+ answer:1, explain:"The touching bars in a histogram signal that the x-axis is a continuous scale with no natural gaps between values."},
+{topic:'visualizing', type:'mc', q:"In a basic frequency distribution table, what does each row typically show?",
+ choices:["A participant's name and score","A possible score value (or interval) and how often it occurred","The mean and standard deviation","A hypothesis and its p-value"],
+ answer:1, explain:"A frequency table pairs each score (or range of scores) with a count of how many times it appeared in the data."},
+{topic:'visualizing', type:'mc', q:"On a histogram, what does the y-axis (vertical axis) typically represent?",
+ choices:["The score value","Frequency (how many scores fell at that value)","The standard deviation","Time"],
+ answer:1, explain:"X-axis = the score values; Y-axis = how often each value (or interval of values) occurred."},
+{topic:'visualizing', type:'mc', q:"When a variable has many possible values spread across a wide range, what's a common technique for building a readable frequency table?",
+ choices:["Only report the mean","Group scores into class intervals","Delete the extreme scores","Use nominal labels instead of numbers"],
+ answer:1, explain:"Grouping scores into intervals (e.g., 0\u20139, 10\u201319...) keeps the table from having a huge number of nearly-empty rows."},
+{topic:'visualizing', type:'mc', q:"Why is it good practice to visualize data before jumping to summary statistics like the mean?",
+ choices:["Visualizing is required by law for publication","Graphs can reveal shape, skew, outliers, or errors that a single number would hide","Summary statistics are always wrong without a graph first","It's faster than calculating statistics"],
+ answer:1, explain:"A single number like the mean can look identical for very different-shaped distributions \u2014 a graph often reveals what the number alone can't."},
+{topic:'visualizing', type:'short', q:"Name one thing a histogram can reveal about a dataset that a single summary number (like the mean) cannot.",
+ sample:"e.g., the shape of the distribution, skew, the presence of outliers, or multiple modes.",
+ explain:"Good options include: overall shape (symmetric vs. skewed), the presence of outliers, gaps in the data, or more than one \u201cpeak\u201d (bimodality) \u2014 all invisible from a single number."},
+
+// ---------------- central ----------------
+{topic:'central', type:'mc', q:"The mean is calculated as:",
+ choices:["The middle score when data are ordered","The most frequently occurring score","The sum of all scores divided by the number of scores","The highest score minus the lowest score"],
+ answer:2, explain:"Mean = \u03a3X / N (or \u03a3X / n for a sample) \u2014 literally the arithmetic average."},
+{topic:'central', type:'mc', q:"The median is:",
+ choices:["The average of all scores","The score that occurs most often","The middle score when data are ordered from lowest to highest","The range of the data"],
+ answer:2, explain:"The median is the 50th percentile \u2014 half the scores fall above it, half below (with an average of the two middle scores if n is even)."},
+{topic:'central', type:'mc', q:"The mode is:",
+ choices:["The most frequently occurring score","The middle score","The average score","The distance between the highest and lowest score"],
+ answer:0, explain:"The mode is simply whichever value shows up most often in the data."},
+{topic:'central', type:'mc', q:"Which measure of central tendency is most sensitive to extreme scores (outliers)?",
+ choices:["The mode","The median","The mean","They're all equally sensitive"],
+ answer:2, explain:"Because the mean uses every score's exact value in its calculation, one very extreme score can pull it noticeably in that direction."},
+{topic:'central', type:'mc', q:"For a strongly skewed distribution, which measure of central tendency usually best represents a \u201ctypical\u201d score?",
+ choices:["The mean, always","The mode, always","The median, since it resists being pulled by extreme scores","None \u2014 skewed distributions have no typical score"],
+ answer:2, explain:"The median only cares about rank order, not how far away an extreme score is, so it stays closer to where most of the data actually sits."},
+{topic:'central', type:'numeric', q:"Dataset: 2, 3, 3, 4, 20. What is the mean? (round to 1 decimal)",
+ answer:6.4, tol:0.05, explain:"Sum = 32, N = 5, mean = 32/5 = 6.4. Notice how the single outlier (20) pulled the mean well above where most of the scores actually sit."},
+{topic:'central', type:'numeric', q:"Same dataset: 2, 3, 3, 4, 20. What is the median?",
+ answer:3, tol:0.01, explain:"Ordered, the middle value (3rd of 5) is 3. Compare this to the mean of 6.4 \u2014 the median is much more representative of the typical score here."},
+{topic:'central', type:'mc', q:"The mode is the only measure of central tendency that can be meaningfully used with which scale of measurement?",
+ choices:["Ratio","Interval","Ordinal","Nominal"],
+ answer:3, explain:"Nominal data (like eye color) has no numeric order or magnitude, so you can't average or rank it \u2014 but you can still ask which category occurred most often."},
+{topic:'central', type:'mc', q:"A distribution with two clearly separate high-frequency values is called:",
+ choices:["Unimodal","Bimodal","Skewed","Symmetric"],
+ answer:1, explain:"Bimodal distributions have two peaks/modes \u2014 often a sign that the data may actually be a mix of two different subgroups."},
+{topic:'central', type:'mc', q:"If a distribution's mean is noticeably greater than its median, the distribution is most likely:",
+ choices:["Symmetric","Positively (right) skewed","Negatively (left) skewed","Bimodal"],
+ answer:1, explain:"A long right tail of high extreme scores pulls the mean up above the median \u2014 the classic signature of positive skew."},
+
+// ---------------- variability ----------------
+{topic:'variability', type:'mc', q:"The range is calculated as:",
+ choices:["Highest score minus lowest score","Sum of scores divided by N","Average distance from the mean","The most common score"],
+ answer:0, explain:"Range = highest \u2212 lowest. It's the simplest measure of spread, but it only looks at two scores."},
+{topic:'variability', type:'mc', q:"What's a major weakness of the range as a measure of variability?",
+ choices:["It's too hard to calculate","It ignores every score except the two most extreme ones","It can't be a negative number","It only works for nominal data"],
+ answer:1, explain:"Two very different-looking datasets can have the same range if their extremes happen to match, even though the scores in between are distributed totally differently."},
+{topic:'variability', type:'mc', q:"A deviation score is calculated as:",
+ choices:["X \u2212 mean","X / N","mean \u2212 X\u00b2","X \u00d7 N"],
+ answer:0, explain:"Deviation score = X \u2212 mean. It tells you how far, and in which direction, a single score sits from the mean."},
+{topic:'variability', type:'mc', q:"If you sum every deviation score in a dataset (\u03a3(X\u2212mean)), you always get:",
+ choices:["A large positive number","Zero","The variance","The standard deviation"],
+ answer:1, explain:"This is a defining property of the mean \u2014 it's the balance point of the data, so positive and negative deviations always cancel out exactly."},
+{topic:'variability', type:'mc', q:"Why do we square deviation scores before summing them to get SS (sum of squares)?",
+ choices:["Squaring makes the math easier to do by hand","Squaring prevents positive and negative deviations from canceling each other out to zero","Squaring converts the data to a different scale of measurement","There's no real reason, it's just convention"],
+ answer:1, explain:"Since raw deviations always sum to zero, squaring them first (making everything positive) lets us capture total variability without it canceling out."},
+{topic:'variability', type:'mc', q:"For a sample, why do we typically divide SS by (n\u22121) instead of n when calculating variance?",
+ choices:["It makes the variance a whole number","Dividing by n\u22121 corrects for sample variance's tendency to underestimate the true population variance","It's required by the Central Limit Theorem","Dividing by n\u22121 makes the SD easier to interpret"],
+ answer:1, explain:"Samples tend to be less variable than their population (they're less likely to capture extreme scores), so n\u22121 (degrees of freedom) provides a better estimate of the population variance."},
+{topic:'variability', type:'mc', q:"Standard deviation is calculated as:",
+ choices:["The square root of variance","Variance squared","The average of all deviation scores","SS divided by the mean"],
+ answer:0, explain:"SD = \u221avariance. Taking the square root undoes the earlier squaring step, bringing the units back to the original scale."},
+{topic:'variability', type:'mc', q:"Why is the standard deviation generally more useful to report than the variance?",
+ choices:["SD is always a smaller number","SD is in the same units as the original scores, while variance is in squared units","Variance can be negative but SD cannot","SD doesn't require calculating deviation scores first"],
+ answer:1, explain:"If your scores are in seconds, the variance is in \u201csquared seconds\u201d \u2014 not very interpretable. The SD converts back to seconds, so it's easier to reason about."},
+{topic:'variability', type:'numeric', q:"Dataset: 4, 6, 8. First find the mean, then the SS (sum of squared deviations).",
+ answer:8, tol:0.1, explain:"Mean = 6. Deviations: \u22122, 0, 2. Squared: 4, 0, 4. SS = 4+0+4 = 8. Try building this exact dataset in the visualizer and watching the deviation arrows and squaring animation."},
+{topic:'variability', type:'tf', q:"On average, a sample tends to be less variable than the population it was drawn from.",
+ answer:true, explain:"This is exactly why the n\u22121 correction exists for sample variance \u2014 without it, sample variance would systematically underestimate the population variance."},
+
+// ---------------- shape ----------------
+{topic:'shape', type:'tf', q:"In a perfectly normal distribution, the mean, median, and mode are all equal.",
+ answer:true, explain:"Symmetry is a defining feature of the normal distribution, so all three measures of central tendency land at the exact same point."},
+{topic:'shape', type:'mc', q:"In a positively (right) skewed distribution, the long tail points toward:",
+ choices:["Lower values","Higher values","Both directions equally","There is no tail in a skewed distribution"],
+ answer:1, explain:"\u201cPositive\u201d skew refers to the direction the tail stretches \u2014 toward the higher, positive end of the scale."},
+{topic:'shape', type:'mc', q:"In a negatively (left) skewed distribution, the long tail points toward:",
+ choices:["Lower values","Higher values","The mode only","There is no tail in a skewed distribution"],
+ answer:0, explain:"Negative skew means the tail stretches toward the lower end of the scale, even though most scores cluster higher up."},
+{topic:'shape', type:'mc', q:"In a positively skewed distribution, which is true?",
+ choices:["Mean < median","Mean = median","Mean > median","Mode is always largest"],
+ answer:2, explain:"The handful of extreme high scores in the tail pull the mean upward, above the median, in a right-skewed distribution."},
+{topic:'shape', type:'mc', q:"In a negatively skewed distribution, which is true?",
+ choices:["Mean < median","Mean = median","Mean > median","There is no relationship between mean and median"],
+ answer:0, explain:"Extreme low scores in the left tail pull the mean down below the median."},
+{topic:'shape', type:'mc', q:"Kurtosis describes:",
+ choices:["The direction a distribution is skewed","How many modes a distribution has","The peakedness or tailedness of a distribution's shape","The sample size used to build the distribution"],
+ answer:2, explain:"Kurtosis is a separate concept from skew \u2014 it describes how sharply peaked or flat/heavy-tailed a distribution is, not which direction it leans."},
+{topic:'shape', type:'mc', q:"Which best describes a \u201cnormal distribution\u201d?",
+ choices:["Any distribution with a mean of zero","A symmetric, unimodal, bell-shaped distribution","A distribution with no variability","A distribution that only contains whole numbers"],
+ answer:1, explain:"The normal distribution is the classic symmetric bell curve: one peak in the middle, tapering evenly on both sides."},
+{topic:'shape', type:'short', q:"Why does it matter whether a distribution is skewed when deciding whether to report the mean or the median?",
+ sample:"e.g., in a skewed distribution the mean gets pulled toward the extreme tail and stops representing a 'typical' score, while the median stays closer to where most scores fall.",
+ explain:"In skewed data, the mean can be dragged noticeably away from where most scores actually sit, making the median the better summary of what's \u201ctypical.\u201d"},
+
+// ---------------- zscores ----------------
+{topic:'zscores', type:'mc', q:"The formula for a z-score is:",
+ choices:["z = (X \u2212 \u03bc) / \u03c3", "z = X / N", "z = \u03bc / \u03c3", "z = (X + \u03bc) \u00d7 \u03c3"],
+ answer:0, explain:"z-score = (raw score \u2212 mean) / standard deviation. It expresses distance from the mean in SD units."},
+{topic:'zscores', type:'mc', q:"A z-score tells you:",
+ choices:["The exact raw score a person obtained","How many standard deviations a score is above or below the mean","The probability of getting that exact score","The sample size used to compute the mean"],
+ answer:1, explain:"z-scores standardize distance from the mean into SD units, which is what makes them comparable across different distributions."},
+{topic:'zscores', type:'mc', q:"A z-score of 0 means:",
+ choices:["The score is impossible","The score is exactly equal to the mean","The score is the lowest in the distribution","There's a calculation error"],
+ answer:1, explain:"z = 0 happens when X = mean, since (mean \u2212 mean) = 0."},
+{topic:'zscores', type:'mc', q:"A negative z-score indicates the raw score is:",
+ choices:["Below the mean","Above the mean","Impossible to interpret","Always an error"],
+ answer:0, explain:"Negative z-scores simply mean the raw score fell below the mean \u2014 the sign tells you direction, the magnitude tells you distance."},
+{topic:'zscores', type:'mc', q:"Why do researchers convert raw scores to z-scores?",
+ choices:["To make the data harder to interpret","To allow fair comparison of scores from different distributions or different scales","To eliminate the need for a mean","Z-scores are required for all statistical tests"],
+ answer:1, explain:"Standardizing puts scores from any distribution on the same universal scale, so you can meaningfully compare, say, a test score to a reaction time."},
+{topic:'zscores', type:'numeric', q:"A distribution has \u03bc\u202f=\u202f50 and \u03c3\u202f=\u202f10. What is the z-score for X\u202f=\u202f65?",
+ answer:1.5, tol:0.05, explain:"z = (65\u221250)/10 = 15/10 = 1.5. This score sits 1.5 standard deviations above the mean."},
+{topic:'zscores', type:'mc', q:"In a standard normal distribution, approximately what percentage of scores fall within 1 standard deviation of the mean?",
+ choices:["about 50%","about 68%","about 95%","about 99.7%"],
+ answer:1, explain:"The classic empirical rule: ~68% within 1 SD, ~95% within 2 SD, ~99.7% within 3 SD."},
+{topic:'zscores', type:'mc', q:"Which table is used to find the exact proportion of scores associated with a given z-score?",
+ choices:["The frequency distribution table","The Unit Normal Table (z-table)","The ANOVA summary table","The correlation table"],
+ answer:1, explain:"The Unit Normal Table (UNT) converts z-scores into precise proportions/probabilities under the normal curve."},
+{topic:'zscores', type:'mc', q:"To convert a z-score back into a raw score, you would use:",
+ choices:["X = z + \u03bc", "X = \u03bc + z\u03c3", "X = z / \u03c3", "X = \u03bc \u2212 z\u03c3"],
+ answer:1, explain:"This just rearranges the original z formula: X = \u03bc + z\u03c3."},
+{topic:'zscores', type:'tf', q:"Z-scores can only be meaningfully calculated for data that comes from a normal distribution.",
+ answer:false, explain:"You can compute a z-score for any distribution's data \u2014 it's just a standardized distance from the mean. It's the *probability interpretations* using the normal curve that assume normality."},
+
+// ---------------- sampling ----------------
+{topic:'sampling', type:'mc', q:"The \u201cdistribution of sample means\u201d (DSM) is:",
+ choices:["The scores of a single sample plotted as a histogram","The distribution formed by taking every possible sample mean (for a given sample size) from a population","Another name for the population distribution","A distribution with only two data points"],
+ answer:1, explain:"The DSM is a theoretical distribution: imagine drawing every possible sample of size n from the population and plotting all their means."},
+{topic:'sampling', type:'mc', q:"According to the Central Limit Theorem, as sample size (n) increases, the shape of the distribution of sample means:",
+ choices:["Becomes more skewed, regardless of the population","Approaches a normal shape, even if the population isn't normal","Becomes identical to a single sample's histogram","Has no predictable shape"],
+ answer:1, explain:"This is the core power of the CLT \u2014 it guarantees the DSM approaches normality as n grows, regardless of the population's original shape."},
+{topic:'sampling', type:'mc', q:"The mean of the distribution of sample means equals:",
+ choices:["Always zero","The population mean, \u03bc","The sample size, n","The standard error"],
+ answer:1, explain:"On average, sample means center right on the true population mean \u2014 that's what makes the sample mean an unbiased estimator of \u03bc."},
+{topic:'sampling', type:'mc', q:"The standard deviation of the distribution of sample means is called the:",
+ choices:["Standard score","Standard error","Sum of squares","Range of means"],
+ answer:1, explain:"\u201cStandard error\u201d is just the specific name for the SD of the DSM \u2014 it describes typical variability among sample means, not individual scores."},
+{topic:'sampling', type:'mc', q:"The formula for standard error is:",
+ choices:["\u03c3 \u00d7 n", "\u03c3 / \u221an", "\u03c3\u00b2 / n", "n / \u03c3"],
+ answer:1, explain:"Standard error = \u03c3 / \u221an. Larger samples produce a smaller (more precise) standard error."},
+{topic:'sampling', type:'mc', q:"As sample size (n) increases, standard error:",
+ choices:["Increases","Decreases","Stays exactly the same","Becomes undefined"],
+ answer:1, explain:"Bigger samples give more stable, precise estimates of the population mean, so the spread of the DSM (standard error) shrinks."},
+{topic:'sampling', type:'mc', q:"Why does the distribution of sample means have less variability than the original population?",
+ choices:["Because larger samples always exclude outliers","Because averaging across many scores in a sample cancels out some of the extreme individual variation","Because the DSM is always smaller in sample size","There's no real reason, it's a coincidence"],
+ answer:1, explain:"An unusually high score in a sample tends to get balanced out by other, more typical scores when you take the average \u2014 so extreme sample means become rarer than extreme individual scores."},
+{topic:'sampling', type:'mc', q:"As a general rule of thumb, at what sample size does the Central Limit Theorem's normal approximation become reliable even for skewed populations?",
+ choices:["n \u2265 2", "n \u2265 5", "n \u2265 30", "n \u2265 1000"],
+ answer:2, explain:"n\u202f\u2265\u202f30 is the commonly cited rule of thumb, though the more symmetric the population already is, the smaller n can be and still work well."},
+{topic:'sampling', type:'numeric', q:"A population has \u03c3\u202f=\u202f12. For samples of n\u202f=\u202f36, what is the standard error?",
+ answer:2, tol:0.05, explain:"Standard error = \u03c3/\u221an = 12/\u221a36 = 12/6 = 2."},
+{topic:'sampling', type:'tf', q:"If the population itself is already normally distributed, the distribution of sample means is normal for any sample size, even n\u202f=\u202f2.",
+ answer:true, explain:"The CLT is really about what happens as n grows for *any* population shape. If the population is already normal, the DSM is normal from the very start, no large-n requirement needed."},
+
+// ---------------- nhst ----------------
+{topic:'nhst', type:'mc', q:"The null hypothesis (H0) generally states that:",
+ choices:["There IS a real effect or difference in the population","There is NO effect, difference, or relationship in the population","The sample data must be discarded","The alternative hypothesis is automatically true"],
+ answer:1, explain:"H0 is the \u201cno effect\u201d hypothesis \u2014 the assumption we test against, essentially the position of \u201cnothing interesting is happening here.\u201d"},
+{topic:'nhst', type:'mc', q:"The alternative hypothesis (H1) generally states that:",
+ choices:["There is no relationship between variables","There IS a real effect, difference, or relationship in the population","The sample size was too small","The population mean is unknown"],
+ answer:1, explain:"H1 is the hypothesis the researcher is often hoping to support \u2014 that something real is going on."},
+{topic:'nhst', type:'mc', q:"A Type I error occurs when a researcher:",
+ choices:["Fails to reject a false null hypothesis","Rejects a true null hypothesis (a \u201cfalse positive\u201d)","Uses the wrong statistical test","Collects too much data"],
+ answer:1, explain:"Type I error = concluding there's an effect when, in reality, there isn't one. The probability of this is controlled by alpha (\u03b1)."},
+{topic:'nhst', type:'mc', q:"A Type II error occurs when a researcher:",
+ choices:["Rejects a true null hypothesis","Fails to reject a null hypothesis that is actually false (a \u201cfalse negative\u201d)","Calculates the wrong p-value","Uses too large a sample"],
+ answer:1, explain:"Type II error = missing a real effect that actually exists in the population."},
+{topic:'nhst', type:'mc', q:"The alpha (\u03b1) level is most commonly set at:",
+ choices:[".50", ".05", ".95", "1.00"],
+ answer:1, explain:"\u03b1\u202f=\u202f.05 is the conventional cutoff in psychology, meaning researchers accept a 5% chance of a Type I error."},
+{topic:'nhst', type:'mc', q:"A \u201cstatistically significant\u201d result means:",
+ choices:["The effect is large and practically important","The result would be unlikely to occur by chance alone if the null hypothesis were true","The researcher's hypothesis has been proven true","The sample was randomly selected"],
+ answer:1, explain:"Statistical significance is specifically about how unlikely the observed result is under H0 \u2014 nothing more, nothing less."},
+{topic:'nhst', type:'mc', q:"How does statistical significance differ from practical importance?",
+ choices:["They always mean exactly the same thing","A statistically significant result isn't necessarily large or meaningful in real-world terms","Practical importance is only relevant for correlational studies","Statistical significance always implies a huge effect"],
+ answer:1, explain:"With a big enough sample, even a tiny, practically meaningless difference can become statistically significant \u2014 significance and size/importance are separate questions."},
+{topic:'nhst', type:'mc', q:"The p-value represents:",
+ choices:["The probability that the null hypothesis is true","The probability of obtaining a result at least as extreme as what was observed, assuming H0 is true","The size of the effect","The sample size needed for significance"],
+ answer:1, explain:"p is a conditional probability: *given* that H0 is true, how likely is a result this extreme (or more) to occur just by chance?"},
+{topic:'nhst', type:'mc', q:"If a study's p-value is less than the chosen alpha level, the standard decision is to:",
+ choices:["Accept the null hypothesis as true","Reject the null hypothesis","Increase the sample size and try again","Report no conclusion"],
+ answer:1, explain:"p < \u03b1 means the result is unlikely enough under H0 that we reject H0 in favor of H1."},
+{topic:'nhst', type:'short', q:"Why can a very large sample size produce a statistically significant result even when the true effect is tiny and not practically meaningful?",
+ sample:"e.g., larger samples shrink the standard error, making even small differences easier to detect as 'unlikely under H0'.",
+ explain:"Bigger samples shrink the standard error, so even a trivial difference becomes easier to distinguish from \u201cno difference at all\u201d \u2014 which is exactly why significance and practical importance must be judged separately."},
+
+// ---------------- design ----------------
+{topic:'design', type:'mc', q:"A correlational research design primarily examines:",
+ choices:["The causal effect of one variable manipulated by the researcher","Whether two (or more) variables are related, without manipulating anything","Whether random assignment worked correctly","How to eliminate all confounds"],
+ answer:1, explain:"Correlational designs measure variables as they naturally occur and look for associations \u2014 nothing is manipulated."},
+{topic:'design', type:'mc', q:"What is the defining feature of a true experimental design?",
+ choices:["A large sample size", "The researcher manipulates an independent variable and controls other factors, often with random assignment", "Using a survey to collect data", "Reporting a correlation coefficient"],
+ answer:1, explain:"Manipulation of the IV, combined with control over confounding variables (often via random assignment), is what allows experiments to support causal claims."},
+{topic:'design', type:'mc', q:"A nonexperimental (or quasi-experimental) design typically involves:",
+ choices:["Random assignment to conditions the researcher creates","Comparing pre-existing groups (e.g., by gender or diagnosis) without manipulating or randomly assigning them","No data collection at all","Only nominal-scale variables"],
+ answer:1, explain:"When group membership already exists before the study (like comparing two age groups), the researcher isn't manipulating anything \u2014 that's nonexperimental."},
+{topic:'design', type:'mc', q:"Why can't correlational designs, by themselves, support causal claims?",
+ choices:["Correlational data is always inaccurate","A relationship between two variables could be explained by a third variable, or the direction of causation could run either way","Correlational studies never use real participants","Correlation coefficients can't be calculated by hand"],
+ answer:1, explain:"This is the classic 'third-variable' and 'directionality' problem \u2014 an observed association doesn't tell you which variable (if either) is causing the other."},
+{topic:'design', type:'mc', q:"What specifically allows a well-designed experiment to support causal conclusions where a correlational study cannot?",
+ choices:["Experiments always have larger samples","Manipulating the IV and controlling/randomizing other factors rules out alternative explanations for the DV","Experiments never require a hypothesis","Experiments don't need a control group"],
+ answer:1, explain:"By manipulating the IV directly and holding other factors constant (or randomizing them away), researchers can rule out competing explanations for changes in the DV."},
+{topic:'design', type:'mc', q:"A confounding variable is:",
+ choices:["The same thing as the dependent variable","A variable that varies systematically along with the IV, offering an alternative explanation for results on the DV","Any variable measured on a nominal scale","A variable that has no effect on the outcome"],
+ answer:1, explain:"A confound 'rides along' with the IV, so you can't tell whether the DV changed because of the IV or because of the confound."},
+{topic:'design', type:'tf', q:"A strong correlation between two variables proves that one variable causes the other.",
+ answer:false, explain:"Correlation never proves causation on its own \u2014 a third variable or reverse causation could explain the same pattern of results."},
+{topic:'design', type:'short', q:"Give one reason a researcher might choose a correlational design over a true experiment, despite its causal limitations.",
+ sample:"e.g., some variables (trauma history, gender, existing health conditions) can't ethically or practically be manipulated by a researcher.",
+ explain:"Some variables of real interest \u2014 trauma exposure, natural disasters, pre-existing conditions \u2014 simply can't be ethically or practically assigned by a researcher, so a correlational approach is the only option."}
+];
+
+const state = {
+  selectedTopics: new Set(),
+  perTopic: 6,
+  quizQuestions: [],
+  currentIndex: 0,
+  score: 0,
+  answered: false,
+  missed: [],
+  perTopicResults: {} // topic -> {correct, total}
+};
+
+function questionsByTopic(topicKey){ return QUESTIONS.filter(q=>q.topic===topicKey); }
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ---------------- SCREEN 1: topic select ----------------
+function renderTopicGrid(){
+  const grid = document.getElementById('topicGrid');
+  grid.innerHTML = '';
+  TOPICS.forEach(t=>{
+    const total = questionsByTopic(t.key).length;
+    const tile = document.createElement('div');
+    tile.className = 'topic-tile';
+    tile.dataset.key = t.key;
+    tile.innerHTML = `<div class="chk"></div><div class="name">${t.name}</div><div class="count">${total} questions available</div>`;
+    tile.addEventListener('click', ()=>{
+      if(state.selectedTopics.has(t.key)) state.selectedTopics.delete(t.key);
+      else state.selectedTopics.add(t.key);
+      updateTopicUI();
+    });
+    grid.appendChild(tile);
+  });
+}
+function updateTopicUI(){
+  document.querySelectorAll('.topic-tile').forEach(el=>{
+    el.classList.toggle('on', state.selectedTopics.has(el.dataset.key));
+  });
+  const n = state.selectedTopics.size;
+  document.getElementById('pickedCount').textContent = n===0 ? 'No topics selected yet' : (n+' topic'+(n>1?'s':'')+' selected');
+  document.getElementById('startBtn').disabled = n===0;
+}
+document.getElementById('selectAllBtn').addEventListener('click', ()=>{
+  if(state.selectedTopics.size === TOPICS.length){ state.selectedTopics.clear(); }
+  else { TOPICS.forEach(t=> state.selectedTopics.add(t.key)); }
+  updateTopicUI();
+});
+document.getElementById('countSlider').addEventListener('input', function(){
+  state.perTopic = +this.value;
+  document.getElementById('countVal').textContent = this.value;
+});
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+
+function startQuiz(){
+  let pool = [];
+  state.selectedTopics.forEach(key=>{
+    const qs = shuffle(questionsByTopic(key)).slice(0, state.perTopic);
+    pool = pool.concat(qs);
+  });
+  state.quizQuestions = shuffle(pool);
+  state.currentIndex = 0;
+  state.score = 0;
+  state.missed = [];
+  state.perTopicResults = {};
+  TOPICS.forEach(t=>{ state.perTopicResults[t.key] = {correct:0,total:0}; });
+  document.getElementById('screenSelect').classList.add('hidden');
+  document.getElementById('screenResults').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  buildRulerTicks();
+  showQuestion();
+}
+
+// ---------------- SCREEN 2: quiz ----------------
+function buildRulerTicks(){
+  const wrap = document.getElementById('rulerTicks');
+  wrap.innerHTML = '';
+  const n = state.quizQuestions.length;
+  for(let i=0;i<n;i++){
+    const t = document.createElement('div');
+    t.className = 'ruler-tick';
+    wrap.appendChild(t);
+  }
+}
+function topicName(key){ const t = TOPICS.find(t=>t.key===key); return t ? t.name : key; }
+
+function showQuestion(){
+  state.answered = false;
+  const q = state.quizQuestions[state.currentIndex];
+  const idx = state.currentIndex;
+  const total = state.quizQuestions.length;
+
+  document.getElementById('rulerLabel').textContent = (idx+1)+' / '+total;
+  document.getElementById('rulerFill').style.width = (100*idx/total)+'%';
+  document.getElementById('qTopicLabel').textContent = topicName(q.topic);
+  document.getElementById('qScoreLabel').textContent = 'Score: '+state.score+' / '+idx;
+  document.getElementById('qText').textContent = q.q;
+
+  const body = document.getElementById('qBody');
+  body.innerHTML = '';
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'feedback';
+  document.getElementById('fbHint').classList.add('hidden');
+  document.getElementById('nextBtn').textContent = 'Check answer';
+  document.getElementById('nextBtn').disabled = true;
+
+  if(q.type==='mc'){
+    const wrap = document.createElement('div');
+    wrap.className = 'choices';
+    q.choices.forEach((c,i)=>{
+      const b = document.createElement('button');
+      b.className = 'choice';
+      b.textContent = c;
+      b.addEventListener('click', ()=> selectChoice(i, wrap, b));
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  } else if(q.type==='tf'){
+    const wrap = document.createElement('div');
+    wrap.className = 'choices';
+    ['True','False'].forEach((c,i)=>{
+      const b = document.createElement('button');
+      b.className = 'choice';
+      b.textContent = c;
+      b.addEventListener('click', ()=> selectChoice(i===0, wrap, b));
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  } else if(q.type==='numeric'){
+    const wrap = document.createElement('div');
+    wrap.className = 'numeric-row';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = 'your answer';
+    inp.id = 'numInput';
+    inp.addEventListener('input', ()=>{
+      document.getElementById('nextBtn').disabled = inp.value.trim()==='';
+    });
+    inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !document.getElementById('nextBtn').disabled) document.getElementById('nextBtn').click(); });
+    wrap.appendChild(inp);
+    body.appendChild(wrap);
+    setTimeout(()=>inp.focus(), 50);
+  } else if(q.type==='short'){
+    const wrap = document.createElement('div');
+    wrap.className = 'numeric-row';
+    wrap.style.display = 'block';
+    const inp = document.createElement('textarea');
+    inp.rows = 3;
+    inp.style.width = '100%';
+    inp.style.fontFamily = "'Inter',sans-serif";
+    inp.style.fontSize = '14px';
+    inp.style.padding = '10px 12px';
+    inp.style.borderRadius = '7px';
+    inp.style.border = '1.4px solid var(--line)';
+    inp.placeholder = 'Type your own answer in a sentence or two \u2014 you\'ll compare it to a sample answer.';
+    inp.id = 'shortInput';
+    inp.addEventListener('input', ()=>{
+      document.getElementById('nextBtn').disabled = inp.value.trim()==='';
+    });
+    wrap.appendChild(inp);
+    body.appendChild(wrap);
+    setTimeout(()=>inp.focus(), 50);
+  }
+
+  document.getElementById('nextBtn').onclick = ()=>{
+    if(!state.answered){ checkAnswer(); }
+    else { advance(); }
+  };
+}
+
+function selectChoice(chosen, wrap, btnEl){
+  if(state.answered) return;
+  wrap._chosenVal = chosen;
+  document.getElementById('nextBtn').disabled = false;
+  wrap.querySelectorAll('.choice').forEach(b=> b.style.outline = 'none');
+  btnEl.style.outline = '2px solid var(--accent)';
+}
+
+function checkAnswer(){
+  const q = state.quizQuestions[state.currentIndex];
+  let correct = false;
+  let userAnswerDisplay = '';
+
+  if(q.type==='mc'){
+    const wrap = document.querySelector('#qBody .choices');
+    const chosenVal = wrap._chosenVal;
+    correct = chosenVal === q.answer;
+    Array.from(wrap.children).forEach((b,i)=>{
+      b.classList.add('locked');
+      if(i===q.answer) b.classList.add('correct');
+      else if(i===chosenVal) b.classList.add('wrong');
+      else b.classList.add('dim');
+      b.onclick = null;
+    });
+  } else if(q.type==='tf'){
+    const wrap = document.querySelector('#qBody .choices');
+    const chosenVal = wrap._chosenVal;
+    correct = chosenVal === q.answer;
+    const correctIdx = q.answer ? 0 : 1;
+    Array.from(wrap.children).forEach((b,i)=>{
+      b.classList.add('locked');
+      if(i===correctIdx) b.classList.add('correct');
+      else if((i===0)===chosenVal) b.classList.add('wrong');
+      else b.classList.add('dim');
+      b.onclick = null;
+    });
+  } else if(q.type==='numeric'){
+    const inp = document.getElementById('numInput');
+    const val = parseFloat(inp.value);
+    const tol = q.tol!==undefined ? q.tol : 0.01;
+    correct = !isNaN(val) && Math.abs(val-q.answer) <= tol;
+    inp.disabled = true;
+    userAnswerDisplay = inp.value;
+  } else if(q.type==='short'){
+    const inp = document.getElementById('shortInput');
+    correct = true; // self-graded, credited for engaging
+    inp.disabled = true;
+  }
+
+  state.answered = true;
+  if(correct) state.score++;
+  const tRes = state.perTopicResults[q.topic];
+  tRes.total++;
+  if(correct) tRes.correct++;
+  else state.missed.push(q);
+
+  const fb = document.getElementById('qFeedback');
+  fb.classList.add('show');
+  fb.classList.add(correct ? 'good' : 'bad');
+  const verdict = document.getElementById('fbVerdict');
+  const text = document.getElementById('fbText');
+  if(q.type==='short'){
+    verdict.textContent = 'Sample answer';
+    text.textContent = q.sample + ' ' + q.explain;
+  } else {
+    verdict.textContent = correct ? 'Correct' : (q.type==='numeric' ? ('Not quite \u2014 answer: '+q.answer) : 'Not quite');
+    text.textContent = q.explain;
+  }
+  if(/visualizer/i.test(q.explain) || q.type==='numeric'){
+    const hint = document.getElementById('fbHint');
+    hint.classList.remove('hidden');
+    hint.textContent = 'Tip: this is a good one to double-check by building the dataset in the visualizer.';
+  }
+
+  document.getElementById('nextBtn').textContent = (state.currentIndex < state.quizQuestions.length-1) ? 'Next question' : 'See results';
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('qScoreLabel').textContent = 'Score: '+state.score+' / '+(state.currentIndex+1);
+}
+
+function advance(){
+  state.currentIndex++;
+  if(state.currentIndex >= state.quizQuestions.length){
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+document.getElementById('quitBtn').addEventListener('click', ()=>{
+  document.getElementById('screenQuiz').classList.add('hidden');
+  document.getElementById('screenSelect').classList.remove('hidden');
+});
+
+// ---------------- SCREEN 3: results ----------------
+function showResults(){
+  document.getElementById('screenQuiz').classList.add('hidden');
+  document.getElementById('screenResults').classList.remove('hidden');
+  const total = state.quizQuestions.length;
+  const pct = total>0 ? Math.round(100*state.score/total) : 0;
+  document.getElementById('resultScore').textContent = pct+'%';
+  document.getElementById('resultLabel').textContent = state.score+' of '+total+' correct';
+
+  const list = document.getElementById('breakdownList');
+  list.innerHTML = '';
+  TOPICS.forEach(t=>{
+    const r = state.perTopicResults[t.key];
+    if(!r || r.total===0) return;
+    const p = Math.round(100*r.correct/r.total);
+    const color = p>=80 ? 'var(--good)' : (p>=50 ? 'var(--accent)' : 'var(--bad)');
+    const row = document.createElement('div');
+    row.className = 'bd-row';
+    row.innerHTML = `<div class="bd-name">${t.name}</div>
+      <div class="bd-bar-track"><div class="bd-bar-fill" style="width:${p}%;background:${color};"></div></div>
+      <div class="bd-pct">${r.correct}/${r.total}</div>`;
+    list.appendChild(row);
+  });
+
+  document.getElementById('retryMissedBtn').disabled = state.missed.length===0;
+  document.getElementById('retryMissedBtn').style.opacity = state.missed.length===0 ? '0.5' : '1';
+}
+
+document.getElementById('backToTopicsBtn').addEventListener('click', ()=>{
+  document.getElementById('screenResults').classList.add('hidden');
+  document.getElementById('screenSelect').classList.remove('hidden');
+});
+
+document.getElementById('retryMissedBtn').addEventListener('click', ()=>{
+  if(state.missed.length===0) return;
+  state.quizQuestions = shuffle(state.missed);
+  state.currentIndex = 0;
+  state.score = 0;
+  state.missed = [];
+  TOPICS.forEach(t=>{ state.perTopicResults[t.key] = {correct:0,total:0}; });
+  document.getElementById('screenResults').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  buildRulerTicks();
+  showQuestion();
+});
+
+renderTopicGrid();
+updateTopicUI();
+</script>
+
+
+</body>
+</html>
