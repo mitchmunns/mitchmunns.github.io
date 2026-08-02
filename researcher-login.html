@@ -188,10 +188,6 @@ Save Profile
     const institution =
         document.getElementById("institution").value;
 
-    const lab =
-        document.getElementById("lab").value;
-
-
     const {error} = await supabaseClient
         .from("researchers")
         .update({
