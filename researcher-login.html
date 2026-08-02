@@ -154,7 +154,18 @@
 
     }
 
-
+    // -------------------------
+    // detect account created
+    // -------------------------
+    
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+    
+        if (event === "SIGNED_IN") {
+            show("Logged in as: " + session.user.email);
+        }
+    
+    });
+    
 </script>
 
 
