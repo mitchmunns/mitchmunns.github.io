@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spatial Platform Researcher Login</title>
+
+    <!-- Supabase JS library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+        }
+
+        #message {
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h1>Researcher Login</h1>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="signUp()">Create Account</button>
+<button onclick="signIn()">Login</button>
+<button onclick="signOut()">Logout</button>
+
+<div id="message"></div>
+
+
+<script>
+
+    // ----------------------------
+    // SUPABASE CONNECTION
+    // ----------------------------
+
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+
+    const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+    // ----------------------------
+    // CREATE ACCOUNT
+    // ----------------------------
+
+    async function signUp(){
+
+        const email =
+            document.getElementById("email").value;
+
+        const password =
+            document.getElementById("password").value;
+
+
+        const {data, error} =
+            await supabaseClient.auth.signUp({
+                email: email,
+                password: password
+            });
+
+
+        if(error){
+            show(error.message);
+        }
+        else{
+            show(
+              "Account created. Check your email if confirmation is enabled."
+            );
+        }
+
+    }
+
+
+    // ----------------------------
+    // LOGIN
+    // ----------------------------
+
+    async function signIn(){
+
+        const email =
+            document.getElementById("email").value;
+
+        const password =
+            document.getElementById("password").value;
+
+
+        const {data, error} =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+
+        if(error){
+            show(error.message);
+        }
+        else{
+
+            show(
+              "Logged in as: "
+              + data.user.email
+            );
+
+        }
+
+    }
+
+
+
+    // ----------------------------
+    // LOGOUT
+    // ----------------------------
+
+    async function signOut(){
+
+        await supabaseClient.auth.signOut();
+
+        show("Logged out");
+
+    }
+
+
+
+    // ----------------------------
+    // DISPLAY MESSAGE
+    // ----------------------------
+
+    function show(message){
+
+        document.getElementById("message").innerHTML =
+            message;
+
+    }
+
+
+</script>
+
+
+</body>
+</html>
