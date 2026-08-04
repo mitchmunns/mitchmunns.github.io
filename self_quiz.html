@@ -5,29 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stats Self-Quiz — Weeks 1–2 Checkpoint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#EEF2ED;
-    --bg-grid: rgba(28,43,57,0.045);
-    --card:#FFFFFF;
-    --ink:#1C2B39;
-    --muted:#5B6B76;
-    --line:#DCE3DC;
-    --accent:#C77D2E;
-    --accent-ink:#7A4C15;
-    --good:#1E8F6F;
-    --good-bg:#E4F4EE;
-    --bad:#C1502E;
-    --bad-bg:#FBEAE3;
-    --card-shadow: 0 1px 0 rgba(28,43,57,0.06), 0 10px 24px -16px rgba(28,43,57,0.25);
+    --bg:#17140f;
+    --bg-grid: rgba(255,176,0,0.035);
+    --card:#242019;
+    --card2:#2c2820;
+    --ink:#F1E6CE;
+    --muted:#9c8f78;
+    --line:#3c352a;
+    --line-strong:#544a39;
+    --accent:#FFB000;
+    --accent-ink:#FFC94D;
+    --good:#39FF6A;
+    --good-bg:#12220f;
+    --bad:#FF5A45;
+    --bad-bg:#2a1210;
+    --card-shadow: inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(0,0,0,.5), 0 10px 24px -12px rgba(0,0,0,.6);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0/100% 34px,
-      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0/34px 100%,
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 4px),
+      radial-gradient(ellipse at 50% -10%, rgba(255,176,0,0.08), transparent 55%),
       var(--bg);
     color:var(--ink);
     font-family:'Inter',system-ui,sans-serif;
@@ -38,11 +40,13 @@
   .top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:30px;flex-wrap:wrap;}
   .brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
   h1{
-    font-family:'Fraunces',serif;
-    font-weight:700;
+    font-family:'Share Tech Mono',monospace;
+    font-weight:400;
     font-size:clamp(28px,4vw,38px);
     margin:0;
-    letter-spacing:-0.01em;
+    letter-spacing:.03em;
+    color:var(--good);
+    text-shadow:0 0 14px rgba(57,255,106,.35);
   }
   .tag{
     font-family:'IBM Plex Mono',monospace;
@@ -51,7 +55,8 @@
     letter-spacing:0.06em;
     text-transform:uppercase;
     color:var(--accent-ink);
-    background:#F6E4CC;
+    background:#3a2a0a;
+    border:1px solid var(--line-strong);
     padding:4px 9px;
     border-radius:5px;
     white-space:nowrap;
@@ -70,67 +75,115 @@
 
   /* ---------- shared card ---------- */
   .card{
-    background:var(--card);
-    border-radius:10px;
+    background:linear-gradient(180deg, var(--card2), var(--card));
+    border-radius:9px;
     box-shadow:var(--card-shadow);
-    border:1px solid var(--line);
+    border:1px solid var(--line-strong);
     position:relative;
   }
   .card::before{
     content:'';
     position:absolute; top:0; left:26px; width:1px; height:100%;
-    background:repeating-linear-gradient(to bottom, transparent 0 3px, rgba(199,125,46,0.14) 3px 4px);
+    background:repeating-linear-gradient(to bottom, transparent 0 3px, rgba(255,176,0,0.22) 3px 4px);
     pointer-events:none;
   }
 
   /* ---------- topic select screen ---------- */
   .topics-head{display:flex;align-items:center;justify-content:space-between;margin:34px 0 14px;flex-wrap:wrap;gap:10px;}
-  .topics-head h2{font-family:'Fraunces',serif;font-size:20px;margin:0;font-weight:600;}
+  .topics-head h2{font-family:'Share Tech Mono',monospace;font-size:21px;margin:0;font-weight:400;color:var(--accent);letter-spacing:.02em;}
   .selectall{
     font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
     color:var(--accent-ink); background:none; border:1px solid var(--accent); border-radius:6px;
     padding:6px 10px; cursor:pointer;
   }
-  .selectall:hover{background:#F6E4CC;}
+  .selectall:hover{background:#3a2a0a;}
   .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
   .topic-tile{
-    background:var(--card); border:1px solid var(--line); border-radius:9px; padding:14px 16px 14px 34px;
-    cursor:pointer; position:relative; transition:border-color .15s, transform .1s;
-    box-shadow:0 1px 0 rgba(28,43,57,0.05);
+    background:linear-gradient(180deg, var(--card2), var(--card)); border:1px solid var(--line-strong); border-radius:8px; padding:14px 16px 14px 34px;
+    cursor:pointer; position:relative; transition:border-color .15s, transform .1s, box-shadow .15s;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
   }
   .topic-tile:hover{border-color:var(--accent);}
-  .topic-tile.on{border-color:var(--accent); background:#FDF7EE;}
+  .topic-tile.on{border-color:var(--accent); background:linear-gradient(180deg,#332911,#241d0e); box-shadow:inset 0 1px 0 rgba(255,255,255,.04), 0 0 10px rgba(255,176,0,.25);}
+
+  /* ---------- lecture-colored topic tiles ---------- */
+  :root{ --lec-bg-a:0.16; --lec-bg-a2:0.09; --lec-border-a:0.5; --lec-glow-a:0.22; }
+  .topic-tile.lec-colored{
+    background:
+      linear-gradient(180deg, rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-bg-a)), rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-bg-a2))),
+      linear-gradient(180deg, var(--card2), var(--card));
+    border-color: rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-border-a));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 14px rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-glow-a));
+  }
+  .topic-tile.lec-multi{
+    background:
+      linear-gradient(135deg, rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-bg-a)), rgba(var(--lec2-r),var(--lec2-g),var(--lec2-b),var(--lec-bg-a))),
+      linear-gradient(180deg, var(--card2), var(--card));
+    border-color: rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-border-a));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 14px rgba(var(--lec2-r),var(--lec2-g),var(--lec2-b),var(--lec-glow-a));
+  }
+  .topic-tile.lec-colored:hover, .topic-tile.lec-multi:hover{border-color:var(--accent);}
+  .topic-tile.lec-colored.on, .topic-tile.lec-multi.on{
+    border-color:var(--accent);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 18px rgba(var(--lec-r),var(--lec-g),var(--lec-b),calc(var(--lec-glow-a) * 1.9));
+  }
   .topic-tile .chk{
     position:absolute; left:14px; top:16px; width:16px;height:16px; border-radius:4px;
-    border:1.6px solid var(--muted); background:#fff;
+    border:1.6px solid var(--muted); background:#0d0b08;
   }
   .topic-tile.on .chk{background:var(--accent); border-color:var(--accent);}
-  .topic-tile.on .chk::after{content:'✓'; color:#fff; font-size:11px; font-weight:800; position:absolute; left:2.5px; top:-1px;}
+  .topic-tile.on .chk::after{content:'✓'; color:#241300; font-size:11px; font-weight:800; position:absolute; left:2.5px; top:-1px;}
   .topic-tile .name{font-weight:600; font-size:14.5px;}
   .topic-tile .count{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:3px;}
+
+  .lecture-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.05em;
+    text-transform:uppercase; padding:2px 7px; border-radius:5px; display:inline-block; margin-top:7px;
+    border:1px solid;
+  }
+  .lecture-badge.lec-1{ color:#AFF6FF; background:rgba(0,229,255,0.14); border-color:rgba(0,229,255,0.55); box-shadow:0 0 8px rgba(0,229,255,0.4); }
+  .lecture-badge.lec-2{ color:#B8FFCB; background:rgba(57,255,106,0.14); border-color:rgba(57,255,106,0.55); box-shadow:0 0 8px rgba(57,255,106,0.4); }
+  .lecture-badge.lec-3{ color:#FFEFC2; background:rgba(255,209,102,0.16); border-color:rgba(255,209,102,0.55); box-shadow:0 0 8px rgba(255,209,102,0.4); }
+  .lecture-badge.lec-4{ color:#FFCBEE; background:rgba(255,110,199,0.16); border-color:rgba(255,110,199,0.55); box-shadow:0 0 8px rgba(255,110,199,0.4); }
+  .lecture-badge.lec-5{ color:#E7D2FF; background:rgba(199,125,255,0.16); border-color:rgba(199,125,255,0.55); box-shadow:0 0 8px rgba(199,125,255,0.4); }
+  .lecture-badge.lec-6{ color:#FFD3C2; background:rgba(255,107,74,0.16); border-color:rgba(255,107,74,0.55); box-shadow:0 0 8px rgba(255,107,74,0.4); }
+  .lecture-badge.lec-multi{
+    color:#F1D8FF;
+    background:linear-gradient(90deg, rgba(199,125,255,0.2), rgba(255,107,74,0.2));
+    border-color:rgba(224,130,190,0.55); box-shadow:0 0 8px rgba(224,130,190,0.4);
+  }
 
   .config-row{display:flex; align-items:center; gap:16px; margin-top:26px; flex-wrap:wrap;}
   .config-row label{font-size:13px; font-weight:600; color:var(--muted); font-family:'IBM Plex Mono',monospace;}
   .config-row input[type=range]{width:160px; accent-color:var(--accent);}
   .config-val{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:14px;}
 
+  input[type=range]{accent-color:var(--accent);}
+  input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--good) 0%, var(--accent) 65%, var(--bad) 100%);box-shadow:inset 0 1px 2px rgba(0,0,0,.5);}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:20px;margin-top:-8px;border-radius:3px;background:linear-gradient(180deg,#e8e2d4,#8a8270);border:1px solid #2a2620;box-shadow:0 1px 3px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.5);}
+  input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--good) 0%, var(--accent) 65%, var(--bad) 100%);}
+  input[type=range]::-moz-range-thumb{width:12px;height:20px;border-radius:3px;background:linear-gradient(180deg,#e8e2d4,#8a8270);border:1px solid #2a2620;box-shadow:0 1px 3px rgba(0,0,0,.65);}
+
   .start-row{margin-top:30px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
   .btn{
-    font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; border:none; border-radius:8px;
-    padding:12px 22px; cursor:pointer; transition:filter .12s, transform .05s;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; border:1px solid var(--line-strong); border-radius:7px;
+    padding:12px 22px; cursor:pointer; transition:filter .12s, transform .05s, box-shadow .12s;
   }
   .btn:active{transform:translateY(1px);}
-  .btn-primary{background:var(--ink); color:#fff;}
-  .btn-primary:hover{filter:brightness(1.15);}
-  .btn-primary:disabled{background:#B9C2C4; cursor:not-allowed;}
-  .btn-ghost{background:transparent; color:var(--ink); border:1.4px solid var(--line);}
-  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-primary{
+    background:linear-gradient(180deg,#ffc233,var(--accent)); color:#241300; border-color:#7a5200; font-weight:700;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 0 0 1px rgba(255,176,0,.5), 0 0 16px rgba(255,176,0,.4);
+  }
+  .btn-primary:hover{filter:brightness(1.12);}
+  .btn-primary:disabled{background:#3a352c; color:var(--muted); border-color:var(--line); box-shadow:none; cursor:not-allowed; filter:none;}
+  .btn-ghost{background:linear-gradient(180deg,#2c2820,#211d16); color:var(--ink); border:1.4px solid var(--line-strong);}
+  .btn-ghost:hover{border-color:var(--accent);}
   .picked-count{font-size:13px; color:var(--muted);}
 
   /* ---------- ruler progress ---------- */
   .ruler{position:relative; height:34px; margin:0 0 26px;}
   .ruler-track{position:absolute; left:0; right:0; top:16px; height:2px; background:var(--line);}
-  .ruler-fill{position:absolute; left:0; top:16px; height:2px; background:var(--accent); transition:width .25s ease;}
+  .ruler-fill{position:absolute; left:0; top:16px; height:2px; background:var(--accent); box-shadow:0 0 6px var(--accent); transition:width .25s ease;}
   .ruler-ticks{position:absolute; left:0; right:0; top:0; display:flex; justify-content:space-between;}
   .ruler-tick{width:1px; height:10px; background:var(--line);}
   .ruler-label{position:absolute; right:0; top:-2px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted);}
@@ -140,31 +193,31 @@
   .qmeta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
   .qtopic{
     font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; text-transform:uppercase;
-    letter-spacing:.05em; color:var(--accent-ink); background:#F6E4CC; padding:3px 8px; border-radius:5px;
+    letter-spacing:.05em; color:var(--accent-ink); background:#3a2a0a; border:1px solid var(--line-strong); padding:3px 8px; border-radius:5px;
   }
   .qscore{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted);}
-  .qtext{font-family:'Fraunces',serif; font-size:20px; font-weight:600; line-height:1.4; margin:0 0 20px;}
+  .qtext{font-family:'Share Tech Mono',monospace; font-size:21px; font-weight:400; line-height:1.4; margin:0 0 20px; color:var(--ink); letter-spacing:.01em;}
   .choices{display:flex; flex-direction:column; gap:9px;}
   .choice{
-    text-align:left; padding:12px 14px; border-radius:8px; border:1.4px solid var(--line); background:#fff;
+    text-align:left; padding:12px 14px; border-radius:7px; border:1.4px solid var(--line-strong); background:linear-gradient(180deg,#2c2820,#211d16);
     cursor:pointer; font-size:14.5px; line-height:1.4; font-family:'Inter',sans-serif; color:var(--ink);
     transition:border-color .12s, background .12s;
   }
   .choice:hover:not(.locked){border-color:var(--accent);}
-  .choice.correct{border-color:var(--good); background:var(--good-bg); font-weight:600;}
-  .choice.wrong{border-color:var(--bad); background:var(--bad-bg);}
+  .choice.correct{border-color:var(--good); background:var(--good-bg); font-weight:600; box-shadow:0 0 10px rgba(57,255,106,.2);}
+  .choice.wrong{border-color:var(--bad); background:var(--bad-bg); box-shadow:0 0 10px rgba(255,90,69,.2);}
   .choice.dim{opacity:.55;}
   .numeric-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
   .numeric-row input{
-    font-family:'IBM Plex Mono',monospace; font-size:15px; padding:10px 12px; border-radius:7px;
-    border:1.4px solid var(--line); width:140px;
+    font-family:'Share Tech Mono',monospace; font-size:16px; padding:10px 12px; border-radius:5px;
+    border:1.4px solid var(--line-strong); width:140px; background:#0d0b08; color:var(--good); box-shadow:inset 0 1px 4px rgba(0,0,0,.6);
   }
-  .numeric-row input:focus{outline:none; border-color:var(--accent);}
+  .numeric-row input:focus{outline:none; border-color:var(--accent); box-shadow:inset 0 1px 4px rgba(0,0,0,.6), 0 0 0 3px rgba(255,176,0,.18);}
 
   .feedback{margin-top:16px; padding:12px 14px; border-radius:8px; font-size:14px; line-height:1.55; display:none;}
   .feedback.show{display:block;}
-  .feedback.good{background:var(--good-bg); color:#0F5C46; border:1px solid #BFE4D6;}
-  .feedback.bad{background:var(--bad-bg); color:#8A3319; border:1px solid #EFC7B4;}
+  .feedback.good{background:var(--good-bg); color:#8CFFAE; border:1px solid #1f4a2c;}
+  .feedback.bad{background:var(--bad-bg); color:#FFB0A3; border:1px solid #5a2620;}
   .feedback .verdict{font-weight:700; font-family:'IBM Plex Mono',monospace; font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:5px;}
   .visualizer-hint{
     margin-top:10px; font-size:12.5px; color:var(--accent-ink); font-style:italic;
@@ -172,20 +225,98 @@
 
   .quiz-actions{display:flex; justify-content:space-between; align-items:center; margin-top:22px;}
 
+  /* ---------- answer feedback animations ---------- */
+  @keyframes flashCorrect{
+    0%{transform:scale(1); box-shadow:var(--card-shadow);}
+    35%{transform:scale(1.025); box-shadow:0 0 0 3px var(--good), 0 0 34px rgba(57,255,106,.55), var(--card-shadow);}
+    100%{transform:scale(1); box-shadow:var(--card-shadow);}
+  }
+  .quiz-card.flash-correct{animation:flashCorrect .7s ease-out;}
+  @keyframes flashWrong{
+    0%{transform:translateX(0) scale(1); box-shadow:var(--card-shadow);}
+    15%{transform:translateX(-9px) scale(1.01); box-shadow:0 0 0 3px var(--bad), 0 0 34px rgba(255,90,69,.5), var(--card-shadow);}
+    30%{transform:translateX(8px) scale(1.01);}
+    45%{transform:translateX(-6px);}
+    60%{transform:translateX(5px); box-shadow:0 0 0 3px var(--bad), 0 0 20px rgba(255,90,69,.35), var(--card-shadow);}
+    100%{transform:translateX(0) scale(1); box-shadow:var(--card-shadow);}
+  }
+  .quiz-card.flash-wrong{animation:flashWrong .55s ease-in-out;}
+
+  /* ---------- tron fanfare (correct answer) ---------- */
+  .tron-overlay{
+    position:fixed; z-index:9999; pointer-events:none;
+    top:var(--ty); left:var(--tx); width:var(--tw); height:var(--th);
+    border:3px solid #6CFFF4;
+    border-radius:10px;
+    opacity:0;
+    box-sizing:border-box;
+  }
+  .tron-overlay::before{
+    content:''; position:absolute; inset:0; border-radius:inherit;
+    box-shadow:
+      0 0 8px 2px #6CFFF4,
+      0 0 26px 6px rgba(108,255,244,.75),
+      0 0 60px 14px rgba(108,255,244,.4),
+      inset 0 0 24px rgba(108,255,244,.55);
+  }
+  .tron-overlay::after{
+    content:''; position:absolute; inset:7px; border-radius:6px;
+    border:1px solid rgba(255,255,255,.9);
+    box-shadow:0 0 10px 2px rgba(255,255,255,.8);
+    opacity:.85;
+  }
+  .tron-overlay.tron-run{
+    animation:tronExpand 1.05s cubic-bezier(.2,.85,.25,1) forwards;
+  }
+  @keyframes tronExpand{
+    0%{ top:var(--ty); left:var(--tx); width:var(--tw); height:var(--th); opacity:0; border-radius:10px; }
+    12%{ opacity:1; }
+    58%{ top:0; left:0; width:100vw; height:100vh; opacity:1; border-radius:0; }
+    78%{ top:0; left:0; width:100vw; height:100vh; opacity:1; border-radius:0; }
+    100%{ top:0; left:0; width:100vw; height:100vh; opacity:0; border-radius:0; }
+  }
+
   /* ---------- results screen ---------- */
   .results-card{padding:34px 34px 30px 48px;}
   .score-hero{display:flex; align-items:baseline; gap:14px; margin-bottom:6px;}
-  .score-big{font-family:'Fraunces',serif; font-weight:700; font-size:56px; line-height:1;}
+  .score-big{font-family:'Share Tech Mono',monospace; font-weight:400; font-size:56px; line-height:1; color:var(--good); text-shadow:0 0 16px rgba(57,255,106,.4);}
   .score-label{color:var(--muted); font-size:15px;}
   .breakdown{margin-top:28px; display:flex; flex-direction:column; gap:12px;}
   .bd-row{display:grid; grid-template-columns:170px 1fr 54px; align-items:center; gap:12px;}
   .bd-name{font-size:13.5px; font-weight:600;}
-  .bd-bar-track{background:#EDEFEA; border-radius:5px; height:10px; overflow:hidden;}
+  .bd-bar-track{background:#0d0b08; border:1px solid var(--line); border-radius:5px; height:10px; overflow:hidden;}
   .bd-bar-fill{height:100%; border-radius:5px;}
   .bd-pct{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted); text-align:right;}
 
   footer{margin-top:40px; text-align:center; color:var(--muted); font-size:12.5px;}
   .hidden{display:none !important;}
+
+  /* ---------- mode tabs ---------- */
+  .mode-tabs{display:flex; gap:8px; margin:26px 0 6px;}
+  .mode-tab{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:700; letter-spacing:.03em;
+    text-transform:uppercase; color:var(--muted); background:linear-gradient(180deg,#2c2820,#211d16); border:1.4px solid var(--line-strong);
+    border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .12s, color .12s, box-shadow .12s;
+  }
+  .mode-tab:hover{border-color:var(--accent);}
+  .mode-tab.on{color:var(--accent-ink); border-color:var(--accent); background:linear-gradient(180deg,#332911,#241d0e); box-shadow:0 0 10px rgba(255,176,0,.25);}
+
+  /* ---------- practice computations ---------- */
+  .practice-type-row{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 26px;}
+  .practice-type-btn{
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; padding:10px 14px; border-radius:7px;
+    border:1.4px solid var(--line-strong); background:linear-gradient(180deg,#2c2820,#211d16); cursor:pointer; color:var(--ink); transition:border-color .12s, background .12s;
+  }
+  .practice-type-btn:hover{border-color:var(--accent);}
+  .practice-type-btn.on{border-color:var(--accent); background:linear-gradient(180deg,#332911,#241d0e); color:var(--accent-ink); box-shadow:0 0 10px rgba(255,176,0,.25);}
+  .practice-card{padding:30px 30px 26px 46px;}
+  .practice-given{
+    font-family:'Share Tech Mono',monospace; font-size:15px; background:#0d0b08; border:1px solid var(--line-strong); color:var(--good);
+    border-radius:6px; padding:12px 14px; margin-bottom:16px; line-height:1.7; box-shadow:inset 0 1px 5px rgba(0,0,0,.6);
+  }
+  .practice-steps{margin-top:14px; padding:12px 14px; border-radius:8px; background:#1a1710; border:1px solid var(--line-strong); font-size:13.5px; line-height:1.8; display:none;}
+  .practice-steps.show{display:block;}
+  .practice-actions{display:flex; justify-content:flex-end; align-items:center; margin-top:20px; flex-wrap:wrap; gap:10px;}
 
   @media (prefers-reduced-motion: reduce){
     *{transition:none !important;}
@@ -193,12 +324,100 @@
   @media (max-width:600px){
     .quiz-card{padding:24px 18px 20px 34px;}
     .results-card{padding:26px 18px 24px 30px;}
+    .practice-card{padding:22px 18px 20px 34px;}
     .bd-row{grid-template-columns:1fr; gap:4px;}
     .bd-pct{text-align:left;}
   }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--muted); background:linear-gradient(180deg,#2c2820,#211d16);
+    border:1.4px solid var(--line-strong); border-radius:7px; padding:8px 12px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:7px; transition:border-color .12s, color .12s;
+    flex-shrink:0;
+  }
+  .theme-toggle:hover{border-color:var(--accent); color:var(--ink);}
+
+  /* ================= LIGHT THEME (original editorial look) ================= */
+  :root[data-theme="light"]{
+    --bg:#EEF2ED;
+    --bg-grid: rgba(28,43,57,0.045);
+    --card:#FFFFFF;
+    --card2:#FFFFFF;
+    --ink:#1C2B39;
+    --muted:#5B6B76;
+    --line:#DCE3DC;
+    --line-strong:#B8C5CB;
+    --accent:#C77D2E;
+    --accent-ink:#7A4C15;
+    --good:#1E8F6F;
+    --good-bg:#E4F4EE;
+    --bad:#C1502E;
+    --bad-bg:#FBEAE3;
+    --card-shadow: 0 1px 0 rgba(28,43,57,0.06), 0 10px 24px -16px rgba(28,43,57,0.25);
+  }
+  [data-theme="light"] body{
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0/100% 34px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0/34px 100%,
+      var(--bg);
+  }
+  [data-theme="light"] h1{font-family:'Fraunces',serif;font-weight:700;color:var(--ink);text-shadow:none;letter-spacing:-0.01em;}
+  [data-theme="light"] .tag{background:#F6E4CC;border-color:transparent;}
+  [data-theme="light"] .card::before{background:repeating-linear-gradient(to bottom, transparent 0 3px, rgba(199,125,46,0.14) 3px 4px);}
+  [data-theme="light"] .topics-head h2{font-family:'Fraunces',serif;font-weight:600;color:var(--ink);}
+  [data-theme="light"] .selectall:hover{background:#F6E4CC;}
+  [data-theme="light"] .topic-tile{background:var(--card);box-shadow:0 1px 0 rgba(28,43,57,0.05);}
+  [data-theme="light"] .topic-tile.on{background:#FDF7EE;box-shadow:0 1px 0 rgba(28,43,57,0.05);}
+  [data-theme="light"] .topic-tile .chk{
+    background:#fff; border-color:var(--ink); border-width:2px;
+    box-shadow:0 0 0 2px rgba(255,255,255,.95), 0 1px 3px rgba(16,24,32,.3);
+  }
+  [data-theme="light"] .topic-tile.on .chk{
+    background:var(--accent); border-color:var(--accent);
+    box-shadow:0 0 0 2px rgba(255,255,255,.95), 0 1px 3px rgba(16,24,32,.3);
+  }
+  :root[data-theme="light"]{ --lec-bg-a:0.55; --lec-bg-a2:0.34; --lec-border-a:0.85; --lec-glow-a:0.3; }
+  [data-theme="light"] .topic-tile.lec-colored{
+    background: linear-gradient(180deg, rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-bg-a)), rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-bg-a2)));
+  }
+  [data-theme="light"] .topic-tile.lec-multi{
+    background: linear-gradient(135deg, rgba(var(--lec-r),var(--lec-g),var(--lec-b),var(--lec-bg-a)), rgba(var(--lec2-r),var(--lec2-g),var(--lec2-b),var(--lec-bg-a)));
+  }
+  [data-theme="light"] .lecture-badge{background:rgba(255,255,255,.62); box-shadow:none;}
+  [data-theme="light"] .lecture-badge.lec-1{color:#005a66; border-color:rgba(0,150,170,.6);}
+  [data-theme="light"] .lecture-badge.lec-2{color:#0b5c2e; border-color:rgba(30,150,80,.6);}
+  [data-theme="light"] .lecture-badge.lec-3{color:#6b4a00; border-color:rgba(190,140,20,.6);}
+  [data-theme="light"] .lecture-badge.lec-4{color:#7a0f4c; border-color:rgba(200,60,140,.6);}
+  [data-theme="light"] .lecture-badge.lec-5{color:#4a1f7a; border-color:rgba(140,80,200,.6);}
+  [data-theme="light"] .lecture-badge.lec-6{color:#7a2a0f; border-color:rgba(200,90,50,.6);}
+  [data-theme="light"] .lecture-badge.lec-multi{color:#6b1f4a; border-color:rgba(180,80,110,.6);}
+  [data-theme="light"] .btn-primary{background:var(--ink);color:#fff;box-shadow:none;}
+  [data-theme="light"] .btn-primary:disabled{background:#B9C2C4;color:#fff;border-color:transparent;}
+  [data-theme="light"] .btn-ghost{background:transparent;}
+  [data-theme="light"] .qtopic{background:#F6E4CC;}
+  [data-theme="light"] .qtext{font-family:'Fraunces',serif;font-weight:600;}
+  [data-theme="light"] .choice{background:#fff;}
+  [data-theme="light"] .choice.correct{box-shadow:none;}
+  [data-theme="light"] .choice.wrong{box-shadow:none;}
+  [data-theme="light"] .numeric-row input{background:#fff;color:var(--ink);box-shadow:none;}
+  [data-theme="light"] .feedback.good{color:#0F5C46;border-color:#BFE4D6;}
+  [data-theme="light"] .feedback.bad{color:#8A3319;border-color:#EFC7B4;}
+  [data-theme="light"] .score-big{font-family:'Fraunces',serif;color:var(--ink);text-shadow:none;}
+  [data-theme="light"] .bd-bar-track{background:#EDEFEA;border-color:transparent;}
+  [data-theme="light"] .mode-tab{background:transparent;}
+  [data-theme="light"] .mode-tab.on{background:#FDF7EE;box-shadow:none;}
+  [data-theme="light"] .practice-type-btn{background:#fff;}
+  [data-theme="light"] .practice-type-btn.on{background:#FDF7EE;box-shadow:none;}
+  [data-theme="light"] .practice-given{background:#F7F5EF;color:var(--ink);box-shadow:none;}
+  [data-theme="light"] .practice-steps{background:#F7F5EF;}
+  [data-theme="light"] .theme-toggle{background:#fff;color:var(--muted);}
+  [data-theme="light"] .theme-toggle:hover{color:var(--ink);}
 </style>
 </head>
 <body>
+<div class="tron-overlay" id="tronOverlay"></div>
 <div class="wrap">
 
   <div class="top">
@@ -206,9 +425,18 @@
       <h1>Self-Quiz</h1>
       <span class="tag">Weeks 1&ndash;2 checkpoint</span>
     </div>
+    <button class="theme-toggle" id="themeToggleBtn">&#9788; Light mode</button>
   </div>
   <p class="sub">Pick the topics you want to practice, answer at your own pace, and see exactly where to focus before Quiz&nbsp;1. This is separate from the Population&rarr;Sample&rarr;Measure&rarr;Distribution visualizer &mdash; but several questions are easiest to reason through if you actually run the scenario there first.</p>
   <div class="visualizer-note">Stuck on a calculation question? <b>Open the visualizer</b> and build the small dataset described &mdash; watching the deviation arrows, SS, or sampling animation play out is usually faster than doing it in your head.</div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab on" data-mode="quiz">Review Quiz</button>
+    <button class="mode-tab" data-mode="practice">Practice Computations</button>
+  </div>
+
+  <!-- ================= QUIZ MODE ================= -->
+  <div id="quizMode">
 
   <!-- ================= SCREEN 1: TOPIC SELECT ================= -->
   <div id="screenSelect">
@@ -272,21 +500,56 @@
     </div>
   </div>
 
+  </div> <!-- /quizMode -->
+
+  <!-- ================= PRACTICE MODE ================= -->
+  <div id="practiceMode" class="hidden">
+    <div class="topics-head">
+      <h2>Practice Computations</h2>
+    </div>
+    <p class="sub" style="margin-bottom:0;">Generate a fresh, randomized dataset or scenario, work the calculation out by hand, then check yourself. Every problem re-randomizes, so you can drill the same skill as many times as you need before Quiz&nbsp;1.</p>
+    <div class="practice-type-row" id="practiceTypeRow"></div>
+
+    <div class="card practice-card">
+      <div class="qmeta">
+        <span class="qtopic" id="pTypeLabel">Type</span>
+        <span class="qscore" id="pScoreLabel">Score: 0 / 0</span>
+      </div>
+      <p class="qtext" id="pText"></p>
+      <div class="practice-given" id="pGiven"></div>
+      <div class="numeric-row">
+        <input type="text" id="pInput" placeholder="your answer">
+        <button class="btn btn-primary" id="pCheckBtn">Check answer</button>
+      </div>
+      <div class="feedback" id="pFeedback">
+        <span class="verdict" id="pFbVerdict"></span>
+        <span id="pFbText"></span>
+      </div>
+      <div class="practice-steps" id="pSteps"></div>
+      <div class="visualizer-hint">Tip: build this exact scenario in the Population&rarr;Sample&rarr;Measure&rarr;Distribution visualizer to watch the deviations, SS, or sampling animation play out.</div>
+      <div class="practice-actions">
+        <button class="btn btn-ghost" id="pNewBtn">Skip / new problem</button>
+      </div>
+    </div>
+  </div>
+
   <footer>Built as a companion to the sampling &amp; distribution visualizer &middot; covers material through Week 2, Lecture 5</footer>
 </div>
 
 <script>
 const TOPICS = [
-  {key:'pop-sample', name:'Populations, Samples & Variables'},
-  {key:'scales', name:'Scales of Measurement'},
-  {key:'visualizing', name:'Visualizing Data'},
-  {key:'central', name:'Central Tendency (Mean/Median/Mode)'},
-  {key:'variability', name:'Variability (Range/Variance/SD)'},
-  {key:'shape', name:'Distributions & Skew'},
-  {key:'zscores', name:'Z-Scores'},
-  {key:'sampling', name:'Sampling Distributions & CLT'},
-  {key:'nhst', name:'Hypothesis Testing Logic'},
-  {key:'design', name:'Research Design'}
+  {key:'pop-sample', name:'Populations, Samples & Variables', lectures:[1]},
+  {key:'scales', name:'Scales of Measurement', lectures:[1]},
+  {key:'visualizing', name:'Visualizing Data', lectures:[2]},
+  {key:'central', name:'Central Tendency (Mean/Median/Mode)', lectures:[2]},
+  {key:'variability', name:'Variability (Range/Variance/SD)', lectures:[2]},
+  {key:'shape', name:'Distributions & Skew', lectures:[2]},
+  {key:'zscores', name:'Z-Scores', lectures:[3]},
+  {key:'sampling', name:'Sampling Distributions & CLT', lectures:[4]},
+  {key:'nhst', name:'Hypothesis Testing Logic', lectures:[5]},
+  {key:'design', name:'Research Design', lectures:[]},
+  {key:'freqprob', name:'Frequency Distributions & Probability', lectures:[4]},
+  {key:'ttest', name:'Z-Tests, T-Tests & Computations', lectures:[5,6]}
 ];
 
 // type: 'mc' (choices+answer index), 'tf' (True/False, answer boolean), 'numeric' (answer number, tolerance optional)
@@ -568,8 +831,110 @@ const QUESTIONS = [
  answer:false, explain:"Correlation never proves causation on its own \u2014 a third variable or reverse causation could explain the same pattern of results."},
 {topic:'design', type:'short', q:"Give one reason a researcher might choose a correlational design over a true experiment, despite its causal limitations.",
  sample:"e.g., some variables (trauma history, gender, existing health conditions) can't ethically or practically be manipulated by a researcher.",
- explain:"Some variables of real interest \u2014 trauma exposure, natural disasters, pre-existing conditions \u2014 simply can't be ethically or practically assigned by a researcher, so a correlational approach is the only option."}
+ explain:"Some variables of real interest \u2014 trauma exposure, natural disasters, pre-existing conditions \u2014 simply can't be ethically or practically assigned by a researcher, so a correlational approach is the only option."},
+
+// ---------------- extra items folded into existing topics ----------------
+{topic:'variability', type:'numeric', q:"Population: 2, 4, 4, 6, 4. Find the population standard deviation (round to 2 decimals).",
+ answer:1.26, tol:0.05, explain:"Mean = 4. Deviations: -2, 0, 0, 2, 0. Squared: 4, 0, 0, 4, 0. SS = 8. Variance = 8/5 = 1.6. SD = \u221a1.6 \u2248 1.26."},
+{topic:'central', type:'numeric', q:"Dataset: 5, 7, 6, 4, 3. Find the SS (sum of squared deviations).",
+ answer:10, tol:0.2, explain:"Mean = 5. Deviations: 0, 2, 1, -1, -2. Squared: 0, 4, 1, 1, 4. SS = 0+4+1+1+4 = 10."},
+{topic:'zscores', type:'mc', q:"A student scores X\u202f=\u202f75 on an exam with \u03bc\u202f=\u202f70. Which would make that score more impressive (further into the tail of the distribution)?",
+ choices:["A larger \u03c3, since more spread makes any single score stand out more","A smaller \u03c3, since it means scores cluster tightly around the mean, so being 5 points away is relatively more extreme","\u03c3 has no effect on how impressive a score is","This can't be determined without knowing the sample size"],
+ answer:1, explain:"z = (X\u2212\u03bc)/\u03c3. With a smaller \u03c3, that same 5-point gap produces a bigger |z| \u2014 the score is further (in SD units) from the pack."},
+
+// ---------------- freqprob ----------------
+{topic:'freqprob', type:'mc', q:"In a frequency distribution table, what does the \u201cp\u201d (probability/proportion) column for each interval represent?",
+ choices:["The frequency doubled","The fraction of the total N that fell in that interval (f/N)","The cumulative frequency up to that interval","The percentage of participants who scored above the mean"],
+ answer:1, explain:"p = f/N for each row \u2014 the share of the whole dataset that landed in that particular interval."},
+{topic:'freqprob', type:'numeric', q:"A class interval has a frequency of f\u202f=\u202f3 out of a total sample of N\u202f=\u202f12. What proportion (p) of the sample fell in that interval?",
+ answer:0.25, tol:0.02, explain:"p = f/N = 3/12 = 0.25."},
+{topic:'freqprob', type:'mc', q:"You want the probability that a randomly selected participant scored in either of two non-overlapping intervals. What do you do with their two proportions?",
+ choices:["Multiply them together","Add them together","Subtract the smaller from the larger","Average them"],
+ answer:1, explain:"For mutually exclusive intervals (a score can't be in both), you add the individual probabilities to get the combined probability."},
+{topic:'freqprob', type:'tf', q:"In a complete frequency distribution table, the proportions (p) across all intervals should sum to 1.00 (or 100%).",
+ answer:true, explain:"Every score falls into exactly one interval, so the proportions collectively must account for the entire dataset \u2014 they sum to 1.00."},
+{topic:'freqprob', type:'mc', q:"The \u201ccumulative frequency\u201d at a given interval refers to:",
+ choices:["The frequency of that interval alone","The total count of scores at or below that interval","The total count of scores above that interval","The mean score in that interval"],
+ answer:1, explain:"Cumulative frequency adds up all the frequencies from the bottom of the distribution through the interval in question \u2014 useful for \u201cX or less\u201d questions."},
+
+// ---------------- ttest ----------------
+{topic:'ttest', type:'mc', q:"You know the population standard deviation (\u03c3) and want to test whether a sample mean differs from the population mean. Which test is appropriate?",
+ choices:["A one-sample t-test","A one-sample z-test","A correlation test","An independent-samples t-test"],
+ answer:1, explain:"When \u03c3 is known, use a z-test. When \u03c3 is unknown and must be estimated from the sample (using s), use a t-test instead."},
+{topic:'ttest', type:'mc', q:"You only have the sample standard deviation (s), not the population \u03c3. Which test should you use to compare a sample mean to a known population mean?",
+ choices:["A one-sample z-test","A one-sample t-test","A plain z-score, not a full hypothesis test","You can't run a test without \u03c3"],
+ answer:1, explain:"Without a known population \u03c3, variability is estimated from the sample (s), and the t-distribution accounts for that added uncertainty."},
+{topic:'ttest', type:'numeric', q:"For a one-sample t-test with a sample of n\u202f=\u202f16 participants, what are the degrees of freedom (df)?",
+ answer:15, tol:0.01, explain:"df = n \u2212 1 = 16 \u2212 1 = 15 for a one-sample t-test."},
+{topic:'ttest', type:'mc', q:"As degrees of freedom (df) get larger and larger, the t-distribution:",
+ choices:["Becomes more spread out with heavier tails","Becomes narrower than the normal distribution","Gets closer and closer to the shape of the normal (z) distribution","Becomes bimodal"],
+ answer:2, explain:"Small df means more uncertainty in estimating \u03c3 from a small sample, hence heavier tails. As df grows, that uncertainty shrinks and t approaches the normal distribution."},
+{topic:'ttest', type:'mc', q:"Compared to a two-tailed test at \u03b1\u202f=\u202f.05, a one-tailed test at the same \u03b1 has a critical value that is:",
+ choices:["More extreme (harder to reach)","Less extreme (easier to reach) in the predicted direction","Exactly the same","Undefined without more information"],
+ answer:1, explain:"A one-tailed test puts all of alpha in a single tail, so the critical value (e.g., z\u202f=\u202f1.645 instead of \u00b11.96) is less extreme \u2014 but only counts in the predicted direction."},
+{topic:'ttest', type:'numeric', q:"A population has \u03bc\u202f=\u202f40 and \u03c3\u202f=\u202f12. For a sample of n\u202f=\u202f9, what is the standard error (\u03c3_M)?",
+ answer:4, tol:0.05, explain:"\u03c3_M = \u03c3/\u221an = 12/\u221a9 = 12/3 = 4."},
+{topic:'ttest', type:'numeric', q:"A sample of n\u202f=\u202f25 is drawn from a population with \u03bc\u202f=\u202f60 and \u03c3\u202f=\u202f20 (so \u03c3_M\u202f=\u202f4). The sample mean is M\u202f=\u202f68. What is the z-statistic for this one-sample z-test?",
+ answer:2, tol:0.05, explain:"z = (M\u2212\u03bc)/\u03c3_M = (68\u221260)/4 = 2.0. Compare that to the critical value (\u00b11.96 for a two-tailed test at \u03b1\u202f=\u202f.05) to decide about H0."},
+{topic:'ttest', type:'mc', q:"Using z\u202f=\u202f2.0 from a two-tailed test with \u03b1\u202f=\u202f.05 (critical z\u202f=\u202f\u00b11.96), what would you conclude?",
+ choices:["Retain H0 \u2014 the result is not significant","Reject H0 \u2014 the result is statistically significant","No decision is possible without the raw data","Switch to a one-tailed test before deciding"],
+ answer:1, explain:"Since |2.0| > 1.96, the sample mean falls in the rejection region, so we reject H0 and conclude the sample mean is significantly different from the population mean."},
+{topic:'ttest', type:'short', q:"In one sentence, what does a p-value tell you once you've run a hypothesis test?",
+ sample:"e.g., the probability of getting a sample result at least as extreme as what you observed, if the null hypothesis were actually true.",
+ explain:"A p-value is a conditional probability \u2014 it tells you how likely your data (or more extreme data) would be if H0 were true, not the probability that H0 itself is true."},
+{topic:'ttest', type:'mc', q:"Which of the following would make a hypothesis test more likely to detect a real effect (increase power), without changing alpha?",
+ choices:["Decreasing the sample size","Increasing the sample size","Reporting only the mean instead of running a test","Rounding your z-statistic down before comparing it to the critical value"],
+ answer:1, explain:"Larger samples shrink the standard error, making real effects easier to detect \u2014 this increases power (the ability to correctly reject a false null)."}
 ];
+
+// ---------------- sound effects (synthesized, no audio files) ----------------
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, startOffset, duration, {type='sine', peak=0.18, glideTo=null}={}){
+  const ctx = getAudioCtx();
+  const t0 = ctx.currentTime + startOffset;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if(glideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1,glideTo), t0+duration);
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(peak, t0+Math.min(0.02,duration*0.2));
+  gain.gain.exponentialRampToValueAtTime(0.001, t0+duration);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+duration+0.02);
+}
+function playCorrectSound(){
+  try{
+    tone(587.33, 0,    0.14, {type:'triangle', peak:0.16}); // D5
+    tone(739.99, 0.08, 0.14, {type:'triangle', peak:0.16}); // F#5
+    tone(987.77, 0.16, 0.28, {type:'triangle', peak:0.18}); // B5
+  }catch(e){}
+}
+function playWrongSound(){
+  try{
+    tone(196.00, 0,    0.32, {type:'sawtooth', peak:0.15, glideTo:146.83}); // G3 -> D3 "womp"
+    tone(146.83, 0.30, 0.40, {type:'sawtooth', peak:0.15, glideTo:110.00}); // D3 -> A2 "womp"
+  }catch(e){}
+}
+function playTronFanfare(){
+  const card = document.querySelector('.quiz-card');
+  const overlay = document.getElementById('tronOverlay');
+  if(!card || !overlay) return;
+  const rect = card.getBoundingClientRect();
+  overlay.style.setProperty('--tx', rect.left+'px');
+  overlay.style.setProperty('--ty', rect.top+'px');
+  overlay.style.setProperty('--tw', rect.width+'px');
+  overlay.style.setProperty('--th', rect.height+'px');
+  overlay.classList.remove('tron-run');
+  void overlay.offsetWidth; // restart the animation if it's still mid-run
+  overlay.classList.add('tron-run');
+  overlay.addEventListener('animationend', ()=> overlay.classList.remove('tron-run'), {once:true});
+}
 
 const state = {
   selectedTopics: new Set(),
@@ -594,6 +959,14 @@ function shuffle(arr){
 }
 
 // ---------------- SCREEN 1: topic select ----------------
+const LECTURE_COLORS = {
+  1: [0,188,212],   // cyan
+  2: [46,204,113],  // green
+  3: [255,190,60],  // gold
+  4: [255,100,180], // pink
+  5: [170,110,255], // purple
+  6: [255,120,70]   // orange
+};
 function renderTopicGrid(){
   const grid = document.getElementById('topicGrid');
   grid.innerHTML = '';
@@ -602,7 +975,21 @@ function renderTopicGrid(){
     const tile = document.createElement('div');
     tile.className = 'topic-tile';
     tile.dataset.key = t.key;
-    tile.innerHTML = `<div class="chk"></div><div class="name">${t.name}</div><div class="count">${total} questions available</div>`;
+    const lecs = t.lectures || [];
+    let lecBadge = '';
+    if(lecs.length){
+      const c1 = LECTURE_COLORS[lecs[0]];
+      tile.style.setProperty('--lec-r', c1[0]); tile.style.setProperty('--lec-g', c1[1]); tile.style.setProperty('--lec-b', c1[2]);
+      if(lecs.length>1){
+        const c2 = LECTURE_COLORS[lecs[lecs.length-1]];
+        tile.style.setProperty('--lec2-r', c2[0]); tile.style.setProperty('--lec2-g', c2[1]); tile.style.setProperty('--lec2-b', c2[2]);
+        tile.classList.add('lec-multi');
+      } else {
+        tile.classList.add('lec-colored');
+      }
+      lecBadge = `<span class="lecture-badge lec-${lecs.length>1 ? 'multi' : lecs[0]}">Lecture ${lecs.join('–')}</span>`;
+    }
+    tile.innerHTML = `<div class="chk"></div><div class="name">${t.name}</div><div class="count">${total} questions available</div>${lecBadge}`;
     tile.addEventListener('click', ()=>{
       if(state.selectedTopics.has(t.key)) state.selectedTopics.delete(t.key);
       else state.selectedTopics.add(t.key);
@@ -803,6 +1190,14 @@ function checkAnswer(){
   if(correct) tRes.correct++;
   else state.missed.push(q);
 
+  const quizCard = document.querySelector('.quiz-card');
+  const flashClass = correct ? 'flash-correct' : 'flash-wrong';
+  quizCard.classList.remove('flash-correct','flash-wrong');
+  void quizCard.offsetWidth; // restart animation if triggered again before it finished
+  quizCard.classList.add(flashClass);
+  quizCard.addEventListener('animationend', ()=> quizCard.classList.remove(flashClass), {once:true});
+  if(correct){ playCorrectSound(); playTronFanfare(); } else { playWrongSound(); }
+
   const fb = document.getElementById('qFeedback');
   fb.classList.add('show');
   fb.classList.add(correct ? 'good' : 'bad');
@@ -886,8 +1281,222 @@ document.getElementById('retryMissedBtn').addEventListener('click', ()=>{
   showQuestion();
 });
 
+// ---------------- MODE TABS ----------------
+document.querySelectorAll('.mode-tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-tab').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    const mode = btn.dataset.mode;
+    document.getElementById('quizMode').classList.toggle('hidden', mode!=='quiz');
+    document.getElementById('practiceMode').classList.toggle('hidden', mode!=='practice');
+  });
+});
+
+// ---------------- PRACTICE COMPUTATIONS ----------------
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function choice(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function genDescriptive(){
+  const n = 5;
+  let data = null;
+  for(let tries=0; tries<50 && !data; tries++){
+    const mean = randInt(4,14);
+    const devs = [];
+    for(let i=0;i<n-1;i++) devs.push(randInt(-6,6));
+    devs.push(-devs.reduce((a,b)=>a+b,0));
+    const candidate = devs.map(d=>mean+d);
+    if(candidate.every(v=>v>=1 && v<=24)) data = candidate;
+  }
+  if(!data) data = [3,5,4,6,2];
+
+  const mean = data.reduce((a,b)=>a+b,0)/n;
+  const devs = data.map(x=>x-mean);
+  const sq = devs.map(d=>d*d);
+  const SS = sq.reduce((a,b)=>a+b,0);
+  const isSample = Math.random()<0.5;
+  const divisor = isSample ? (n-1) : n;
+  const variance = SS/divisor;
+  const sd = Math.sqrt(variance);
+  const askStat = choice(['mean','SS','variance','sd']);
+  const groupLabel = isSample ? `a sample of n = ${n}` : `a population of N = ${n}`;
+
+  let prompt, answer, tol;
+  if(askStat==='mean'){
+    prompt = 'Find the mean of this dataset.'; answer = mean; tol = 0.05;
+  } else if(askStat==='SS'){
+    prompt = 'Find the SS (sum of squared deviations) for this dataset.'; answer = SS; tol = 0.1;
+  } else if(askStat==='variance'){
+    prompt = `Treating this as ${groupLabel}, find the variance.`; answer = variance; tol = Math.max(0.05, Math.abs(variance)*0.03);
+  } else {
+    prompt = `Treating this as ${groupLabel}, find the standard deviation.`; answer = sd; tol = Math.max(0.03, Math.abs(sd)*0.03);
+  }
+
+  return {
+    typeLabel:'Mean, SS, Variance & SD',
+    given:`Data: ${data.join(', ')}`,
+    prompt, answer, tol,
+    steps:[
+      `Mean = ΣX / N = ${data.reduce((a,b)=>a+b,0)} / ${n} = ${mean.toFixed(2)}`,
+      `Deviations (X − mean): ${devs.map(d=>d.toFixed(2)).join(', ')}`,
+      `Squared deviations: ${sq.map(s=>s.toFixed(2)).join(', ')}`,
+      `SS = Σ(X−mean)² = ${SS.toFixed(2)}`,
+      `Variance (÷ ${divisor}, treating this as ${isSample?'a sample':'a population'}) = ${SS.toFixed(2)} / ${divisor} = ${variance.toFixed(3)}`,
+      `SD = √variance = ${sd.toFixed(3)}`
+    ]
+  };
+}
+
+function genZScore(){
+  const sigma = choice([4,8,12,16,20,24]);
+  const mu = randInt(30,100);
+  const z = choice([-2.5,-2,-1.5,-1,-0.5,0.5,1,1.5,2,2.5]);
+  const X = mu + z*sigma;
+  const askZ = Math.random()<0.5;
+  const given = `μ = ${mu}, σ = ${sigma}`;
+  let prompt, answer, tol, steps;
+  if(askZ){
+    prompt = `Find the z-score for X = ${X}.`;
+    answer = z; tol = 0.05;
+    steps = [`z = (X − μ) / σ`, `z = (${X} − ${mu}) / ${sigma} = ${z}`];
+  } else {
+    prompt = `What raw score X corresponds to a z-score of ${z}?`;
+    answer = X; tol = 0.5;
+    steps = [`X = μ + zσ`, `X = ${mu} + (${z})(${sigma}) = ${X}`];
+  }
+  return {typeLabel:'Z-Scores', given, prompt, answer, tol, steps};
+}
+
+function genSE(){
+  const sigma = choice([6,12,18,24,30,36,48]);
+  const n = choice([4,9,16,25,36,49,64]);
+  const se = sigma/Math.sqrt(n);
+  return {
+    typeLabel:'Standard Error',
+    given:`σ = ${sigma}, n = ${n}`,
+    prompt:'Find the standard error (σ_M) for samples of this size.',
+    answer: se, tol: Math.max(0.05, se*0.03),
+    steps:[
+      `σ_M = σ / √n`,
+      `σ_M = ${sigma} / √${n} = ${sigma} / ${Math.sqrt(n)} = ${se.toFixed(3)}`
+    ]
+  };
+}
+
+function genZTest(){
+  const combos = [
+    {sigma:8,n:4},{sigma:12,n:9},{sigma:20,n:25},{sigma:18,n:9},
+    {sigma:24,n:16},{sigma:15,n:9},{sigma:10,n:25},{sigma:16,n:4},
+    {sigma:9,n:9},{sigma:12,n:36}
+  ];
+  const c = choice(combos);
+  const se = c.sigma/Math.sqrt(c.n);
+  const mu = randInt(40,100);
+  const z = choice([-3,-2.5,-2,-1.5,-1,1,1.5,2,2.5,3]);
+  const M = +(mu + z*se).toFixed(2);
+  return {
+    typeLabel:'One-Sample Z-Test',
+    given:`μ = ${mu}, σ = ${c.sigma}, n = ${c.n} (σ_M = ${se.toFixed(2)}), sample mean M = ${M}`,
+    prompt:'What is the z-statistic for this one-sample z-test?',
+    answer:z, tol:0.1,
+    steps:[
+      `σ_M = σ/√n = ${c.sigma}/√${c.n} = ${se.toFixed(2)}`,
+      `z = (M − μ) / σ_M = (${M} − ${mu}) / ${se.toFixed(2)} = ${z}`,
+      `Critical value check: two-tailed α = .05 → critical z = ±1.96. ${Math.abs(z)>1.96?'|z| exceeds 1.96, so you would reject H0.':'|z| does not exceed 1.96, so you would retain H0.'}`
+    ]
+  };
+}
+
+const PRACTICE_TYPES = [
+  {key:'descriptive', name:'Mean, SS, Variance & SD', gen: genDescriptive},
+  {key:'zscore', name:'Z-Scores (raw ↔ z)', gen: genZScore},
+  {key:'se', name:'Standard Error', gen: genSE},
+  {key:'ztest', name:'One-Sample Z-Test Statistic', gen: genZTest}
+];
+
+const practiceState = { typeKey:'descriptive', current:null, score:0, total:0 };
+
+function renderPracticeTypeRow(){
+  const row = document.getElementById('practiceTypeRow');
+  row.innerHTML = '';
+  PRACTICE_TYPES.forEach(t=>{
+    const b = document.createElement('button');
+    b.className = 'practice-type-btn' + (t.key===practiceState.typeKey ? ' on' : '');
+    b.textContent = t.name;
+    b.addEventListener('click', ()=>{
+      practiceState.typeKey = t.key;
+      practiceState.score = 0; practiceState.total = 0;
+      renderPracticeTypeRow();
+      newPracticeProblem();
+    });
+    row.appendChild(b);
+  });
+}
+
+function newPracticeProblem(){
+  const type = PRACTICE_TYPES.find(t=>t.key===practiceState.typeKey);
+  practiceState.current = type.gen();
+  document.getElementById('pTypeLabel').textContent = practiceState.current.typeLabel;
+  document.getElementById('pScoreLabel').textContent = 'Score: '+practiceState.score+' / '+practiceState.total;
+  document.getElementById('pText').textContent = practiceState.current.prompt;
+  document.getElementById('pGiven').textContent = practiceState.current.given;
+  const inp = document.getElementById('pInput');
+  inp.value = '';
+  inp.disabled = false;
+  document.getElementById('pFeedback').className = 'feedback';
+  const stepsEl = document.getElementById('pSteps');
+  stepsEl.className = 'practice-steps';
+  stepsEl.innerHTML = '';
+  document.getElementById('pCheckBtn').textContent = 'Check answer';
+  document.getElementById('pCheckBtn').disabled = false;
+  setTimeout(()=>inp.focus(), 30);
+}
+
+function checkPractice(){
+  if(document.getElementById('pCheckBtn').textContent === 'New problem'){
+    newPracticeProblem();
+    return;
+  }
+  const inp = document.getElementById('pInput');
+  const val = parseFloat(inp.value);
+  const cur = practiceState.current;
+  const correct = !isNaN(val) && Math.abs(val - cur.answer) <= cur.tol;
+  practiceState.total++;
+  if(correct) practiceState.score++;
+  inp.disabled = true;
+
+  const fb = document.getElementById('pFeedback');
+  fb.classList.add('show', correct?'good':'bad');
+  document.getElementById('pFbVerdict').textContent = correct ? 'Correct' : ('Not quite — answer: '+(Math.round(cur.answer*1000)/1000));
+  document.getElementById('pFbText').textContent = correct ? 'Nice work.' : 'Check the worked solution below.';
+
+  const stepsEl = document.getElementById('pSteps');
+  stepsEl.classList.add('show');
+  stepsEl.innerHTML = cur.steps.map(s=>`<div>${s}</div>`).join('');
+
+  document.getElementById('pScoreLabel').textContent = 'Score: '+practiceState.score+' / '+practiceState.total;
+  document.getElementById('pCheckBtn').textContent = 'New problem';
+}
+
+document.getElementById('pCheckBtn').addEventListener('click', checkPractice);
+document.getElementById('pInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') checkPractice(); });
+document.getElementById('pNewBtn').addEventListener('click', newPracticeProblem);
+
 renderTopicGrid();
 updateTopicUI();
+renderPracticeTypeRow();
+newPracticeProblem();
+
+// ---------------- theme toggle ----------------
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeToggleBtn').innerHTML = theme==='light' ? '&#9789; Dark mode' : '&#9788; Light mode';
+  localStorage.setItem('psy10b-theme', theme);
+}
+document.getElementById('themeToggleBtn').addEventListener('click', ()=>{
+  const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  applyTheme(current==='light' ? 'dark' : 'light');
+});
+applyTheme(localStorage.getItem('psy10b-theme') || 'dark');
 </script>
 
 
