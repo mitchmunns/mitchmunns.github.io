@@ -4,17 +4,38 @@
 <meta charset="UTF-8">
 <title>Population → Sample → Measure → Distribution</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
   :root{
-    --bg:#EBF1F3; --panel:#FFFFFF; --ink:#101820; --muted:#5A6672;
-    --line:#DBE4E8; --line-strong:#B8C5CB; --accent:#00C2C7; --accent2:#00E6C3; --pop:#AEB6BA;
+    --bg:#17140f; --panel:#242019; --panel2:#2c2820; --ink:#F1E6CE; --muted:#9c8f78;
+    --line:#3c352a; --line-strong:#544a39; --accent:#FFB000; --accent2:#39FF6A; --peak:#FF3B30; --pop:#4a4335;
+    --stage-bg:#0b0906;
+  }
+  :root[data-theme="light"]{
+    --bg:#EBF1F3; --panel:#FFFFFF; --panel2:#FFFFFF; --ink:#101820; --muted:#5A6672;
+    --line:#DBE4E8; --line-strong:#B8C5CB; --accent:#00C2C7; --accent2:#00E6C3; --peak:#FF6B6B; --pop:#AEB6BA;
+    --stage-bg:#ffffff;
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);font-family:'Inter',sans-serif;color:var(--ink);padding:10px 16px 30px;}
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px;
-    box-shadow:0 1px 3px rgba(16,24,32,.04);}
+  body{
+    margin:0;
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 4px),
+      radial-gradient(ellipse at 50% -12%, rgba(255,176,0,0.09), transparent 55%),
+      var(--bg);
+    font-family:'Inter',sans-serif;color:var(--ink);padding:10px 16px 30px;
+  }
+  .panel{
+    background:linear-gradient(180deg, var(--panel2), var(--panel));
+    border:1px solid var(--line-strong);border-radius:9px;padding:18px 20px;margin-bottom:16px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(0,0,0,.5), 0 5px 16px rgba(0,0,0,.45);
+    position:relative;
+  }
+  .panel::before{
+    content:'';position:absolute;left:10px;right:10px;top:0;height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  }
 
   .section-label{
     font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--accent);
@@ -41,10 +62,12 @@
     text-transform:uppercase;letter-spacing:.04em;
   }
   .text-grid input[type=text]{
-    font-family:'Inter',sans-serif;font-size:13.5px;padding:8px 11px;border-radius:6px;
-    border:1px solid var(--line-strong);color:var(--ink);background:#fff;
+    font-family:'Share Tech Mono',monospace;font-size:14px;padding:8px 11px;border-radius:4px;
+    border:1px solid var(--line-strong);color:var(--accent2);background:#0d0b08;
+    box-shadow:inset 0 1px 4px rgba(0,0,0,.6);
   }
-  .text-grid input[type=text]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,194,199,.15);}
+  .text-grid input[type=text]:focus{outline:none;border-color:var(--accent);box-shadow:inset 0 1px 4px rgba(0,0,0,.6), 0 0 0 3px rgba(255,176,0,.18);}
+  .text-grid input[type=text]::placeholder{color:var(--muted);opacity:.7;}
 
   .scale-btns{display:flex;gap:4px;}
   .scale-note{font-size:12.5px;color:var(--muted);margin:9px 0 0;line-height:1.5;max-width:840px;}
@@ -67,16 +90,18 @@
 
   .btn-group{display:flex;gap:8px;}
   button.action-btn{
-    font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;padding:9px 16px;border-radius:7px;
-    border:1px solid var(--line-strong);background:#fff;cursor:pointer;color:var(--ink);transition:all .15s;
+    font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;padding:9px 16px;border-radius:6px;
+    border:1px solid var(--line-strong);cursor:pointer;color:var(--ink);transition:all .15s;
+    background:linear-gradient(180deg,#3a3428,#211d16);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 3px rgba(0,0,0,.5), 0 2px 4px rgba(0,0,0,.4);
   }
   button.action-btn.primary{
-    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04181a;border-color:var(--accent);
-    box-shadow:0 0 0 1px rgba(0,194,199,.4), 0 0 16px rgba(0,194,199,.35);font-weight:700;
+    background:linear-gradient(180deg,#ffc233,var(--accent));color:#241300;border-color:#7a5200;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 0 0 1px rgba(255,176,0,.5), 0 0 18px rgba(255,176,0,.45);font-weight:700;
   }
-  button.action-btn.primary.running{background:linear-gradient(135deg,#FF6B6B,#FF8C8C);box-shadow:0 0 0 1px rgba(255,107,107,.4),0 0 16px rgba(255,107,107,.35);color:#2a0a0a;}
-  button.action-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
-  button.action-btn:not(:disabled):hover{filter:brightness(1.03);}
+  button.action-btn.primary.running{background:linear-gradient(180deg,#ff6b5c,var(--peak));border-color:#7a0f0a;box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 0 0 1px rgba(255,59,48,.5),0 0 18px rgba(255,59,48,.45);color:#2a0a0a;}
+  button.action-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none;}
+  button.action-btn:not(:disabled):hover{filter:brightness(1.15);}
   .progress-text{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);}
   .progress-text b{color:var(--ink);}
 
@@ -87,25 +112,29 @@
   }
   .stats-chip i{color:var(--muted);font-style:normal;}
 
-  .stage-panel{padding:0;overflow:hidden;border:1px solid var(--accent);box-shadow:0 0 0 1px rgba(0,194,199,.15), 0 2px 18px rgba(0,194,199,.08);}
+  .stage-panel{
+    padding:0;overflow:hidden;border-radius:10px;border:3px solid #0a0806;
+    box-shadow:0 0 0 1px rgba(255,176,0,.35), 0 0 26px rgba(255,176,0,.14), inset 0 0 0 1px rgba(255,255,255,.04), 0 8px 22px rgba(0,0,0,.5);
+  }
 
   .stage-wrap{display:flex;flex-direction:column;gap:8px;}
   .toolbar-row-wrap{position:sticky;top:0;z-index:40;display:flex;align-items:flex-start;gap:8px;background:var(--bg);padding:4px 0 3px;margin:-4px 0 0;}
   .toolbar-stack{flex:0 1 auto;display:flex;flex-direction:column;gap:3px;min-width:0;}
   .info-strip{
     display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 10px;
-    background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px;
-    font-size:12px;line-height:1.35;
+    background:#0b0a07;border:1px solid var(--line-strong);border-radius:6px;padding:6px 11px;
+    font-size:12px;line-height:1.35;box-shadow:inset 0 1px 5px rgba(0,0,0,.7);
   }
-  .info-strip.info-warning{background:#FDEEEE;border-color:#E63946;}
-  .info-strip.info-warning .info-title{color:#B3261E;}
-  .info-strip.info-warning .info-formula{color:#B3261E;}
-  .info-strip .info-title{font-family:'Fraunces',serif;font-weight:600;font-size:12.5px;color:var(--ink);}
+  .info-strip.info-warning{background:#1c0d0b;border-color:var(--peak);}
+  .info-strip.info-warning .info-title{color:#ff8a7f;}
+  .info-strip.info-warning .info-formula{color:#ff8a7f;}
+  .info-strip .info-title{font-family:'Share Tech Mono',monospace;font-weight:600;font-size:13px;color:var(--accent2);letter-spacing:.02em;}
   .info-strip .info-formula{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:700;color:var(--accent);}
   .info-strip .info-text{color:var(--muted);flex:1;min-width:200px;}
   .top-toolbar{
     display:flex;align-items:center;flex-wrap:wrap;gap:4px;
-    padding:4px 6px;background:var(--bg);border:1px solid var(--line);border-radius:8px;
+    padding:5px 7px;background:linear-gradient(180deg,#2c2820,#211d17);border:1px solid var(--line-strong);border-radius:8px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 2px rgba(0,0,0,.4);
   }
   .tab-row{padding:3px 4px;gap:3px;background:transparent;border:none;}
   .tab-btn{padding:4px 10px;}
@@ -114,8 +143,9 @@
   .toolbar-sep{width:1px;align-self:stretch;background:var(--line);margin:0 3px;}
   .mini-btn{
     font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--ink);
-    background:#fff;border:1px solid var(--line);border-radius:5px;padding:4px 7px;cursor:pointer;
-    transition:background .15s,color .15s,border-color .15s;line-height:1;
+    background:linear-gradient(180deg,#332e24,#211d16);border:1px solid var(--line-strong);border-radius:5px;padding:4px 7px;cursor:pointer;
+    transition:background .15s,color .15s,border-color .15s,box-shadow .15s;line-height:1;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
   }
   .mini-btn.symbol{font-size:13px;min-width:26px;text-align:center;}
   .mini-btn.zone-toggle{display:inline-flex;align-items:center;gap:5px;}
@@ -123,16 +153,16 @@
   .mini-btn.zone-toggle:not(.active){opacity:0.55;}
   .mini-btn.zone-toggle:not(.active) .eye-ic{opacity:0.4;}
   .mini-btn:hover{border-color:var(--accent);}
-  .mini-btn.active{background:var(--ink);color:var(--accent2);border-color:var(--ink);}
-  #stage{width:100%;height:auto;display:block;background:#fff;}
+  .mini-btn.active{background:linear-gradient(180deg,#3a2f10,#211a08);color:var(--accent2);border-color:var(--accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 0 8px rgba(57,255,106,.35);}
+  #stage{width:100%;height:auto;display:block;background:var(--stage-bg);}
 
-  .zone-title{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;fill:var(--ink);letter-spacing:.02em;}
+  .zone-title{font-family:'Share Tech Mono',monospace;font-size:21px;font-weight:700;fill:var(--accent);letter-spacing:.05em;}
   .p-label{font-family:'Inter',sans-serif;font-size:14px;font-weight:700;fill:var(--ink);}
-  .score-num{font-family:'IBM Plex Mono',monospace;font-size:38px;font-weight:600;fill:var(--accent);}
+  .score-num{font-family:'Share Tech Mono',monospace;font-size:38px;font-weight:600;fill:var(--accent2);}
   .score-sub{font-family:'Inter',sans-serif;font-size:14.5px;fill:var(--muted);}
-  .axis-label{font-family:'IBM Plex Mono',monospace;font-size:20px;fill:var(--muted);}
+  .axis-label{font-family:'Share Tech Mono',monospace;font-size:20px;fill:var(--muted);}
   .axis-title{font-family:'Inter',sans-serif;font-size:16.5px;font-weight:700;fill:var(--ink);}
-  .domain-line{stroke:var(--ink);stroke-width:1.6;}
+  .domain-line{stroke:var(--line-strong);stroke-width:1.6;}
   .station-caption{font-family:'Inter',sans-serif;font-size:15px;fill:var(--muted);}
   @keyframes stationPulse{0%,100%{opacity:0.55;} 50%{opacity:1;}}
   .station-pulse{animation:stationPulse 0.5s ease-in-out 3;}
@@ -165,31 +195,96 @@
   .walking .arm-rotor.right{animation:armSwingR 0.38s ease-in-out infinite;}
 
   .menu-toggle{
-    display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);
-    border-radius:8px;padding:9px 14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:700;
-    color:var(--ink);cursor:pointer;margin:0 8px 8px 0;transition:background .15s,color .15s,border-color .15s;
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(180deg,#332e24,#211d16);border:1px solid var(--line-strong);
+    border-radius:7px;padding:9px 14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:700;
+    color:var(--ink);cursor:pointer;margin:0 8px 8px 0;transition:background .15s,color .15s,border-color .15s,box-shadow .15s;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
   }
   .menu-toggle:hover{border-color:var(--accent);}
-  .menu-toggle.active{background:var(--ink);color:var(--accent2);border-color:var(--ink);}
+  .menu-toggle.active{background:linear-gradient(180deg,#3a2f10,#211a08);color:var(--accent2);border-color:var(--accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 0 10px rgba(57,255,106,.35);}
   .menu-toggle svg{width:15px;height:15px;flex-shrink:0;}
   .menu-toggles-row{margin-bottom:4px;}
   .menu-dropdown-zone{position:relative;flex:1 1 260px;min-width:200px;align-self:stretch;}
   .menu-body{
-    display:none;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px;
-    position:absolute;top:5px;left:0;right:0;z-index:30;box-shadow:0 10px 28px rgba(16,24,32,.16);
+    display:none;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line-strong);border-radius:9px;padding:10px 12px;
+    position:absolute;top:5px;left:0;right:0;z-index:30;box-shadow:0 10px 28px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);
     max-height:min(60vh,520px);overflow-y:auto;
   }
   .menu-body.show{display:block;}
 
-  .run-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;bottom:0;z-index:35;background:var(--bg);padding:6px 0 3px;box-shadow:0 -8px 12px -8px rgba(16,24,32,.10);}
+  .run-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;bottom:0;z-index:35;background:var(--bg);padding:6px 0 3px;box-shadow:0 -8px 12px -8px rgba(0,0,0,.35);}
   .mini-speed{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-left:auto;}
   .mini-speed input[type=range]{width:110px;}
   .mini-speed .n-val{color:var(--ink);width:34px;}
 
   .status-bar{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);margin-top:10px;}
-  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong);flex-shrink:0;transition:background .2s;}
-  .status-bar.running .status-dot{background:var(--accent);animation:stationPulse 0.8s ease-in-out infinite;}
-  .status-bar.done .status-dot{background:#38B77C;}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong);flex-shrink:0;transition:background .2s, box-shadow .2s;}
+  .status-bar.running .status-dot{background:var(--accent);box-shadow:0 0 6px var(--accent);animation:stationPulse 0.8s ease-in-out infinite;}
+  .status-bar.done .status-dot{background:var(--accent2);box-shadow:0 0 6px var(--accent2);}
+
+  /* ---------- old-stereo chrome: fader sliders + rack screws ---------- */
+  input[type=range]{accent-color:var(--accent);}
+  input[type=range]::-webkit-slider-runnable-track{
+    height:4px;border-radius:2px;
+    background:linear-gradient(90deg,var(--accent2) 0%, var(--accent) 65%, var(--peak) 100%);
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.5);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:13px;height:20px;margin-top:-8px;border-radius:3px;
+    background:linear-gradient(180deg,#e8e2d4,#8a8270);border:1px solid #2a2620;
+    box-shadow:0 1px 3px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  input[type=range]::-moz-range-track{
+    height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent2) 0%, var(--accent) 65%, var(--peak) 100%);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:12px;height:20px;border-radius:3px;background:linear-gradient(180deg,#e8e2d4,#8a8270);border:1px solid #2a2620;
+    box-shadow:0 1px 3px rgba(0,0,0,.65);
+  }
+
+  .theme-toggle-row{display:flex;justify-content:flex-end;margin-bottom:6px;}
+  .theme-toggle{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:700;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--muted);background:linear-gradient(180deg,#332e24,#211d16);
+    border:1px solid var(--line-strong);border-radius:7px;padding:7px 12px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;transition:border-color .12s,color .12s;
+  }
+  .theme-toggle:hover{border-color:var(--accent);color:var(--ink);}
+
+  /* ================= LIGHT THEME (original clean/editorial look) ================= */
+  [data-theme="light"] body{
+    background:var(--bg);
+  }
+  [data-theme="light"] .panel{box-shadow:0 1px 3px rgba(16,24,32,.04);}
+  [data-theme="light"] .panel::before{display:none;}
+  [data-theme="light"] .text-grid input[type=text]{
+    font-family:'Inter',sans-serif;font-size:13.5px;color:var(--ink);background:#fff;box-shadow:none;
+  }
+  [data-theme="light"] .text-grid input[type=text]:focus{box-shadow:0 0 0 3px rgba(0,194,199,.15);}
+  [data-theme="light"] button.action-btn{
+    background:#fff;box-shadow:none;
+  }
+  [data-theme="light"] button.action-btn.primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04181a;border-color:var(--accent);
+    box-shadow:0 0 0 1px rgba(0,194,199,.4), 0 0 16px rgba(0,194,199,.35);
+  }
+  [data-theme="light"] button.action-btn.primary.running{background:linear-gradient(135deg,#FF6B6B,#FF8C8C);border-color:#FF6B6B;box-shadow:0 0 0 1px rgba(255,107,107,.4),0 0 16px rgba(255,107,107,.35);color:#2a0a0a;}
+  [data-theme="light"] .stats-chip{background:var(--bg);}
+  [data-theme="light"] .stage-panel{border:1px solid var(--accent);border-radius:10px;box-shadow:0 0 0 1px rgba(0,194,199,.15), 0 2px 18px rgba(0,194,199,.08);}
+  [data-theme="light"] .info-strip{background:#fff;box-shadow:none;}
+  [data-theme="light"] .info-strip.info-warning{background:#FDEEEE;}
+  [data-theme="light"] .info-strip .info-title{font-family:'Inter',sans-serif;font-weight:700;color:var(--ink);}
+  [data-theme="light"] .top-toolbar{background:var(--bg);box-shadow:none;}
+  [data-theme="light"] .mini-btn{background:#fff;box-shadow:none;}
+  [data-theme="light"] .mini-btn.active{background:var(--ink);color:var(--accent2);box-shadow:none;}
+  [data-theme="light"] .zone-title{font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:.02em;}
+  [data-theme="light"] .score-num{font-family:'IBM Plex Mono',monospace;font-weight:600;}
+  [data-theme="light"] .axis-label{font-family:'IBM Plex Mono',monospace;}
+  [data-theme="light"] .menu-toggle{background:var(--bg);box-shadow:none;}
+  [data-theme="light"] .menu-toggle.active{background:var(--ink);color:var(--accent2);box-shadow:none;}
+  [data-theme="light"] .menu-body{background:var(--panel);box-shadow:0 10px 28px rgba(16,24,32,.16);}
+  [data-theme="light"] .theme-toggle{background:#fff;box-shadow:none;}
 </style>
 </head>
 <!-- reusable inline icons -->
@@ -221,6 +316,9 @@
 </svg>
 <body>
 
+<div class="theme-toggle-row">
+  <button class="theme-toggle" id="themeToggleBtn">&#9788; Light mode</button>
+</div>
 <div class="stage-wrap">
   <div class="toolbar-row-wrap">
     <div class="toolbar-stack">
@@ -236,6 +334,7 @@
         <button class="mini-btn menu-toggle" data-menu="menuParams"><svg class="eye-ic"><use href="#icon-gear"/></svg> Parameters</button>
         <button class="mini-btn menu-toggle" data-menu="menuManip"><svg class="eye-ic"><use href="#icon-branch"/></svg> Manipulation</button>
         <button class="mini-btn menu-toggle" data-menu="menuPop"><svg class="eye-ic"><use href="#icon-users"/></svg> Population</button>
+        <button class="mini-btn menu-toggle" data-menu="menuData"><svg class="eye-ic"><use href="#icon-ruler"/></svg> Data</button>
       </div>
 
       <div class="top-toolbar tab-content" id="tabScale" style="display:none;">
@@ -318,6 +417,24 @@
         <div id="popControlsRow"></div>
         <p class="scale-note">Each group draws its scores from its own population — give groups different means to simulate a real effect, or leave them equal to see how much difference shows up by chance alone.</p>
       </div>
+
+      <div class="menu-body" id="menuData">
+        <div class="section-label">Use your own data</div>
+        <p class="scale-note" style="margin-top:0;">Paste numbers — copied straight from a spreadsheet or CSV — to use as your sample, instead of randomly drawing scores from the simulated population. Values are rounded to whole numbers for plotting. Paste a single column for a one-sample design, or paste <b>multiple columns</b> (tab-separated, like an Excel selection, or one comma-separated group per line) for independent groups or repeated-measures conditions — an optional header row (e.g. "Placebo, Drug") becomes the group/condition labels. The Population mean/SD sliders become for reference only once your real values are driving the sample.</p>
+        <div class="text-grid">
+          <label>Label (optional)</label><input type="text" id="dataLabelInput" placeholder="e.g., Hours studying">
+        </div>
+        <textarea id="dataTextarea" rows="5" placeholder="One column:&#10;4, 3, 6, 4, 8&#10;&#10;Or multiple columns (tab- or comma-separated, one row per participant):&#10;Placebo   Drug&#10;4         7&#10;3         6&#10;6         9" style="width:100%;margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:8px 10px;border-radius:6px;border:1px solid var(--line-strong);resize:vertical;"></textarea>
+        <div class="scale-btns" id="dataDesignBtns" style="display:none;margin-top:10px;">
+          <button class="mini-btn active" id="dataDesignIndepBtn" data-design="independent">Independent samples (separate groups)</button>
+          <button class="mini-btn" id="dataDesignDepBtn" data-design="dependent">Repeated measures (same participants, paired)</button>
+        </div>
+        <div class="btn-group" style="margin-top:10px;">
+          <button class="mini-btn" id="dataApplyBtn">Use this data as my sample</button>
+          <button class="mini-btn" id="dataClearBtn" style="display:none;">Clear &amp; go back to random</button>
+        </div>
+        <p class="scale-note" id="dataStatus"></p>
+      </div>
     </div>
   </div>
 
@@ -351,9 +468,46 @@
 <div class="status-bar" id="statusBar"><span class="status-dot"></span><span id="statusText">Ready</span></div>
 
 <script>
-const ACCENT = '#00C2C7';
-const NEUTRAL_COLOR = '#8B949B';
-const CAT_COLORS = ['#00C2C7','#FF6B6B','#7C83FD','#FFB84C','#FF6EC7','#38B77C','#C77DFF','#FFD166'];
+const PALETTES = {
+  dark:  { ACCENT:'#39FF6A', NEUTRAL:'#FFB000', CAT:['#39FF6A','#FF3B30','#00E5FF','#FFB000','#FF6EC7','#C77DFF','#FFD166','#38B77C'] },
+  light: { ACCENT:'#00C2C7', NEUTRAL:'#8B949B', CAT:['#00C2C7','#FF6B6B','#7C83FD','#FFB84C','#FF6EC7','#38B77C','#C77DFF','#FFD166'] }
+};
+let currentTheme = 'dark';
+let ACCENT = PALETTES.dark.ACCENT;
+let NEUTRAL_COLOR = PALETTES.dark.NEUTRAL;
+let CAT_COLORS = PALETTES.dark.CAT;
+
+// ---------------- sound effects (synthesized, no audio files) ----------------
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, startOffset, duration, {type='sine', peak=0.16, glideTo=null}={}){
+  const ctx = getAudioCtx();
+  const t0 = ctx.currentTime + startOffset;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if(glideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1,glideTo), t0+duration);
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(peak, t0+Math.min(0.02,duration*0.2));
+  gain.gain.exponentialRampToValueAtTime(0.001, t0+duration);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+duration+0.02);
+}
+function playPlopSound(){
+  try{ tone(420, 0, 0.12, {type:'sine', peak:0.13, glideTo:130}); }catch(e){}
+}
+function playChachingSound(){
+  try{
+    tone(1046.5, 0,    0.08, {type:'square',   peak:0.06}); // click
+    tone(1568.0, 0.04, 0.20, {type:'triangle', peak:0.14}); // G6 ring
+    tone(2093.0, 0.08, 0.24, {type:'triangle', peak:0.11}); // C7 ring
+  }catch(e){}
+}
 
 let constructName = '';
 let measureDescription = '';
@@ -386,8 +540,31 @@ let revealTriggered = false;
 let isAnimating = false;
 let isRunningAll = false;
 
+let customColumns = null; // array of arrays of whole-number scores pasted by the student (one array per group/condition), or null to use random generation
+let customColumnLabels = null; // matching group/condition labels, if a header row was pasted
 let TASK_MIN=0, TASK_MAX=5, colCount=6;
 function computeTaskRange(){
+  if(customColumns){
+    if(sampleDesign==='dependent' && numLevels===2 && customColumns.length>=2){
+      // this design shows a Difference (D) axis, not raw scores — range the axis off the
+      // actual per-row differences (Time2 − Time1), not the raw values, or the histogram
+      // bins won't line up with where sendDifferenceToDistribution actually places them
+      const n = Math.min(customColumns[0].length, customColumns[1].length);
+      const diffs = [];
+      for(let i=0;i<n;i++) diffs.push(customColumns[1][i]-customColumns[0][i]);
+      TASK_MIN = Math.min(0, ...diffs);
+      TASK_MAX = Math.max(0, ...diffs);
+      if(TASK_MIN===TASK_MAX){ TASK_MIN -= 1; TASK_MAX += 1; }
+      colCount = TASK_MAX - TASK_MIN + 1;
+      return;
+    }
+    const allVals = customColumns.flat();
+    TASK_MIN = Math.min(...allVals);
+    TASK_MAX = Math.max(...allVals);
+    if(TASK_MIN===TASK_MAX) TASK_MAX = TASK_MIN+1;
+    colCount = TASK_MAX - TASK_MIN + 1;
+    return;
+  }
   if(sampleDesign==='dependent' && numLevels===2){
     TASK_MIN = -numItems;
     TASK_MAX = numItems;
@@ -417,10 +594,23 @@ function generateScore(group){
 function generateChoice(){
   return Math.floor(Math.random()*numItems);
 }
+function customScoreFor(idx, group){
+  if(!customColumns) return undefined;
+  const col = customColumns[group] || customColumns[0];
+  // one-sample and independent-samples participants are numbered straight through (idx 1..N);
+  // independent-samples with 2+ groups round-robins group assignment (see groupForParticipant),
+  // so the occurrence within a given group is idx's position among just that group's participants.
+  // dependent (paired) participants instead contribute one score per condition, so idx IS the row.
+  const occ = (sampleDesign==='dependent' || numLevels<=1) ? (idx-1) : Math.floor((idx-1)/numLevels);
+  return col[occ];
+}
 let participantScoreCache = {};
 function cachedGenerateScore(idx, group){
   const key = idx+'-'+group;
-  if(participantScoreCache[key]===undefined) participantScoreCache[key] = generateScore(group);
+  if(participantScoreCache[key]===undefined){
+    const custom = customScoreFor(idx, group);
+    participantScoreCache[key] = custom!==undefined ? custom : generateScore(group);
+  }
   return participantScoreCache[key];
 }
 function cachedGenerateChoice(idx, group){
@@ -780,10 +970,13 @@ function drawChrome(){
     const color = CAT_COLORS[g%CAT_COLORS.length];
     const st = manipZoneG.append('g').attr('id','manipStation-'+g);
     st.append('rect').attr('x',pos.x-52).attr('y',pos.y-26).attr('width',104).attr('height',52).attr('rx',10)
-      .attr('fill','#fff').attr('stroke',color).attr('stroke-width',2);
+      .attr('fill','var(--panel2)').attr('stroke',color).attr('stroke-width',2);
     st.append('text').attr('id','manipLabel-'+g).attr('x',pos.x).attr('y',pos.y+5).attr('text-anchor','middle')
       .attr('font-family',"'IBM Plex Mono',monospace").attr('font-weight',800).attr('font-size',14).attr('fill',color)
       .text(groupLabels[g]||defaultGroupLabel(g));
+    const marker = GROUP_MARKERS[g%GROUP_MARKERS.length];
+    const iconG = st.append('g').attr('transform',`translate(${pos.x+52-15},${pos.y-26+16}) scale(0.58)`);
+    drawMarkerShapeOnly(iconG, marker.shape, color, false);
   }
   manipZoneG.append('g').attr('id','manipLayer');
 
@@ -802,6 +995,7 @@ function drawChrome(){
   measG.append('text').attr('class','station-caption').attr('x',measureStationX).attr('y',baseline+20).attr('text-anchor','middle').text('measurement station');
 
   svg.append('g').attr('id','flyLayer');
+  const distMeterLayer = svg.append('g').attr('id','distMeterLayer'); // EQ-style meter wells, drawn behind the person icons
   const distIconLayers = svg.append('g').attr('id','distIconLayers');
   for(let g=0; g<numLevels; g++) distIconLayers.append('g').attr('id','distGroupLayer-'+g);
   svg.append('g').attr('id','distLaneLayer');
@@ -878,6 +1072,26 @@ function drawChrome(){
       grid.append('text').attr('class','axis-label').attr('id','overflowLabel-'+idx)
         .attr('x',distColX(s)).attr('y', distTargetY(distMaxStack)-14).attr('text-anchor','middle')
         .attr('font-size',15).attr('fill','var(--accent)').text('');
+
+      // EQ meter well behind this column: a dark backlit LED-strip track with unlit segment
+      // rungs, so the stacked people read as an old graphic-equalizer bar even at n=0
+      if(dvScale!=='nominal' && currentTheme==='dark'){
+        const trackW = Math.max(10, distColWidth*0.46);
+        const trackTop = distTargetY(distMaxStack) - distStepHeight*0.35;
+        const trackBottom = baseline+1;
+        distMeterLayer.append('rect')
+          .attr('x', distColX(s)-trackW/2).attr('y', trackTop)
+          .attr('width', trackW).attr('height', Math.max(0,trackBottom-trackTop))
+          .attr('rx', Math.min(6,trackW*0.28))
+          .attr('fill','#0a0806').attr('stroke','var(--line)').attr('stroke-width',1).attr('opacity',0.9);
+        const rungGap = Math.max(6, distStepHeight*0.5);
+        for(let y=trackBottom-rungGap; y>trackTop+4; y-=rungGap){
+          distMeterLayer.append('line')
+            .attr('x1',distColX(s)-trackW/2+3).attr('x2',distColX(s)+trackW/2-3)
+            .attr('y1',y).attr('y2',y)
+            .attr('stroke','#000').attr('stroke-width',1).attr('opacity',0.4);
+        }
+      }
     }
     grid.append('text').attr('class','axis-title').attr('id','distAxisTitle').attr('x',(ZONE.dist.x0+ZONE.dist.x1)/2).attr('y',baseline+56).attr('text-anchor','middle')
       .text(measureDescription || 'Result');
@@ -977,6 +1191,14 @@ function updateStageLabels(){
 
 // ---- measure station: item-count test (ratio / interval / ordinal) ----
 function drawMeasureTest(measG){
+  if(customColumns){
+    drawPuzzleGlyph(measG, measureStationX-104, measureStationY-104, 1.25, ACCENT);
+    measG.append('text').attr('class','station-caption').attr('x',measureStationX-76).attr('y',measureStationY-98).attr('text-anchor','start')
+      .attr('font-weight',700).attr('font-size',18).attr('fill','var(--ink)').text('Your data');
+    measG.append('text').attr('class','station-caption').attr('id','tallyText').attr('x',measureStationX).attr('y',measureStationY+8)
+      .attr('text-anchor','middle').attr('font-size',22).attr('font-weight',700).text('');
+    return;
+  }
   drawPuzzleGlyph(measG, measureStationX-104, measureStationY-104, 1.25, ACCENT);
   measG.append('text').attr('class','station-caption').attr('x',measureStationX-76).attr('y',measureStationY-98).attr('text-anchor','start')
     .attr('font-weight',700).attr('font-size',18).attr('fill','var(--ink)').text(numItems+'-item test');
@@ -985,7 +1207,7 @@ function drawMeasureTest(measG){
     const p = itemPos(i);
     const item = measG.append('g').attr('id','testItem-'+i).attr('transform',`translate(${p.x},${p.y}) scale(1)`);
     item.append('rect').attr('class','item-box').attr('x',-ITEM_BOX/2).attr('y',-ITEM_BOX/2).attr('width',ITEM_BOX).attr('height',ITEM_BOX).attr('rx',9)
-      .attr('fill','#fff').attr('stroke','var(--line-strong)').attr('stroke-width',1.8);
+      .attr('fill','var(--panel2)').attr('stroke','var(--line-strong)').attr('stroke-width',1.8);
     item.append('text').attr('class','item-mark').attr('text-anchor','middle').attr('y',ITEM_FONT*0.35)
       .attr('font-family','IBM Plex Mono, monospace').attr('font-size',ITEM_FONT).attr('font-weight',700).text('');
   }
@@ -997,7 +1219,7 @@ function resetTestItems(){
   for(let i=0;i<numItems;i++){
     const item = d3.select('#testItem-'+i);
     const p = itemPos(i);
-    item.select('.item-box').attr('fill','#fff').attr('stroke','var(--line-strong)');
+    item.select('.item-box').attr('fill','var(--panel2)').attr('stroke','var(--line-strong)');
     item.select('.item-mark').text('').attr('fill','var(--ink)');
     item.interrupt().attr('transform', `translate(${p.x},${p.y}) scale(1)`);
   }
@@ -1045,7 +1267,7 @@ function drawMeasureChoice(measG){
     const boxW = Math.max(30, Math.min(ITEM_BOX+12, ITEM_GAP-8));
     const opt = measG.append('g').attr('id','choiceOpt-'+i).attr('transform',`translate(${p.x},${p.y}) scale(1)`);
     opt.append('rect').attr('class','opt-box').attr('x',-boxW/2).attr('y',-ITEM_BOX/2).attr('width',boxW).attr('height',ITEM_BOX).attr('rx',9)
-      .attr('fill','#fff').attr('stroke',color).attr('stroke-width',2);
+      .attr('fill','var(--panel2)').attr('stroke',color).attr('stroke-width',2);
     opt.append('text').attr('class','opt-label').attr('id','choiceLabel-'+i).attr('text-anchor','middle').attr('y',ITEM_FONT*0.28)
       .attr('font-family','IBM Plex Mono, monospace').attr('font-size',Math.max(10,ITEM_FONT*0.6)).attr('font-weight',700).attr('fill',color)
       .text(categoryLabels[i]||('Option '+(i+1)));
@@ -1059,7 +1281,7 @@ function resetChoiceButtons(){
     const opt = d3.select('#choiceOpt-'+i);
     const p = itemPos(i);
     const color = CAT_COLORS[i%CAT_COLORS.length];
-    opt.select('.opt-box').attr('fill','#fff').attr('stroke',color);
+    opt.select('.opt-box').attr('fill','var(--panel2)').attr('stroke',color);
     opt.select('.opt-label').attr('fill',color);
     opt.interrupt().attr('transform', `translate(${p.x},${p.y}) scale(1)`);
   }
@@ -1577,7 +1799,10 @@ function legendCellPos(g, row){
 }
 function revealLegendEntry(group, key){
   if(!legendRevealed[group]) legendRevealed[group] = [];
-  if(!legendRevealed[group].includes(key)) legendRevealed[group].push(key);
+  if(!legendRevealed[group].includes(key)){
+    legendRevealed[group].push(key);
+    playChachingSound();
+  }
   renderStatsLegend();
   const cell = d3.select('#legendCell-'+group+'-'+key);
   if(!cell.empty()){
@@ -1666,7 +1891,7 @@ function showFormulaRow(group, key, tokenDefs){
     const w = tok.text.length*charW+9;
     const el = g.append('text').attr('x',x).attr('y',rowY).attr('text-anchor','start')
       .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize)
-      .attr('font-weight', tok.muted?600:800).attr('fill', tok.muted?'var(--muted)':'#000')
+      .attr('font-weight', tok.muted?600:800).attr('fill', tok.muted?'var(--muted)':'var(--ink)')
       .attr('opacity',0).text(tok.text);
     el.transition().delay(T(i*60)).duration(T(200)).attr('opacity',1);
     if(tok.key) tokens[tok.key] = {el, x:x+w/2, y:rowY};
@@ -1679,7 +1904,7 @@ function showFormulaRow(group, key, tokenDefs){
       let fin = g.select('.row-final');
       if(!fin.empty()){ fin.text('= '+text); return; }
       g.append('text').attr('class','row-final').attr('x',endX+6).attr('y',rowY).attr('text-anchor','start')
-        .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',800).attr('fill',color||'#000')
+        .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',800).attr('fill',color||'var(--ink)')
         .attr('opacity',0).text('= '+text)
         .transition().duration(T(300)).attr('opacity',1);
     }
@@ -1764,7 +1989,7 @@ function flyExpressionIntoToken(rowInfo, tokenRef, color, cb){
   const svg = d3.select('#stage');
   const exprText = rowInfo.slots.map(s=>s.disp).join('+') + (rowInfo.truncated ? '+\u22EF' : '');
   rowInfo.remove();
-  if(rowInfo.slots.length===0){ tokenRef.el.text('0').attr('fill','#000'); cb(); return; }
+  if(rowInfo.slots.length===0){ tokenRef.el.text('0').attr('fill','var(--ink)'); cb(); return; }
   const chip = svg.append('text').attr('x',rowInfo.cx).attr('y',rowInfo.y).attr('text-anchor','middle')
     .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',16).attr('font-weight',700).attr('fill',color)
     .attr('opacity',0).text(exprText);
@@ -1773,7 +1998,7 @@ function flyExpressionIntoToken(rowInfo, tokenRef, color, cb){
     .attr('x',tokenRef.x).attr('y',tokenRef.y).attr('font-size',19)
     .on('end', ()=>{
       chip.remove();
-      tokenRef.el.text(exprText).attr('fill','#000');
+      tokenRef.el.text(exprText).attr('fill','var(--ink)');
       cb();
     });
 }
@@ -1850,7 +2075,7 @@ function flyCountIntoToken(originPos, tokenRef, n, color, cb){
     .attr('x',tokenRef.x).attr('y',tokenRef.y).attr('font-size',19)
     .on('end', ()=>{
       chip.remove();
-      tokenRef.el.text(String(n)).attr('fill','#000');
+      tokenRef.el.text(String(n)).attr('fill','var(--ink)');
       cb();
     });
 }
@@ -1888,7 +2113,7 @@ function flyResultIntoToken(origin, tokenRef, resultText, color, cb){
     .attr('x', tokenRef ? tokenRef.x : origin.x).attr('y', tokenRef ? tokenRef.y : origin.y).attr('font-size',19)
     .on('end', ()=>{
       chip.remove();
-      if(tokenRef) tokenRef.el.text(resultText).attr('fill','#000');
+      if(tokenRef) tokenRef.el.text(resultText).attr('fill','var(--ink)');
       origin.remove && origin.remove();
       cb();
     });
@@ -2160,7 +2385,7 @@ function ensureMeanShown(group, cb){
   const color = CAT_COLORS[group%CAT_COLORS.length];
   if(!showMean){ showMean = true; d3.select('#meanBtn').classed('active', true); }
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 'x\u0304 = \u03A3x / n', '#000', null, ()=>{
+  addCenteredFormulaLine(group, 'x\u0304 = \u03A3x / n', 'var(--ink)', null, ()=>{
     if(gst.n===0){ addCenteredFormulaLine(group,'= no data',color,null,()=>cb(gst.mean)); return; }
     const pts = getLandedIconPositions(group);
     flyPeopleAboveDistribution(pts, p=>p.score, group, (rowInfo)=>{
@@ -2252,7 +2477,7 @@ function ensureSSShown(group, cb){
   const color = CAT_COLORS[group%CAT_COLORS.length];
   if(!showSS){ showSS = true; d3.select('#ssBtn').classed('active', true); }
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 'SS = \u03A3(x\u2212x\u0304)\u00B2', '#000', null, ()=>{
+  addCenteredFormulaLine(group, 'SS = \u03A3(x\u2212x\u0304)\u00B2', 'var(--ink)', null, ()=>{
     if(gst.n===0){ addCenteredFormulaLine(group,'= no data',color,null,()=>cb(gst.ss)); return; }
     ensureDeviationsShown(group, ()=>{
       const pts = getLandedIconPositions(group);
@@ -2283,7 +2508,7 @@ function ensureSDShown(group, cb){
   if(!showSS){ showSS = true; d3.select('#ssBtn').classed('active', true); }
   updateStatsReadout();
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 's = \u221A(SS/(n\u22121))', '#000', null, ()=>{
+  addCenteredFormulaLine(group, 's = \u221A(SS/(n\u22121))', 'var(--ink)', null, ()=>{
     if(gst.n===0){ addCenteredFormulaLine(group,'= no data',color,null,()=>cb(gst.sd)); return; }
     flashSSVisual(group);
     ensureRevealed(group, 'ss', ()=>{
@@ -2313,7 +2538,7 @@ function ensureSEShown(group, cb){
   if(!showSD){ showSD = true; d3.select('#sdBtn').classed('active', true); }
   updateStatsReadout();
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 'SE = s / \u221An', '#000', null, ()=>{
+  addCenteredFormulaLine(group, 'SE = s / \u221An', 'var(--ink)', null, ()=>{
     if(gst.n===0){ addCenteredFormulaLine(group,'= no data',color,null,()=>cb(0)); return; }
     flashSDVisual(group);
     ensureRevealed(group, 'sd', ()=>{
@@ -2340,7 +2565,7 @@ function showMedianCalc(group){
   const color = CAT_COLORS[group%CAT_COLORS.length];
   const val = (dvScale==='ratio'||dvScale==='interval') ? gst.median.toFixed(2) : statLabel(Math.round(gst.median));
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 'median', '#000', null, ()=>{
+  addCenteredFormulaLine(group, 'median', 'var(--ink)', null, ()=>{
     addCenteredFormulaLine(group, '= '+val, color, null, ()=> revealLegendEntry(group,'median'));
   });
 }
@@ -2349,7 +2574,7 @@ function showModeCalc(group){
   if(gst.n===0) return;
   const color = CAT_COLORS[group%CAT_COLORS.length];
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 'mode', '#000', null, ()=>{
+  addCenteredFormulaLine(group, 'mode', 'var(--ink)', null, ()=>{
     addCenteredFormulaLine(group, '= '+statLabel(gst.modeIdx), color, null, ()=> revealLegendEntry(group,'mode'));
   });
 }
@@ -2363,7 +2588,7 @@ function showZCalc(group){
   if(!showMean){ showMean = true; d3.select('#meanBtn').classed('active', true); }
   updateStatsReadout();
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 'z = (x\u0304\u2212\u03BC\u2080)/(\u03C3/\u221An)', '#000', null, function(){
+  addCenteredFormulaLine(group, 'z = (x\u0304\u2212\u03BC\u2080)/(\u03C3/\u221An)', 'var(--ink)', null, function(){
     ensureRevealed(group, 'mean', function(){
       revealN(group, function(){
         buildSequentialLine(group, [
@@ -2394,7 +2619,7 @@ function showTCalc(group){
   updateStatsReadout();
   clearFormulaCard(group);
   const formulaSymbol = (sampleDesign==='dependent' && numLevels===2) ? 't = (D\u0304\u2212\u03BC\u2080)/(s_D/\u221An)' : 't = (x\u0304\u2212\u03BC\u2080)/(s/\u221An)';
-  addCenteredFormulaLine(group, formulaSymbol, '#000', null, function(){
+  addCenteredFormulaLine(group, formulaSymbol, 'var(--ink)', null, function(){
     ensureRevealed(group, 'mean', function(){
       ensureRevealed(group, 'sd', function(){
         revealN(group, function(){
@@ -2435,7 +2660,7 @@ function showIndepTCalc(g1, g2){
   const titleText = usePaired
     ? (name1+' vs '+name2+' (treated as independent): t = (x\u0304\u2081\u2212x\u0304\u2082)/SE')
     : ('vs '+name2+': t = (x\u0304\u2081\u2212x\u0304\u2082)/SE');
-  addCenteredFormulaLine(g1, titleText, '#000', null, ()=>{
+  addCenteredFormulaLine(g1, titleText, 'var(--ink)', null, ()=>{
     const build = ()=> buildSequentialLine(g1, [
       {type:'static', text:'= ('},
       {type:'fly', text:st1.mean.toFixed(2), origin: usePaired?null:()=>flashLegendCell(g1,'mean'), color:color1},
@@ -2523,7 +2748,7 @@ function flyValueIntoCell(group, text, origin, target, color, fontSize, cb){
       .on('end', ()=>{
         chip.remove();
         d3.select('#formulaCard-'+group).select('#anovaTableLayer').append('text').attr('x',target.x).attr('y',target.y+3).attr('text-anchor','middle')
-          .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',700).attr('fill','#333')
+          .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',700).attr('fill','var(--ink)')
           .text(text);
         if(cb) setTimeout(cb, T(80));
       });
@@ -2619,18 +2844,18 @@ function renderStatsTableSkeleton(group, rowDefs, colLabels, cb){
 
   const layer = card.append('g').attr('id','anovaTableLayer');
   layer.append('rect').attr('x',tableX0).attr('y',tableTop).attr('width',tableW).attr('height',totalH)
-    .attr('fill','#fff').attr('stroke','var(--line)').attr('opacity',0).transition().duration(T(250)).attr('opacity',1);
+    .attr('fill','var(--panel2)').attr('stroke','var(--line-strong)').attr('opacity',0).transition().duration(T(250)).attr('opacity',1);
   colLabels.forEach((c,ci)=>{
     layer.append('text').attr('x', ci===0?colX[0]+2:colCenter(ci)).attr('y',headerY)
       .attr('text-anchor', ci===0?'start':'middle').attr('font-family',"'IBM Plex Mono',monospace")
-      .attr('font-size',fontSize).attr('font-weight',800).attr('fill','#333').attr('opacity',0)
+      .attr('font-size',fontSize).attr('font-weight',800).attr('fill','var(--ink)').attr('opacity',0)
       .text(c).transition().duration(T(250)).attr('opacity',1);
   });
   layer.append('line').attr('x1',tableX0).attr('x2',tableX1).attr('y1',tableTop+rowH-1).attr('y2',tableTop+rowH-1)
-    .attr('stroke','#999').attr('stroke-width',1).attr('opacity',0).transition().duration(T(250)).attr('opacity',1);
+    .attr('stroke','var(--line-strong)').attr('stroke-width',1).attr('opacity',0).transition().duration(T(250)).attr('opacity',1);
   rowDefs.forEach(row=>{
     layer.append('text').attr('x',colX[0]+2).attr('y',row.y).attr('text-anchor','start')
-      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',700).attr('fill','#333')
+      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',700).attr('fill','var(--ink)')
       .attr('opacity',0).text(row.label).transition().duration(T(200)).attr('opacity',1);
   });
   card.attr('data-lines', lineIdx + Math.ceil(totalH/24) + 2);
@@ -2688,23 +2913,23 @@ function buildScratchSequentialLine(group, geom, segments, cb){
     geom.lastPos = {x:targetX, y};
     if(seg.type==='fly' && seg.origin){
       const svg = d3.select('#stage');
-      flashAtPosition(group, seg.origin, seg.color||'#5A6672', ()=>{
+      flashAtPosition(group, seg.origin, seg.color||'var(--muted)', ()=>{
         const chip = svg.append('text').attr('x',seg.origin.x).attr('y',seg.origin.y).attr('text-anchor','middle')
-          .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',11).attr('font-weight',700).attr('fill',seg.color||'#5A6672')
+          .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',11).attr('font-weight',700).attr('fill',seg.color||'var(--muted)')
           .text(seg.text);
         chip.transition().duration(T(420)).ease(d3.easeCubicInOut)
           .attr('x',targetX).attr('y',y).attr('font-size',fontSize)
           .on('end', ()=>{
             chip.remove();
             card.append('text').attr('class','scratch-line').attr('x',targetX).attr('y',y).attr('text-anchor','middle')
-              .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',700).attr('fill',seg.color||'#5A6672')
+              .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',700).attr('fill',seg.color||'var(--muted)')
               .text(seg.text);
             setTimeout(()=> placeNext(i+1), T(130));
           });
       });
     } else {
       card.append('text').attr('class','scratch-line').attr('x',targetX).attr('y',y).attr('text-anchor','middle')
-        .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',600).attr('fill','#5A6672')
+        .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',fontSize).attr('font-weight',600).attr('fill','var(--muted)')
         .attr('opacity',0).text(seg.text)
         .transition().duration(T(150)).attr('opacity',1);
       setTimeout(()=> placeNext(i+1), T(160));
@@ -2756,15 +2981,15 @@ function fillTableColumn(group, geom, colIndex, entries, cb){
     if(e.custom){
       e.custom(target, advance);
     } else if(e.formulaText){
-      showScratchLine(group, geom, e.formulaText, '#5A6672', ()=>{
+      showScratchLine(group, geom, e.formulaText, 'var(--muted)', ()=>{
         setTimeout(()=>{
           const origin = e.origin || lastScratchPos(geom);
-          flyValueIntoCell(group, e.resultText, origin, target, '#5A6672', geom.fontSize, advance);
+          flyValueIntoCell(group, e.resultText, origin, target, 'var(--muted)', geom.fontSize, advance);
         }, T(650));
       });
     } else {
       layer.append('text').attr('x',target.x).attr('y',target.y+3).attr('text-anchor','middle')
-        .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',geom.fontSize).attr('font-weight',700).attr('fill','#333')
+        .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',geom.fontSize).attr('font-weight',700).attr('fill','var(--ink)')
         .attr('opacity',0).text(e.resultText).transition().duration(T(150)).attr('opacity',1);
       setTimeout(advance, T(150));
     }
@@ -2816,7 +3041,7 @@ function renderDeviationsFromGrandMean(layer, g, grandMean){
 function ssWithinCustomEntry(group, geom, groups, formulaText, resultText){
   return {
     custom: (target, done)=>{
-      showScratchLine(group, geom, formulaText, '#5A6672', ()=>{
+      showScratchLine(group, geom, formulaText, 'var(--muted)', ()=>{
         highlightGroupsDistribution(groups);
         function revealAll(i, then){
           if(i>=groups.length){ then(); return; }
@@ -2831,7 +3056,7 @@ function ssWithinCustomEntry(group, geom, groups, formulaText, resultText){
           });
           buildScratchSequentialLine(group, geom, segs, ()=>{
             setTimeout(()=>{
-              flyValueIntoCell(group, resultText, lastScratchPos(geom), target, '#5A6672', geom.fontSize, ()=>{
+              flyValueIntoCell(group, resultText, lastScratchPos(geom), target, 'var(--muted)', geom.fontSize, ()=>{
                 clearGroupHighlight();
                 done();
               });
@@ -2848,7 +3073,7 @@ function ssWithinCustomEntry(group, geom, groups, formulaText, resultText){
 function ssBetweenCustomEntry(group, geom, groups, formulaTitle, resultText){
   return {
     custom: (target, done)=>{
-      showScratchLine(group, geom, formulaTitle+' =', '#5A6672', ()=>{
+      showScratchLine(group, geom, formulaTitle+' =', 'var(--muted)', ()=>{
         highlightGroupsDistribution(groups);
         const gm = renderGrandMeanLine(true);
         const gmOrigin = useSidewaysDist()
@@ -2869,7 +3094,7 @@ function ssBetweenCustomEntry(group, geom, groups, formulaTitle, resultText){
           setTimeout(()=>{
             buildScratchSequentialLine(group, geom, [{type:'static', text:'= '+resultText}], ()=>{
               setTimeout(()=>{
-                flyValueIntoCell(group, resultText, lastScratchPos(geom), target, '#5A6672', geom.fontSize, ()=>{
+                flyValueIntoCell(group, resultText, lastScratchPos(geom), target, 'var(--muted)', geom.fontSize, ()=>{
                   clearGroupHighlight();
                   done();
                 });
@@ -2895,9 +3120,9 @@ function ssTotalCustomEntry(group, geom, groups, ssTotalValue){
       groups.forEach(g=> renderDeviationsFromGrandMean(devLayer, g, gm));
       devLayer.transition().duration(T(250)).attr('opacity',1);
       const card = d3.select('#formulaCard-'+group);
-      addCenteredFormulaLine(group, 'SS\u1D57\u1D52\u1D57\u1D43\u02E1 = \u03A3(x\u2212x\u0304)\u00B2', '#000', null, ()=>{
+      addCenteredFormulaLine(group, 'SS\u1D57\u1D52\u1D57\u1D43\u02E1 = \u03A3(x\u2212x\u0304)\u00B2', 'var(--ink)', null, ()=>{
         flyPeopleAboveDistribution(allPts, p=>p.score-gm, group, (rowInfo)=>{
-          addExpressionLineFromRow(group, rowInfo, '#5A6672', (termEls)=>{
+          addExpressionLineFromRow(group, rowInfo, 'var(--muted)', (termEls)=>{
             squareTermsInPlace(termEls, ()=>{
               const bandInfo = formulaBandFor(group);
               geom.scratchY = bandInfo.y0 + 40 + (+card.attr('data-lines'))*24 + 8;
@@ -2915,7 +3140,7 @@ function ssTotalCustomEntry(group, geom, groups, ssTotalValue){
                   buildScratchSequentialLine(group, geom, [{type:'static', text:'= '+ssTotalValue.toFixed(2)}], ()=>{
                     setTimeout(()=>{
                       devLayer.transition().duration(T(400)).attr('opacity',0).on('end', ()=> devLayer.remove());
-                      flyValueIntoCell(group, ssTotalValue.toFixed(2), lastScratchPos(geom), target, '#5A6672', geom.fontSize, done);
+                      flyValueIntoCell(group, ssTotalValue.toFixed(2), lastScratchPos(geom), target, 'var(--muted)', geom.fontSize, done);
                     }, T(300));
                   });
                 }, T(400));
@@ -2936,15 +3161,15 @@ function divisionFloatCustomEntry(geom, label, numCellPos, denomCellPos, numVal,
       const resultText = resultVal.toFixed(2);
       const segs = [
         {type:'static', text:label+' = '},
-        {type:'fly', text:numText, origin:numCellPos, color:'#5A6672'},
+        {type:'fly', text:numText, origin:numCellPos, color:'var(--muted)'},
         {type:'static', text:'/'},
-        {type:'fly', text:denomText, origin:denomCellPos, color:'#5A6672'}
+        {type:'fly', text:denomText, origin:denomCellPos, color:'var(--muted)'}
       ];
       buildScratchSequentialLine(group, geom, segs, ()=>{
         setTimeout(()=>{
           buildScratchSequentialLine(group, geom, [{type:'static', text:'= '+resultText}], ()=>{
             setTimeout(()=>{
-              flyValueIntoCell(group, resultText, lastScratchPos(geom), target, '#5A6672', geom.fontSize, done);
+              flyValueIntoCell(group, resultText, lastScratchPos(geom), target, 'var(--muted)', geom.fontSize, done);
             }, T(400));
           });
         }, T(400));
@@ -2959,19 +3184,19 @@ function dfCustomEntry(group, geom, formulaText, resultText, nText){
   return {
     custom: (target, done)=>{
       const legendO = legendCellPos(group, legendRowFor(group,'n'));
-      flashAtPosition(group, legendO, '#5A6672', ()=>{
+      flashAtPosition(group, legendO, 'var(--muted)', ()=>{
         const svg = d3.select('#stage');
         const nextY = geom.scratchY + (geom.scratchIndex||0)*15;
         const chip = svg.append('text').attr('x',legendO.x).attr('y',legendO.y).attr('text-anchor','middle')
-          .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',11).attr('font-weight',700).attr('fill','#5A6672')
+          .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',11).attr('font-weight',700).attr('fill','var(--muted)')
           .text(nText);
         chip.transition().duration(T(450)).ease(d3.easeCubicInOut)
           .attr('x',geom.scratchCx).attr('y',nextY).attr('font-size',11)
           .on('end', ()=>{
             chip.remove();
-            showScratchLine(group, geom, formulaText, '#5A6672', ()=>{
+            showScratchLine(group, geom, formulaText, 'var(--muted)', ()=>{
               setTimeout(()=>{
-                flyValueIntoCell(group, resultText, lastScratchPos(geom), target, '#5A6672', geom.fontSize, ()=>{
+                flyValueIntoCell(group, resultText, lastScratchPos(geom), target, 'var(--muted)', geom.fontSize, ()=>{
                   done();
                 });
               }, T(500));
@@ -2985,7 +3210,7 @@ function dfCustomEntry(group, geom, formulaText, resultText, nText){
 function showRMAnovaCalc(){
   stepRestartFn = showRMAnovaCalc;
   const r = computeRMAnova();
-  const color = '#5A6672';
+  const color = 'var(--muted)';
   clearFormulaCard(0);
   renderGrandMeanLine(false);
   if(!r){
@@ -2994,7 +3219,7 @@ function showRMAnovaCalc(){
   }
   const activeConditions = []; for(let g=0; g<numLevels; g++) if(getRawValuesForGroup(g).length>0) activeConditions.push(g);
   ensureRevealed(0, 'n', ()=> ensureRevealed(0, 'mean', ()=>{
-    addCenteredFormulaLine(0, 'Repeated-Measures ANOVA', '#000', null, ()=>{
+    addCenteredFormulaLine(0, 'Repeated-Measures ANOVA', 'var(--ink)', null, ()=>{
       const rowCond = {label:'Conditions'}, rowSubj = {label:'Subjects'}, rowError = {label:'Error'}, rowTotal = {label:'Total'};
       const rowDefs = [rowCond, rowSubj, rowError, rowTotal];
       renderStatsTableSkeleton(0, rowDefs, ['Source','SS','df','MS','F','p'], (geom)=>{
@@ -3031,7 +3256,7 @@ function showRMAnovaCalc(){
 function showOneWayAnovaCalc(){
   stepRestartFn = showOneWayAnovaCalc;
   const r = computeOneWayAnova();
-  const color = '#5A6672';
+  const color = 'var(--muted)';
   clearFormulaCard(0);
   renderGrandMeanLine(false);
   if(!r){
@@ -3040,7 +3265,7 @@ function showOneWayAnovaCalc(){
   }
   const activeGroups = []; for(let g=0; g<numLevels; g++) if(getRawValuesForGroup(g).length>0) activeGroups.push(g);
   ensureRevealed(0, 'n', ()=> ensureRevealed(0, 'mean', ()=>{
-    addCenteredFormulaLine(0, 'One-Way ANOVA', '#000', null, ()=>{
+    addCenteredFormulaLine(0, 'One-Way ANOVA', 'var(--ink)', null, ()=>{
       const rowBetween = {label:'Between'}, rowWithin = {label:'Within'}, rowTotal = {label:'Total'};
       const rowDefs = [rowBetween, rowWithin, rowTotal];
       renderStatsTableSkeleton(0, rowDefs, ['Source','SS','df','MS','F','p'], (geom)=>{
@@ -3122,7 +3347,7 @@ function runIndividualZ(group, personId, score){
   const origin = p ? {x:p.x, y:p.y-11} : {x:(ZONE.dist.x0+ZONE.dist.x1)/2, y:contentTop-20};
 
   clearFormulaCard(group);
-  addCenteredFormulaLine(group, 'z = (X \u2212 x\u0304) / s', '#000', null, ()=>{
+  addCenteredFormulaLine(group, 'z = (X \u2212 x\u0304) / s', 'var(--ink)', null, ()=>{
     ensureRevealed(group, 'mean', ()=>{
       ensureRevealed(group, 'sd', ()=>{
         buildSequentialLine(group, [
@@ -3635,16 +3860,25 @@ function sendToMeasure(idx, slot, personColor, group, cb){
       }, T(300));
     } else {
       const score = cachedGenerateScore(idx, group);
-      setTimeout(()=>{
-        playTestSequence(score, ()=>{
+      if(customColumns){
+        setTimeout(()=>{
+          d3.select('#tallyText').text('X = '+score).attr('opacity',0)
+            .transition().duration(T(220)).ease(d3.easeBackOut.overshoot(1.6)).attr('opacity',1);
           labelSampleIcon(idx, String(score));
-          awaitStepGate(()=>{
-            setTimeout(()=>{
-              sendToDistribution(travelerG, target, score, group, cb);
-            }, T(700));
+          awaitStepGate(()=> setTimeout(()=> sendToDistribution(travelerG, target, score, group, cb), T(550)));
+        }, T(300));
+      } else {
+        setTimeout(()=>{
+          playTestSequence(score, ()=>{
+            labelSampleIcon(idx, String(score));
+            awaitStepGate(()=>{
+              setTimeout(()=>{
+                sendToDistribution(travelerG, target, score, group, cb);
+              }, T(700));
+            });
           });
-        });
-      }, T(300));
+        }, T(300));
+      }
     }
   });
 }
@@ -3669,6 +3903,32 @@ const GROUP_MARKERS = [
   {dx:-14, dy:40, shape:'shield'}    // D: shield, left hand, high
 ];
 
+// draws just the marker glyph (flag/barbell/star/shield), reused by both the held-item flag
+// that flies with each person and the static legend icon in their Manipulation station box
+function drawMarkerShapeOnly(g, shape, color, withLetter, letter){
+  if(shape==='flag'){
+    g.append('rect').attr('x',0).attr('y',-12).attr('width',13).attr('height',9).attr('rx',1)
+      .attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
+    if(withLetter) g.append('text').attr('x',6.5).attr('y',-5).attr('text-anchor','middle')
+      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',7.5).attr('font-weight',800).attr('fill','#fff').text(letter);
+  } else if(shape==='barbell'){
+    g.append('line').attr('x1',-9).attr('y1',-8).attr('x2',9).attr('y2',-8).attr('stroke',color).attr('stroke-width',2.8);
+    g.append('circle').attr('cx',-9).attr('cy',-8).attr('r',5).attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
+    g.append('circle').attr('cx',9).attr('cy',-8).attr('r',5).attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
+    if(withLetter) g.append('text').attr('x',0).attr('y',-5).attr('text-anchor','middle')
+      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',6).attr('font-weight',800).attr('fill','#fff').text(letter);
+  } else if(shape==='star'){
+    g.append('path').attr('transform','translate(0,-8)').attr('d', starPathMini(8,3.4))
+      .attr('fill',color).attr('stroke','#fff').attr('stroke-width',0.9);
+    if(withLetter) g.append('text').attr('x',0).attr('y',-5.5).attr('text-anchor','middle')
+      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',6).attr('font-weight',800).attr('fill','#fff').text(letter);
+  } else {
+    g.append('path').attr('d','M 0,-16 L 7,-12 L 7,-4 L 0,1 L -7,-4 L -7,-12 Z')
+      .attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
+    if(withLetter) g.append('text').attr('x',0).attr('y',-7).attr('text-anchor','middle')
+      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',6.5).attr('font-weight',800).attr('fill','#fff').text(letter);
+  }
+}
 function addGroupFlag(parentG, group, iconScale){
   const color = CAT_COLORS[group%CAT_COLORS.length];
   const letter = String.fromCharCode(65+group);
@@ -3677,30 +3937,7 @@ function addGroupFlag(parentG, group, iconScale){
   const flagG = parentG.append('g').attr('class','group-flag').attr('transform',`translate(${m.dx},${-m.dy}) scale(${s})`)
     .attr('opacity',0);
   flagG.append('line').attr('x1',0).attr('y1',12).attr('x2',0).attr('y2',-2).attr('stroke','#555').attr('stroke-width',1.4);
-
-  if(m.shape==='flag'){
-    flagG.append('rect').attr('x',0).attr('y',-12).attr('width',13).attr('height',9).attr('rx',1)
-      .attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
-    flagG.append('text').attr('x',6.5).attr('y',-5).attr('text-anchor','middle')
-      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',7.5).attr('font-weight',800).attr('fill','#fff').text(letter);
-  } else if(m.shape==='barbell'){
-    flagG.append('line').attr('x1',-9).attr('y1',-8).attr('x2',9).attr('y2',-8).attr('stroke',color).attr('stroke-width',2.8);
-    flagG.append('circle').attr('cx',-9).attr('cy',-8).attr('r',5).attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
-    flagG.append('circle').attr('cx',9).attr('cy',-8).attr('r',5).attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
-    flagG.append('text').attr('x',0).attr('y',-5).attr('text-anchor','middle')
-      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',6).attr('font-weight',800).attr('fill','#fff').text(letter);
-  } else if(m.shape==='star'){
-    flagG.append('path').attr('transform','translate(0,-8)').attr('d', starPathMini(8,3.4))
-      .attr('fill',color).attr('stroke','#fff').attr('stroke-width',0.9);
-    flagG.append('text').attr('x',0).attr('y',-5.5).attr('text-anchor','middle')
-      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',6).attr('font-weight',800).attr('fill','#fff').text(letter);
-  } else {
-    flagG.append('path').attr('d','M 0,-16 L 7,-12 L 7,-4 L 0,1 L -7,-4 L -7,-12 Z')
-      .attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
-    flagG.append('text').attr('x',0).attr('y',-7).attr('text-anchor','middle')
-      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-size',6.5).attr('font-weight',800).attr('fill','#fff').text(letter);
-  }
-
+  drawMarkerShapeOnly(flagG, m.shape, color, true, letter);
   flagG.transition().duration(T(220)).ease(d3.easeBackOut.overshoot(1.8)).attr('opacity',1);
   return flagG;
 }
@@ -3740,14 +3977,21 @@ function sendToDistribution(travelerG, from, score, group, cb){
       .attr('transform',`translate(${distTarget.x},${distTarget.y}) scale(${distIconScale})`)
       .on('end', ()=>{
         gBins[idx]++;
+        playPlopSound();
         if(isOverflow){
           overflowCountsByGroup[group][idx]++;
           const groupOverflow = overflowCountsByGroup[group][idx];
           d3.select('#overflowLabel-'+idx).text('+'+groupOverflow+' more ('+distGroupLabel(group)+')');
           travelerG.transition().duration(T(260)).attr('opacity',0).remove();
         } else {
+          const ledColor = CAT_COLORS[group%CAT_COLORS.length];
           travelerG.attr('id', 'distIcon-'+group+'-'+idx+'-'+stackIndex);
-          travelerG.selectAll('.p-head,.p-body,.p-leg,.p-arm').attr('fill-opacity',0.62);
+          if(currentTheme==='dark'){
+            travelerG.selectAll('.p-head,.p-body,.p-leg,.p-arm').attr('fill-opacity',0.45);
+            travelerG.style('filter', `drop-shadow(0 0 2px ${ledColor}) drop-shadow(0 0 7px ${ledColor})`);
+          } else {
+            travelerG.selectAll('.p-head,.p-body,.p-leg,.p-arm').attr('fill-opacity',0.62);
+          }
           d3.select('#distGroupLayer-'+group).append(function(){ return travelerG.node(); });
           addGroupFlag(travelerG, group, distIconScale);
           travelerG.append('text').attr('class','jersey-label').attr('x',0).attr('y',-11).attr('text-anchor','middle')
@@ -3866,14 +4110,22 @@ function measureConditionDependent(idx, travelerG, fromPos, fromScale, color, gr
   if(!pairedData[idx]){ travelerG.remove(); return; }
   const cachedScore = pairedData[idx].scores[group];
   if(!zoneVisible.measure){
-    const score = cachedScore!==undefined ? cachedScore : generateScore(group);
+    const score = cachedScore!==undefined ? cachedScore : cachedGenerateScore(idx, group);
     finishMeasureDependent(idx, travelerG, fromPos, color, group, order, step, score, cb);
     return;
   }
   const target = {x:measureStationX, y:measureStationY+52};
   const mid = {x:(fromPos.x+target.x)/2, y: Math.min(fromPos.y,target.y)-30};
   flyCurve(travelerG, fromPos, mid, target, fromScale, 1.3, T(700), d3.easeCubicInOut, ()=>{
-    const score = cachedScore!==undefined ? cachedScore : generateScore(group);
+    const score = cachedScore!==undefined ? cachedScore : cachedGenerateScore(idx, group);
+    if(customColumns){
+      setTimeout(()=>{
+        d3.select('#tallyText').text('X = '+score).attr('opacity',0)
+          .transition().duration(T(220)).ease(d3.easeBackOut.overshoot(1.6)).attr('opacity',1);
+        setTimeout(()=> finishMeasureDependent(idx, travelerG, target, color, group, order, step, score, cb), T(400));
+      }, T(300));
+      return;
+    }
     setTimeout(()=>{
       playTestSequence(score, ()=>{
         setTimeout(()=> finishMeasureDependent(idx, travelerG, target, color, group, order, step, score, cb), T(300));
@@ -3982,6 +4234,7 @@ function sendConditionCirclesToHistogram(idx, order, cb){
       const currentCount = gBins[colIdx];
       const isOverflow = currentCount>=stackCap;
       gBins[colIdx]++;
+      playPlopSound();
       if(isOverflow){
         overflowCountsByGroup[group][colIdx]++;
         const n = overflowCountsByGroup[group][colIdx];
@@ -3989,6 +4242,7 @@ function sendConditionCirclesToHistogram(idx, order, cb){
         flying.transition().duration(T(260)).attr('opacity',0).remove();
       } else {
         flying.attr('id','distCircle-'+idx+'-'+group);
+        if(currentTheme==='dark') flying.style('filter', `drop-shadow(0 0 2px ${color}) drop-shadow(0 0 6px ${color})`);
         svg.select('#distGroupLayer-'+group).append(function(){ return flying.node(); });
         landedPos[group] = target;
       }
@@ -4010,7 +4264,7 @@ function drawSpaghettiInHistogram(idx, landedPos){
     return (i===0?'M ':'L ')+p.x.toFixed(1)+','+p.y.toFixed(1);
   }).join(' ');
   svg.select('#distSpaghettiLayer').append('path').attr('id','distSpaghetti-'+idx)
-    .attr('d',pathData).attr('fill','none').attr('stroke','#5A6672').attr('stroke-width',1)
+    .attr('d',pathData).attr('fill','none').attr('stroke','var(--muted)').attr('stroke-width',1)
     .attr('opacity',0)
     .transition().duration(T(350)).attr('opacity',0.35);
 }
@@ -4172,7 +4426,7 @@ function computeDifferenceDependent(idx, personG, slot, cb){
   const diff = s1 - s0;
   const svg = d3.select('#stage');
   const flyLayer = svg.select('#flyLayer');
-  const diffColor = '#5A6672';
+  const diffColor = 'var(--muted)';
 
   const pos0 = sampleCircleTargetPos(slot, 0);
   const pos1 = sampleCircleTargetPos(slot, 1);
@@ -4189,7 +4443,7 @@ function computeDifferenceDependent(idx, personG, slot, cb){
     clone0.remove(); clone1.remove();
     const exprG = flyLayer.append('g').attr('transform',`translate(${meetX},${meetY})`);
     const exprText = exprG.append('text').attr('text-anchor','middle')
-      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-weight',800).attr('font-size',15).attr('fill','#000')
+      .attr('font-family',"'IBM Plex Mono',monospace").attr('font-weight',800).attr('font-size',15).attr('fill','var(--ink)')
       .attr('opacity',0).text(s1+' \u2212 '+s0);
     exprText.transition().duration(T(220)).attr('opacity',1)
       .transition().delay(T(550)).duration(T(200)).attr('opacity',0)
@@ -4225,7 +4479,7 @@ function sendDifferenceToDistribution(idx, personG, slot, diff, cb){
   const flyLayer = svg.select('#flyLayer');
   const travelerG = flyLayer.append('g').attr('transform',`translate(${slot.x},${slot.y}) scale(${sampleIconScale})`);
   appendPersonShapes(travelerG, NEUTRAL_COLOR, false);
-  const diffColor = '#5A6672';
+  const diffColor = 'var(--muted)';
   recolorPerson(travelerG, diffColor, T(1));
   // the original person + jersey stay in the sample area as a permanent record; this traveler is a fresh clone
   sendToDistribution(travelerG, slot, diff, 0, cb);
@@ -4435,6 +4689,160 @@ d3.selectAll('#designOneBtn, #designIndepBtn, #designDepBtn').on('click', functi
   d3.select('#nVal').text(sampleSize);
   resetStudy();
 });
+
+// ---------------- custom data (paste-your-own-sample) ----------------
+function parseFlatNumbers(text){
+  const parts = text.split(/[\s,;\t\n\r]+/).map(s=>s.trim()).filter(s=>s.length>0);
+  const nums = [];
+  parts.forEach(p=>{
+    const v = parseFloat(p);
+    if(!isNaN(v)) nums.push(v);
+  });
+  return nums;
+}
+// Detects one pasted column of numbers (any mix of spaces/commas/newlines), OR a multi-column
+// table (tab-separated, like a spreadsheet selection, or comma-separated with one group per line),
+// with an optional non-numeric header row used as group/condition labels.
+function parseCustomColumns(text){
+  const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l.length>0);
+  if(lines.length===0) return {columns:[], labels:[]};
+
+  const hasTab = lines.some(l=> l.includes('\t'));
+  let delim = null;
+  if(hasTab){
+    delim = /\t+/;
+  } else if(lines.length>1){
+    const commaCounts = lines.map(l=> (l.match(/,/g)||[]).length);
+    if(commaCounts[0]>0 && commaCounts.every(c=> c===commaCounts[0])) delim = /\s*,\s*/;
+  }
+
+  if(!delim){
+    return {columns:[parseFlatNumbers(text)], labels:['']};
+  }
+
+  let rows = lines.map(l=> l.split(delim).map(c=>c.trim()).filter(c=>c.length>0));
+  let labels = null;
+  const firstRowNumeric = rows[0].length>0 && rows[0].every(c=> !isNaN(parseFloat(c)));
+  if(!firstRowNumeric){
+    labels = rows[0];
+    rows = rows.slice(1);
+  }
+  const numCols = Math.max(0, ...rows.map(r=>r.length));
+  const columns = Array.from({length:numCols}, ()=>[]);
+  rows.forEach(r=>{
+    for(let c=0;c<numCols;c++){
+      const cell = r[c];
+      if(cell===undefined || cell==='') continue;
+      const v = parseFloat(cell);
+      if(!isNaN(v)) columns[c].push(v);
+    }
+  });
+  if(!labels) labels = columns.map(()=> '');
+  return {columns, labels};
+}
+function forceOneSampleDesign(){
+  if(sampleDesignUI !== 'one') document.getElementById('designOneBtn').click();
+}
+function forceDesign(kind){
+  if(kind==='dependent'){
+    if(sampleDesignUI !== 'dependent') document.getElementById('designDepBtn').click();
+  } else {
+    if(sampleDesignUI !== 'independent') document.getElementById('designIndepBtn').click();
+  }
+}
+d3.select('#dataTextarea').on('input', function(){
+  const text = this.value;
+  const statusEl = document.getElementById('dataStatus');
+  const designRow = document.getElementById('dataDesignBtns');
+  if(!text.trim()){ statusEl.textContent = ''; designRow.style.display = 'none'; return; }
+  const parsed = parseCustomColumns(text);
+  const cols = parsed.columns.filter(c=>c.length>0);
+  if(cols.length<=1){
+    designRow.style.display = 'none';
+    const n = cols[0] ? cols[0].length : 0;
+    statusEl.textContent = n>=2 ? `Detected 1 column, ${n} values — one-sample design.` : 'Paste at least 2 numeric values.';
+  } else {
+    designRow.style.display = 'flex';
+    const lens = cols.map(c=>c.length);
+    const labelText = parsed.labels.some(l=>l) ? ' ('+parsed.labels.filter(l=>l).join(', ')+')' : '';
+    let msg = `Detected ${cols.length} columns${labelText}, ${lens.join('/')} rows.`;
+    if(cols.length>4) msg += ' Only the first 4 columns will be used.';
+    if(new Set(lens).size>1) msg += ` Columns will be trimmed to ${Math.min(...lens)} rows to line up.`;
+    statusEl.textContent = msg;
+  }
+});
+d3.selectAll('#dataDesignIndepBtn, #dataDesignDepBtn').on('click', function(){
+  d3.selectAll('#dataDesignIndepBtn, #dataDesignDepBtn').classed('active', false);
+  d3.select(this).classed('active', true);
+});
+d3.select('#dataApplyBtn').on('click', function(){
+  const statusEl = document.getElementById('dataStatus');
+  const parsed = parseCustomColumns(document.getElementById('dataTextarea').value);
+  let columns = parsed.columns.filter(c=>c.length>0);
+  if(columns.length===0 || columns[0].length<2){
+    statusEl.textContent = 'Paste at least 2 numeric values (or multiple columns for a multi-group design).';
+    return;
+  }
+  columns = columns.slice(0, MAX_GROUPS);
+  const labels = parsed.labels.slice(0, columns.length);
+  const minLen = Math.min(...columns.map(c=>c.length));
+  columns = columns.map(c=> c.slice(0, minLen));
+
+  const rounded = columns.map(c=> c.map(v=> Math.round(v)));
+  const hadRounding = rounded.some((c,ci)=> c.some((v,i)=> v!==columns[ci][i]));
+
+  customColumns = rounded;
+  customColumnLabels = labels;
+  if(dvScale==='nominal') dvScale = 'ratio';
+
+  const nGroups = customColumns.length;
+  const n = minLen;
+
+  groupLabels = ['','','',''];
+  if(nGroups>1){
+    const chosenDesign = document.querySelector('#dataDesignBtns .mini-btn.active');
+    forceDesign(chosenDesign && chosenDesign.dataset.design==='dependent' ? 'dependent' : 'independent');
+    numLevels = nGroups;
+    d3.select('#levelsSlider').property('value', numLevels);
+    d3.select('#levelsVal').text(numLevels);
+    labels.forEach((lab,i)=>{ if(lab) groupLabels[i] = lab; });
+  } else {
+    forceOneSampleDesign();
+  }
+
+  perGroupN = n;
+  d3.select('#perGroupSlider').attr('max', Math.max(60, n)).property('value', n);
+  d3.select('#perGroupVal').text(n);
+
+  sampleSize = (nGroups>1 && sampleDesign!=='dependent') ? nGroups*n : n;
+  d3.select('#nSlider').attr('max', Math.max(500, sampleSize)).property('value', sampleSize);
+  d3.select('#nVal').text(sampleSize);
+
+  const label = document.getElementById('dataLabelInput').value.trim();
+  if(label){ measureDescription = label; d3.select('#measureInput').property('value', label); }
+
+  resetStudy();
+
+  const mid = Math.round(((TASK_MIN+TASK_MAX)/2)*10)/10;
+  testMu0 = mid;
+  d3.select('#mu0Slider2').attr('min',TASK_MIN).attr('max',TASK_MAX).attr('step',0.1).property('value',mid);
+  d3.select('#mu0Val2').text(mid.toFixed(1));
+
+  let msg = nGroups>1
+    ? `Loaded ${nGroups} columns × ${n} rows each (min ${TASK_MIN}, max ${TASK_MAX}), ${sampleDesign==='dependent'?'repeated measures':'independent samples'}.`
+    : `Loaded ${n} values (min ${TASK_MIN}, max ${TASK_MAX}).`;
+  if(hadRounding) msg += ' Rounded to the nearest whole number for plotting.';
+  msg += ' Use "Sample next participant" or "Run all" below to bring them in.';
+  statusEl.textContent = msg;
+  document.getElementById('dataClearBtn').style.display = 'inline-block';
+});
+d3.select('#dataClearBtn').on('click', function(){
+  customColumns = null; customColumnLabels = null;
+  document.getElementById('dataStatus').textContent = 'Cleared — back to randomly generated scores.';
+  d3.select(this).style('display','none');
+  resetStudy();
+});
+
 const SPEED_MIN = 0.25, SPEED_MAX = 50, SPEED_SLIDER_MAX = 1000;
 function sliderPosToSpeed(pos){ return SPEED_MIN * Math.pow(SPEED_MAX/SPEED_MIN, pos/SPEED_SLIDER_MAX); }
 function speedToSliderPos(sp){ return SPEED_SLIDER_MAX * Math.log(sp/SPEED_MIN) / Math.log(SPEED_MAX/SPEED_MIN); }
@@ -4796,6 +5204,23 @@ window.addEventListener('resize', fitStageWidth);
     d3.select('#stage').attr('viewBox', `0 0 ${W} ${H}`);
   }
 })();
+
+// ---------------- theme toggle ----------------
+function applyTheme(theme){
+  currentTheme = theme;
+  ACCENT = PALETTES[theme].ACCENT;
+  NEUTRAL_COLOR = PALETTES[theme].NEUTRAL;
+  CAT_COLORS = PALETTES[theme].CAT;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeToggleBtn').innerHTML = theme==='light' ? '&#9789; Dark mode' : '&#9788; Light mode';
+  localStorage.setItem('psy10b-theme', theme);
+}
+document.getElementById('themeToggleBtn').addEventListener('click', ()=>{
+  applyTheme(currentTheme==='light' ? 'dark' : 'light');
+  participantScoreCache = {};
+  resetStudy();
+});
+applyTheme(localStorage.getItem('psy10b-theme') || 'dark');
 
 resetStudy();
 setTimeout(fitStageHeight, 0);
