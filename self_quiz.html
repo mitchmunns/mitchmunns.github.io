@@ -137,6 +137,8 @@
   .topic-tile .count{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:3px;}
   .topic-tile .progress-stat{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:5px;}
   .topic-tile .progress-stat b{color:var(--accent-ink); font-size:12.5px;}
+  .topic-tile .class-stat{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:2px;}
+  .topic-tile .class-stat b{color:var(--ink); font-size:12.5px;}
 
   .lecture-badge{
     font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.05em;
@@ -1104,6 +1106,22 @@ async function showQuestionDifficulty(questionText){
   }catch(e){ /* supplementary info only -- fail silently */ }
 }
 
+// topic_stats is the same fully-aggregated, non-identifying pattern as question_stats,
+// but rolled up per category -- lets the topic-select screen show "this one's hard for
+// everyone" alongside each student's own score (see supabase_schema_v3.sql).
+let topicStatsCache = {};
+async function loadTopicStats(){
+  if(!sbClient) return;
+  try{
+    const {data, error} = await sbClient.from('topic_stats').select('topic, attempts, correct_count');
+    if(error || !data) return;
+    topicStatsCache = {};
+    data.forEach(row=>{ topicStatsCache[row.topic] = row; });
+    renderTopicGrid();
+    updateTopicUI();
+  }catch(e){ /* supplementary info only -- fail silently */ }
+}
+
 // ---------------- accounts (optional -- guest mode is the default) ----------------
 function refreshAccountUI(){
   const statusEl = document.getElementById('accountStatus');
@@ -1226,9 +1244,13 @@ function renderTopicGrid(){
     }
     const prog = progress[t.key];
     const progStat = prog && prog.total>0
-      ? `<div class="progress-stat"><b>${prog.points}</b> pt${prog.points===1?'':'s'} &middot; ${Math.round(100*prog.correct/prog.total)}% accuracy (${prog.total} answered)</div>`
+      ? `<div class="progress-stat">You: <b>${prog.points}</b> pt${prog.points===1?'':'s'} &middot; ${Math.round(100*prog.correct/prog.total)}% accuracy (${prog.total} answered)</div>`
       : '';
-    tile.innerHTML = `<div class="chk"></div><div class="name">${t.name}</div><div class="count">${total} questions available</div>${progStat}${lecBadge}`;
+    const cstat = topicStatsCache[t.key];
+    const classStat = cstat && cstat.attempts>0
+      ? `<div class="class-stat">Class: <b>${Math.round(100*cstat.correct_count/cstat.attempts)}%</b> correct (${cstat.attempts} attempt${cstat.attempts===1?'':'s'})</div>`
+      : '';
+    tile.innerHTML = `<div class="chk"></div><div class="name">${t.name}</div><div class="count">${total} questions available</div>${progStat}${classStat}${lecBadge}`;
     tile.addEventListener('click', ()=>{
       if(state.selectedTopics.has(t.key)) state.selectedTopics.delete(t.key);
       else state.selectedTopics.add(t.key);
@@ -1480,6 +1502,7 @@ document.getElementById('quitBtn').addEventListener('click', ()=>{
   document.getElementById('screenSelect').classList.remove('hidden');
   renderTopicGrid();
   updateTopicUI();
+  loadTopicStats();
 });
 
 // ---------------- SCREEN 3: results ----------------
@@ -1515,6 +1538,7 @@ document.getElementById('backToTopicsBtn').addEventListener('click', ()=>{
   document.getElementById('screenSelect').classList.remove('hidden');
   renderTopicGrid();
   updateTopicUI();
+  loadTopicStats();
 });
 
 document.getElementById('retryMissedBtn').addEventListener('click', ()=>{
@@ -1733,6 +1757,7 @@ document.getElementById('pNewBtn').addEventListener('click', newPracticeProblem)
 
 renderTopicGrid();
 updateTopicUI();
+loadTopicStats();
 renderPracticeTypeRow();
 newPracticeProblem();
 
