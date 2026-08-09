@@ -231,7 +231,7 @@ function updateSkewUI(){
 const meanLinePlugin={id:'meanLine',afterDraw(chart){
   if(chart.canvas.id!=='samC'||lastMean===null)return;
   const{ctx,chartArea}=chart;if(!chartArea)return;
-  const px=chartArea.left+(lastMean-popMin)/(popMax-popMin)*(chartArea.right-chartArea.left);
+  const px=chart.scales.x.getPixelForValue(lastMean);
   ctx.save();ctx.beginPath();ctx.moveTo(px,chartArea.top);ctx.lineTo(px,chartArea.bottom);
   ctx.strokeStyle=C_MEAN_LINE;ctx.lineWidth=2;ctx.setLineDash([5,3]);ctx.stroke();ctx.setLineDash([]);
   ctx.font='500 11px system-ui,sans-serif';ctx.fillStyle=C_MEAN_LINE;ctx.textAlign='center';
