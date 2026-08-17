@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stats Self-Quiz — Weeks 1–2 Checkpoint</title>
+<title>Stats Self-Quiz — Weeks 1–4 Checkpoint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -151,6 +151,12 @@
   .lecture-badge.lec-4{ color:#FFCBEE; background:rgba(255,110,199,0.16); border-color:rgba(255,110,199,0.55); box-shadow:0 0 8px rgba(255,110,199,0.4); }
   .lecture-badge.lec-5{ color:#E7D2FF; background:rgba(199,125,255,0.16); border-color:rgba(199,125,255,0.55); box-shadow:0 0 8px rgba(199,125,255,0.4); }
   .lecture-badge.lec-6{ color:#FFD3C2; background:rgba(255,107,74,0.16); border-color:rgba(255,107,74,0.55); box-shadow:0 0 8px rgba(255,107,74,0.4); }
+  .lecture-badge.lec-7{ color:#B6FFF0; background:rgba(0,191,165,0.16); border-color:rgba(0,191,165,0.55); box-shadow:0 0 8px rgba(0,191,165,0.4); }
+  .lecture-badge.lec-8{ color:#E6FFB0; background:rgba(170,220,50,0.18); border-color:rgba(170,220,50,0.55); box-shadow:0 0 8px rgba(170,220,50,0.4); }
+  .lecture-badge.lec-9{ color:#FFC7C7; background:rgba(255,80,80,0.16); border-color:rgba(255,80,80,0.55); box-shadow:0 0 8px rgba(255,80,80,0.4); }
+  .lecture-badge.lec-10{ color:#D2D6FF; background:rgba(120,130,255,0.18); border-color:rgba(120,130,255,0.55); box-shadow:0 0 8px rgba(120,130,255,0.4); }
+  .lecture-badge.lec-11{ color:#FFE4AD; background:rgba(255,179,0,0.16); border-color:rgba(255,179,0,0.55); box-shadow:0 0 8px rgba(255,179,0,0.4); }
+  .lecture-badge.lec-12{ color:#C2EFFF; background:rgba(80,190,255,0.16); border-color:rgba(80,190,255,0.55); box-shadow:0 0 8px rgba(80,190,255,0.4); }
   .lecture-badge.lec-multi{
     color:#F1D8FF;
     background:linear-gradient(90deg, rgba(199,125,255,0.2), rgba(255,107,74,0.2));
@@ -447,6 +453,12 @@
   [data-theme="light"] .lecture-badge.lec-4{color:#7a0f4c; border-color:rgba(200,60,140,.6);}
   [data-theme="light"] .lecture-badge.lec-5{color:#4a1f7a; border-color:rgba(140,80,200,.6);}
   [data-theme="light"] .lecture-badge.lec-6{color:#7a2a0f; border-color:rgba(200,90,50,.6);}
+  [data-theme="light"] .lecture-badge.lec-7{color:#00695c; border-color:rgba(0,150,135,.6);}
+  [data-theme="light"] .lecture-badge.lec-8{color:#5a6b00; border-color:rgba(150,180,20,.6);}
+  [data-theme="light"] .lecture-badge.lec-9{color:#8a1f1f; border-color:rgba(210,60,60,.6);}
+  [data-theme="light"] .lecture-badge.lec-10{color:#3a3f9e; border-color:rgba(100,110,220,.6);}
+  [data-theme="light"] .lecture-badge.lec-11{color:#7a5200; border-color:rgba(200,145,0,.6);}
+  [data-theme="light"] .lecture-badge.lec-12{color:#005f80; border-color:rgba(40,150,200,.6);}
   [data-theme="light"] .lecture-badge.lec-multi{color:#6b1f4a; border-color:rgba(180,80,110,.6);}
   [data-theme="light"] .btn-primary{background:var(--ink);color:#fff;box-shadow:none;}
   [data-theme="light"] .btn-primary:disabled{background:#B9C2C4;color:#fff;border-color:transparent;}
@@ -480,7 +492,7 @@
   <div class="top">
     <div class="brand">
       <h1>Self-Quiz</h1>
-      <span class="tag">Weeks 1&ndash;2 checkpoint</span>
+      <span class="tag">Weeks 1&ndash;4 checkpoint</span>
     </div>
     <div class="top-controls">
       <div class="account-bar">
@@ -510,7 +522,7 @@
       <button class="auth-guest-link" id="authGuestBtn">Continue as guest &rarr;</button>
     </div>
   </div>
-  <p class="sub">Pick the topics you want to practice, answer at your own pace, and see exactly where to focus before Quiz&nbsp;1. This is separate from the Population&rarr;Sample&rarr;Measure&rarr;Distribution visualizer &mdash; but several questions are easiest to reason through if you actually run the scenario there first.</p>
+  <p class="sub">Pick the topics you want to practice, answer at your own pace, and see exactly where to focus before Quiz&nbsp;1 or Quiz&nbsp;2. This is separate from the Population&rarr;Sample&rarr;Measure&rarr;Distribution visualizer &mdash; but several questions are easiest to reason through if you actually run the scenario there first.</p>
   <div class="visualizer-note">Stuck on a calculation question? <b>Open the visualizer</b> and build the small dataset described. </div>
 
   <div class="mode-tabs">
@@ -617,7 +629,7 @@
     </div>
   </div>
 
-  <footer>Built as a companion to the sampling &amp; distribution visualizer &middot; covers material through Week 2, Lecture 5</footer>
+  <footer>Built as a companion to the sampling &amp; distribution visualizer &middot; covers material through Week 4, Lecture 12</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -634,7 +646,13 @@ const TOPICS = [
   {key:'nhst', name:'Hypothesis Testing Logic', lectures:[5]},
   {key:'design', name:'Research Design', lectures:[]},
   {key:'freqprob', name:'Frequency Distributions & Probability', lectures:[4]},
-  {key:'ttest', name:'Z-Tests, T-Tests & Computations', lectures:[5,6]}
+  {key:'ttest', name:'Z-Tests, T-Tests & Computations', lectures:[5,6]},
+  {key:'indep-ttest', name:'Independent-Samples t-Test', lectures:[7]},
+  {key:'dep-ttest', name:'Dependent-Samples (Repeated-Measures) t-Test', lectures:[8]},
+  {key:'anova-logic', name:'ANOVA Logic & the F-Ratio', lectures:[9]},
+  {key:'oneway-anova', name:'One-Way ANOVA & Post-Hoc Tests', lectures:[10]},
+  {key:'rm-anova', name:'Repeated-Measures ANOVA', lectures:[11]},
+  {key:'twoway-anova', name:'Two-Way ANOVA', lectures:[12]}
 ];
 
 // type: 'mc' (choices+answer index), 'tf' (True/False, answer boolean), 'numeric' (answer number, tolerance optional)
@@ -969,7 +987,154 @@ const QUESTIONS = [
  explain:"A p-value is a conditional probability \u2014 it tells you how likely your data (or more extreme data) would be if H0 were true, not the probability that H0 itself is true."},
 {topic:'ttest', type:'mc', q:"Which of the following would make a hypothesis test more likely to detect a real effect (increase power), without changing alpha?",
  choices:["Decreasing the sample size","Increasing the sample size","Reporting only the mean instead of running a test","Rounding your z-statistic down before comparing it to the critical value"],
- answer:1, explain:"Larger samples shrink the standard error, making real effects easier to detect \u2014 this increases power (the ability to correctly reject a false null)."}
+ answer:1, explain:"Larger samples shrink the standard error, making real effects easier to detect \u2014 this increases power (the ability to correctly reject a false null)."},
+
+// ---------------- indep-ttest (Lecture 7) ----------------
+{topic:'indep-ttest', type:'mc', q:"An independent-samples t-test is used to compare:",
+ choices:["Two means from two completely separate, unrelated groups","A single sample mean to a known population mean","The same group of people measured twice","Three or more group means at once"],
+ answer:0, explain:"Independent samples means the two groups don't overlap \u2014 different people in each condition, with no pairing between them."},
+{topic:'indep-ttest', type:'tf', q:"For a two-tailed independent-samples t-test, the null hypothesis is stated in terms of population parameters (\u03bc1 and \u03bc2), not sample statistics (M1 and M2).",
+ answer:true, explain:"Hypotheses are always claims about the population, not the specific sample you happened to collect \u2014 so H0 reads \u03bc1 = \u03bc2, never M1 = M2."},
+{topic:'indep-ttest', type:'mc', q:"In the independent-samples t formula, the numerator represents:",
+ choices:["The pooled variance","The difference between the two sample means (M1 \u2212 M2)","The total sample size","The critical t value"],
+ answer:1, explain:"Like every t-statistic, the numerator is the observed difference you're testing \u2014 here, how far apart the two sample means actually landed."},
+{topic:'indep-ttest', type:'mc', q:"The denominator of the independent-samples t formula is:",
+ choices:["The estimated standard error of the difference between means, s(M1\u2212M2)","The range of the combined samples","The population standard deviation, \u03c3","The number of participants in the larger group"],
+ answer:0, explain:"As always, t = (observed difference) / (standard error of that difference) \u2014 the denominator estimates how much difference we'd expect from chance/sampling error alone."},
+{topic:'indep-ttest', type:'mc', q:"Why do we compute a pooled variance (sp\u00b2) for an independent-samples t-test?",
+ choices:["To throw away the smaller sample's data","To combine the variability from both samples into one, more stable estimate, weighted by each sample's degrees of freedom","Because the population variance is always unknown","To convert the data to z-scores first"],
+ answer:1, explain:"Pooling gives a better single estimate of the (assumed shared) population variance than either sample alone could provide \u2014 larger samples contribute proportionally more."},
+{topic:'indep-ttest', type:'mc', q:"Compared to a two-tailed test, what is the main disadvantage of a one-tailed independent-samples t-test?",
+ choices:["It always requires a larger sample size","It commits you to predicting a specific direction of effect in advance \u2014 a real effect in the unpredicted direction can't be detected as significant","It can never reach statistical significance","It doesn't have a critical value"],
+ answer:1, explain:"A one-tailed test puts all of alpha in one tail, making it easier to detect an effect in the predicted direction \u2014 but it can completely miss a real effect that goes the opposite way."},
+{topic:'indep-ttest', type:'numeric', q:"Two independent groups: n1 = 8, n2 = 8. What are the degrees of freedom (df) for this independent-samples t-test?",
+ answer:14, tol:0.01, explain:"df = n1 + n2 \u2212 2 = 8 + 8 \u2212 2 = 14. Each sample contributes n\u22121 df, since one score's variability is already 'used up' estimating that sample's own mean."},
+{topic:'indep-ttest', type:'tf', q:"The independent-samples t-test assumes that the two populations have equal variances (homogeneity of variance).",
+ answer:true, explain:"This is exactly why we pool the two sample variances into a single estimate \u2014 pooling only makes sense if we're assuming the two populations share the same underlying variance."},
+{topic:'indep-ttest', type:'short', q:"Give one practical reason a researcher might choose an independent-samples design over a repeated-measures design, despite repeated-measures usually being more statistically powerful.",
+ sample:"e.g., some manipulations can't be 'undone' between conditions (like teaching a skill), or repeated testing risks order/practice effects; independent groups also avoids needing matched or related participants.",
+ explain:"Repeated-measures designs aren't always possible or appropriate \u2014 some treatments permanently change participants (you can't 'untrain' a skill), and independent groups sidesteps order effects entirely."},
+
+// ---------------- dep-ttest (Lecture 8) ----------------
+{topic:'dep-ttest', type:'mc', q:"The two types of dependent-samples designs are:",
+ choices:["Independent groups and matched groups","Repeated-measures (same people tested twice) and matched-subjects (different people paired on relevant traits)","One-tailed and two-tailed","Between-subjects and within-groups"],
+ answer:1, explain:"Both designs create paired scores \u2014 either from the same person tested twice, or from two different people who were deliberately matched on key characteristics."},
+{topic:'dep-ttest', type:'mc', q:"Why do we calculate a dependent-samples t-test on difference scores (D = X2 \u2212 X1) rather than on the raw scores directly?",
+ choices:["Difference scores are always larger, making the test more powerful","Subtracting removes each pair's baseline/individual differences, isolating just the change caused by the treatment","D scores are required by the Central Limit Theorem","There's no real reason \u2014 it's just convention"],
+ answer:1, explain:"By taking the difference within each pair, whatever made that person or pair unique cancels out \u2014 what's left is a cleaner measure of the treatment's effect."},
+{topic:'dep-ttest', type:'mc', q:"The degrees of freedom for a dependent-samples t-test with n pairs is:",
+ choices:["n","n \u2212 1","n \u2212 2","2n \u2212 2"],
+ answer:1, explain:"Even though there are 2n raw scores, there are only n difference scores (one per pair) \u2014 so df = n \u2212 1, just like a one-sample t-test run on the D scores."},
+{topic:'dep-ttest', type:'mc', q:"Counterbalancing the order of conditions in a repeated-measures design is important because it helps control for:",
+ choices:["Sampling error","Order effects \u2014 practice, fatigue, or carryover effects tied to which condition came first","Type I error specifically","The need for a pooled variance"],
+ answer:1, explain:"If everyone did Treatment A first, any improvement in Treatment B might just be practice or fatigue, not the treatment itself. Counterbalancing spreads the order around so it doesn't systematically favor one condition."},
+{topic:'dep-ttest', type:'numeric', q:"D scores for 5 matched pairs: 2, \u22121, 3, 0, 1. What is MD (the mean difference)?",
+ answer:1, tol:0.05, explain:"MD = \u03a3D / n = (2 + (\u22121) + 3 + 0 + 1) / 5 = 5/5 = 1."},
+{topic:'dep-ttest', type:'mc', q:"The formula for the mean of the difference scores is:",
+ choices:["MD = \u03a3D / n","MD = \u03a3D\u00b2 / n","MD = D / \u03c3","MD = \u03a3(X1 + X2) / 2n"],
+ answer:0, explain:"Same logic as any mean \u2014 sum the difference scores and divide by how many pairs (n) there are."},
+{topic:'dep-ttest', type:'mc', q:"What is the main statistical benefit of a dependent-samples (repeated-measures or matched) design over an independent-samples design?",
+ choices:["It always requires fewer total data points to collect","It removes individual differences from the error term, which shrinks the standard error and increases power","It eliminates the need for a null hypothesis","It guarantees a larger effect size"],
+ answer:1, explain:"Because individual variability is subtracted out within each pair, the remaining variability (used to estimate the standard error) is smaller \u2014 making real effects easier to detect."},
+{topic:'dep-ttest', type:'tf', q:"In a matched-subjects design, the exact same participants are tested in both conditions.",
+ answer:false, explain:"That's a repeated-measures design. A matched-subjects design pairs up two different people who are similar on relevant traits (e.g., age, income) \u2014 no one participant appears in both conditions."},
+{topic:'dep-ttest', type:'short', q:"What is one potential problem with a repeated-measures design, and what's the standard solution?",
+ sample:"e.g., order/practice/fatigue effects from testing the same people twice; the solution is counterbalancing the order of conditions across participants.",
+ explain:"Testing someone twice risks order-related contamination (practice makes them better the second time, or fatigue makes them worse) \u2014 counterbalancing which condition comes first spreads that risk evenly across conditions instead of letting it bias the results."},
+
+// ---------------- anova-logic (Lecture 9) ----------------
+{topic:'anova-logic', type:'mc', q:"A researcher has 5 treatment groups and is deciding how to analyze the data. Running a separate t-test on every possible pair of groups would require 10 separate tests. What's the main statistical problem with doing that instead of a single ANOVA?",
+ choices:["10 tests would take too long to compute by hand","Each test carries its own chance of a false positive, so the combined risk of at least one Type I error across all 10 tests climbs well above alpha","t-tests aren't valid unless there are exactly two groups in the entire study","There's no real problem \u2014 the two approaches always lead to identical conclusions"],
+ answer:1, explain:"Each individual t-test carries its own 5% false-positive risk \u2014 stack enough of them up and your true chance of at least one false positive climbs well above \u03b1. ANOVA tests all the groups at once with a single error rate."},
+{topic:'anova-logic', type:'mc', q:"Why is the F-ratio always built as (between-treatments variance) \u00f7 (within-treatments variance), and never flipped the other way around?",
+ choices:["It's arbitrary \u2014 either order works exactly the same for hypothesis testing","Putting the variance that's sensitive to a real treatment effect on top means a genuine effect pushes F up and away from 1, which is what the rejection region is built around","Within-treatments variance is always the larger number, so it has to go on the bottom","F must always come out less than 1 by definition"],
+ answer:1, explain:"F is constructed so that a real treatment effect inflates the ratio above 1 \u2014 the F-table and rejection region only make sense with the numerator and denominator assigned this way."},
+{topic:'anova-logic', type:'mc', q:"In a one-way ANOVA, what happens to the F-ratio if the actual size of the treatment effect increases, while sample sizes and chance variability stay the same?",
+ choices:["F decreases toward 0","F stays exactly the same, since F only reflects chance","F increases, because the between-treatments variance (numerator) grows while the within-treatments variance (denominator) doesn't","F becomes undefined"],
+ answer:2, explain:"A bigger real treatment effect pushes the group means further apart, inflating the between-treatments variance (numerator) without touching the within-treatments/chance variance (denominator) \u2014 so F climbs."},
+{topic:'anova-logic', type:'mc', q:"If the null hypothesis is true (no real treatment effect anywhere), the expected value of the F-ratio is approximately:",
+ choices:["0","1","Equal to the sample size","Always negative"],
+ answer:1, explain:"Even with zero treatment effect, the numerator and denominator are both just estimating the same chance variability \u2014 so their ratio averages out to about 1, not 0. An F far above 1 is what signals a real effect."},
+{topic:'anova-logic', type:'mc', q:"Total variability in a one-way ANOVA is partitioned into:",
+ choices:["SStotal = SSbetween \u00d7 SSwithin","SStotal = SSbetween + SSwithin","SStotal = SSbetween \u2212 SSwithin","SStotal = SSbetween / SSwithin"],
+ answer:1, explain:"The total sum of squares splits cleanly into a between-treatments piece (differences among group means) and a within-treatments piece (differences among scores inside each group)."},
+{topic:'anova-logic', type:'numeric', q:"A one-way ANOVA compares k = 5 treatment conditions with N = 30 total participants. What is dfwithin (the error degrees of freedom)?",
+ answer:25, tol:0.01, explain:"dfwithin = N \u2212 k = 30 \u2212 5 = 25. Each group contributes its own n\u22121 df, and those sum to N\u2212k overall."},
+{topic:'anova-logic', type:'numeric', q:"A one-way ANOVA compares k = 6 treatment conditions. What is dfbetween?",
+ answer:5, tol:0.01, explain:"dfbetween = k \u2212 1 = 6 \u2212 1 = 5 \u2014 one degree of freedom is 'used up' once you know the grand mean and k\u22121 of the group means."},
+{topic:'anova-logic', type:'tf', q:"An F-ratio close to 1.0 suggests that there is little or no real treatment effect.",
+ answer:true, explain:"When numerator and denominator are both estimating essentially the same chance variability, they land close to each other \u2014 producing a ratio near 1, the signature of 'no real effect.'"},
+{topic:'anova-logic', type:'short', q:"In your own words, what do the numerator and denominator of the F-ratio each represent, conceptually?",
+ sample:"e.g., the numerator reflects how different the group means are (treatment effect + chance), and the denominator reflects how much variability you'd expect just from chance/individual differences alone \u2014 so a big F means the treatment differences are large relative to what chance alone would produce.",
+ explain:"F is fundamentally a signal-to-noise ratio: 'how much do the groups differ' (numerator) versus 'how much would we expect them to differ by chance alone' (denominator)."},
+
+// ---------------- oneway-anova (Lecture 10) ----------------
+{topic:'oneway-anova', type:'short', q:"A one-way ANOVA comes back significant. In your own words, why isn't that enough on its own to say which treatment 'worked' \u2014 what's still missing, and what kind of follow-up test fills that gap?",
+ sample:"e.g., a significant F only tells you that some group means differ somewhere among the k groups, not which specific ones \u2014 a post-hoc test like Tukey's HSD is needed to pin down exactly which pairs differ.",
+ explain:"Think of the omnibus F-test as a smoke detector: it tells you something's different somewhere, but not where. Post-hoc tests like Tukey's HSD go pair-by-pair to locate the source."},
+{topic:'oneway-anova', type:'mc', q:"Why can't you just run separate independent-samples t-tests on every pair of groups instead of using a proper post-hoc test?",
+ choices:["t-tests can't be computed once you have more than 2 groups","Doing many pairwise comparisons inflates the overall Type I error rate, which post-hoc tests like Tukey's HSD are built to control","Post-hoc tests are always more powerful for every comparison","There's no difference \u2014 it's purely a matter of convention"],
+ answer:1, explain:"This is the exact same multiple-comparisons problem that justified using ANOVA in the first place \u2014 post-hoc procedures build in a correction so the family-wise error rate stays near \u03b1."},
+{topic:'oneway-anova', type:'tf', q:"The classic version of Tukey's HSD test assumes that every treatment condition has the same sample size (n).",
+ answer:true, explain:"Tukey's HSD, in its standard form, is built around equal n per group so that a single critical 'honestly significant difference' value can be applied fairly to every pairwise comparison."},
+{topic:'oneway-anova', type:'mc', q:"Eta-squared (\u03b7\u00b2) in a one-way ANOVA represents:",
+ choices:["The critical value of F","The proportion of total variability in the DV that is accounted for by the treatment effect","The number of treatment conditions","The standard error of the mean"],
+ answer:1, explain:"\u03b7\u00b2 = SSbetween / SStotal \u2014 it's an effect-size measure, telling you what share of all the variability in scores is explained by which treatment group someone was in."},
+{topic:'oneway-anova', type:'numeric', q:"A one-way ANOVA has SSbetween = 12 and SSwithin = 28. What proportion of the total variability is accounted for by the treatment effect (\u03b7\u00b2)?",
+ answer:0.3, tol:0.01, explain:"First find SStotal = SSbetween + SSwithin = 12 + 28 = 40. Then \u03b7\u00b2 = SSbetween / SStotal = 12/40 = 0.30."},
+{topic:'oneway-anova', type:'numeric', q:"A one-way ANOVA has SStotal = 90 and SSbetween = 35. What is SSwithin?",
+ answer:55, tol:0.5, explain:"SSwithin = SStotal \u2212 SSbetween = 90 \u2212 35 = 55, since total variability splits exactly into a between-treatments piece and a within-treatments piece."},
+{topic:'oneway-anova', type:'numeric', q:"A one-way ANOVA has SSbetween = 24 and dfbetween = 3. What is MSbetween?",
+ answer:8, tol:0.2, explain:"MSbetween = SSbetween / dfbetween = 24/3 = 8."},
+{topic:'oneway-anova', type:'tf', q:"A statistically significant one-way ANOVA guarantees that every treatment mean differs significantly from every other treatment mean.",
+ answer:false, explain:"A significant F only means *at least one* pair of means differs somewhere among the groups \u2014 you need a post-hoc test to find out exactly which pair(s)."},
+{topic:'oneway-anova', type:'short', q:"Why is it a problem, statistically, to just 'eyeball' which group means look different after a significant ANOVA instead of running a formal post-hoc test?",
+ sample:"e.g., without a formal test controlling the error rate, eyeballing differences (or running lots of uncorrected t-tests) inflates the chance of falsely calling a difference significant that's really just due to chance.",
+ explain:"Any comparison you make without a controlled procedure carries its own risk of a false positive \u2014 stack up enough 'eyeballed' comparisons and you're very likely to call something significant that isn't. Post-hoc tests build in a correction for exactly this."},
+
+// ---------------- rm-anova (Lecture 11) ----------------
+{topic:'rm-anova', type:'tf', q:"In the second stage of a repeated-measures ANOVA's two-stage process, individual differences (SSbetween-subjects) are subtracted out of the within-treatments variability, leaving a smaller SSerror term.",
+ answer:true, explain:"Stage 1 splits total variability into between-treatments and within-treatments. Stage 2 pulls the consistent, person-to-person differences (SSbetween-subjects) out of that within-treatments piece, leaving a cleaner SSerror for the denominator of F."},
+{topic:'rm-anova', type:'mc', q:"Why does removing individual differences from the error term tend to increase the power of a repeated-measures ANOVA (compared to a one-way ANOVA on independent groups)?",
+ choices:["It doesn't \u2014 power stays exactly the same","A smaller SSerror produces a smaller denominator for F, which makes the F-ratio larger for the same treatment effect","It automatically increases the sample size","It changes the critical value to a more lenient one"],
+ answer:1, explain:"F = MSbetween-treatments / MSerror. Shrinking the error term (by subtracting out consistent individual differences) makes F bigger \u2014 and a bigger F is easier to push past the critical value."},
+{topic:'rm-anova', type:'numeric', q:"A repeated-measures ANOVA summary table shows SSbetween-treatments = 45 with dfbetween-treatments = 3. What is MSbetween-treatments?",
+ answer:15, tol:0.1, explain:"MS = SS / df, so MSbetween-treatments = 45 / 3 = 15."},
+{topic:'rm-anova', type:'numeric', q:"A repeated-measures ANOVA has MSbetween-treatments = 12, SSerror = 32, and dferror = 8. What is the F-ratio?",
+ answer:3, tol:0.1, explain:"MSerror = SSerror/dferror = 32/8 = 4. F = MSbetween-treatments / MSerror = 12/4 = 3."},
+{topic:'rm-anova', type:'mc', q:"If a repeated-measures ANOVA is statistically significant, how do you determine which specific treatment conditions differ from each other?",
+ choices:["You can't \u2014 RM ANOVA never supports follow-up comparisons","Run a post-hoc test, such as Tukey's HSD, just like you would after a one-way ANOVA","Automatically assume all conditions differ from each other","Rerun the study with a larger sample"],
+ answer:1, explain:"A significant omnibus F \u2014 whether from a one-way or repeated-measures ANOVA \u2014 only tells you a difference exists somewhere. Post-hoc tests like Tukey's HSD are still needed to locate it."},
+{topic:'rm-anova', type:'mc', q:"Effect size for a repeated-measures ANOVA (partial \u03b7\u00b2) is calculated as:",
+ choices:["SSbetween-treatments / SStotal","SSbetween-treatments / (SSbetween-treatments + SSerror)","SSerror / SSbetween-treatments","MSbetween-treatments \u2212 MSerror"],
+ answer:1, explain:"Because individual differences have already been pulled out of the picture, partial \u03b7\u00b2 compares the treatment effect only against the leftover error \u2014 not against the full SStotal (which still contains the between-subjects variability)."},
+{topic:'rm-anova', type:'tf', q:"In a repeated-measures ANOVA, SSerror is generally smaller than SSwithin-treatments would have been in an equivalent independent-measures design.",
+ answer:true, explain:"That's the whole point of the second stage \u2014 subtracting out SSbetween-subjects (consistent individual differences) from SSwithin-treatments leaves a smaller SSerror behind."},
+{topic:'rm-anova', type:'short', q:"What is the main statistical tradeoff of using a repeated-measures ANOVA design over an independent-measures (between-subjects) one-way ANOVA?",
+ sample:"e.g., RM ANOVA usually has more power (smaller error term, fewer participants needed) since individual differences are removed, but it risks order/practice effects and requires the same people to complete every condition.",
+ explain:"You gain power by stripping out individual differences \u2014 but you take on the same risks any repeated-measures design carries (order effects, participant dropout across conditions, and conditions that can't ethically or practically be 'undone')."},
+
+// ---------------- twoway-anova (Lecture 12) ----------------
+{topic:'twoway-anova', type:'mc', q:"A two-way ANOVA is used when a study has:",
+ choices:["One independent variable with two levels","Two independent variables (factors) examined together in the same study","Two dependent variables and no independent variable","A single sample compared to a known population mean"],
+ answer:1, explain:"'Two-way' refers to two factors (IVs) crossed with each other \u2014 for example, treatment type AND dosage, examined together rather than in separate studies."},
+{topic:'twoway-anova', type:'mc', q:"A 'main effect' in a two-way ANOVA refers to:",
+ choices:["The effect of one independent variable, averaged across all levels of the other independent variable","The effect of both independent variables combined into a single score","The largest cell mean in the design","The correlation between the two independent variables"],
+ answer:0, explain:"Each factor gets its own main effect \u2014 essentially asking 'does this IV matter, ignoring the other IV for a moment?'"},
+{topic:'twoway-anova', type:'mc', q:"An 'interaction effect' in a two-way ANOVA means:",
+ choices:["The two independent variables are correlated with each other","The effect of one independent variable depends on the specific level of the other independent variable","Neither independent variable had any effect","The main effects can't be computed"],
+ answer:1, explain:"An interaction is the 'it depends' result \u2014 e.g., a drug might help at low doses but hurt at high doses, so the effect of dose depends on which drug you gave."},
+{topic:'twoway-anova', type:'mc', q:"How many F-ratios does a standard two-way ANOVA produce?",
+ choices:["One","Two","Three: main effect A, main effect B, and the A\u00d7B interaction","Four"],
+ answer:2, explain:"You get a separate significance test for each main effect plus one for the interaction between the two factors \u2014 three F-ratios total."},
+{topic:'twoway-anova', type:'mc', q:"On a line graph of cell means, non-parallel (crossing or diverging) lines are typically a visual sign of:",
+ choices:["A main effect only, never an interaction","An interaction effect between the two independent variables","A Type II error","A violation of the homogeneity of variance assumption"],
+ answer:1, explain:"When lines are perfectly parallel, the effect of one IV is the same at every level of the other \u2014 no interaction. Non-parallel lines mean that effect changes depending on the other factor's level, the definition of an interaction."},
+{topic:'twoway-anova', type:'tf', q:"When a two-way ANOVA produces a significant interaction, the main effects should be interpreted with caution rather than taken at face value.",
+ answer:true, explain:"A significant interaction means the story is more complicated than either main effect alone suggests \u2014 the effect of one IV genuinely changes depending on the other IV, so an averaged-across-conditions 'main effect' can be misleading."},
+{topic:'twoway-anova', type:'short', q:"Give one advantage of running a single two-way (factorial) study with two independent variables, instead of running two completely separate one-way studies.",
+ sample:"e.g., a factorial design lets you detect interactions between the variables (something two separate studies never could), and it's more efficient \u2014 you get information about both IVs (and their interaction) from one combined sample.",
+ explain:"Separate studies can never reveal whether the two variables interact, since each study only ever varies one factor at a time. A factorial design is also more efficient, often needing fewer total participants to learn about both IVs."}
 ];
 
 // ---------------- sound effects (synthesized, no audio files) ----------------
@@ -1218,7 +1383,13 @@ const LECTURE_COLORS = {
   3: [255,190,60],  // gold
   4: [255,100,180], // pink
   5: [170,110,255], // purple
-  6: [255,120,70]   // orange
+  6: [255,120,70],  // orange
+  7: [0,191,165],   // teal
+  8: [170,220,50],  // chartreuse
+  9: [255,80,80],   // crimson
+  10: [120,130,255],// indigo
+  11: [255,179,0],  // amber
+  12: [80,190,255]  // sky
 };
 function renderTopicGrid(){
   const grid = document.getElementById('topicGrid');
@@ -1680,11 +1851,139 @@ function genZTest(){
   };
 }
 
+function genIndepTTest(){
+  function makeGroup(meanTarget, ni){
+    const devs = [];
+    for(let i=0;i<ni-1;i++) devs.push(randInt(-3,3));
+    devs.push(-devs.reduce((a,b)=>a+b,0));
+    return devs.map(d=>meanTarget+d);
+  }
+  const n1 = 4, n2 = 4;
+  let g1, g2, tries = 0, ok = false;
+  do{
+    const m1 = randInt(4,12);
+    const m2 = m1 + choice([-5,-4,-3,3,4,5]);
+    g1 = makeGroup(m1, n1);
+    g2 = makeGroup(m2, n2);
+    ok = g1.every(v=>v>=1 && v<=22) && g2.every(v=>v>=1 && v<=22);
+    tries++;
+  } while(!ok && tries<80);
+
+  const mean1 = g1.reduce((a,b)=>a+b,0)/n1;
+  const mean2 = g2.reduce((a,b)=>a+b,0)/n2;
+  const ss1 = g1.reduce((a,b)=>a+(b-mean1)**2,0);
+  const ss2 = g2.reduce((a,b)=>a+(b-mean2)**2,0);
+  const df = n1+n2-2;
+  const pooledVar = (ss1+ss2)/df;
+  const seDiff = Math.sqrt(pooledVar*(1/n1+1/n2));
+  const t = (mean1-mean2)/seDiff;
+
+  return {
+    typeLabel:'Independent-Samples t-Test',
+    given:`Group 1 (n1=${n1}): ${g1.join(', ')}  |  Group 2 (n2=${n2}): ${g2.join(', ')}`,
+    prompt:'Compute the independent-samples t-statistic for these two groups.',
+    answer:t, tol:Math.max(0.05, Math.abs(t)*0.03),
+    steps:[
+      `M1 = ${mean1.toFixed(2)}, M2 = ${mean2.toFixed(2)}`,
+      `SS1 = ${ss1.toFixed(2)}, SS2 = ${ss2.toFixed(2)}`,
+      `df = n1+n2−2 = ${n1}+${n2}−2 = ${df}`,
+      `Pooled variance sp² = (SS1+SS2)/df = (${ss1.toFixed(2)}+${ss2.toFixed(2)})/${df} = ${pooledVar.toFixed(3)}`,
+      `s(M1−M2) = √[sp²(1/n1 + 1/n2)] = √[${pooledVar.toFixed(3)}×(1/${n1}+1/${n2})] = ${seDiff.toFixed(3)}`,
+      `t = (M1−M2) / s(M1−M2) = (${mean1.toFixed(2)}−${mean2.toFixed(2)}) / ${seDiff.toFixed(3)} = ${t.toFixed(2)}`
+    ]
+  };
+}
+
+function genDepTTest(){
+  const n = 5;
+  let D, tries = 0, ok = false;
+  do{
+    D = [];
+    for(let i=0;i<n;i++) D.push(randInt(-5,7));
+    const MDcheck = D.reduce((a,b)=>a+b,0)/n;
+    ok = D.some(d=>d!==MDcheck); // guard against zero variance
+    tries++;
+  } while(!ok && tries<50);
+
+  const MD = D.reduce((a,b)=>a+b,0)/n;
+  const devs = D.map(d=>d-MD);
+  const ssD = devs.reduce((a,b)=>a+b*b,0);
+  const varD = ssD/(n-1);
+  const sMD = Math.sqrt(varD/n);
+  const t = MD/sMD;
+
+  return {
+    typeLabel:'Dependent-Samples t-Test',
+    given:`D scores (n = ${n} pairs): ${D.join(', ')}`,
+    prompt:'Compute the dependent-samples t-statistic for these difference scores (testing H0: μD = 0).',
+    answer:t, tol:Math.max(0.05, Math.abs(t)*0.03),
+    steps:[
+      `MD = ΣD/n = ${D.reduce((a,b)=>a+b,0)}/${n} = ${MD.toFixed(2)}`,
+      `SSD = Σ(D−MD)² = ${ssD.toFixed(2)}`,
+      `Variance = SSD/(n−1) = ${ssD.toFixed(2)}/${n-1} = ${varD.toFixed(3)}`,
+      `sMD = √(variance/n) = √(${varD.toFixed(3)}/${n}) = ${sMD.toFixed(3)}`,
+      `t = MD / sMD = ${MD.toFixed(2)} / ${sMD.toFixed(3)} = ${t.toFixed(2)}`
+    ]
+  };
+}
+
+function genOneWayANOVA(){
+  function makeGroup(meanTarget, ni){
+    const devs = [];
+    for(let i=0;i<ni-1;i++) devs.push(randInt(-2,2));
+    devs.push(-devs.reduce((a,b)=>a+b,0));
+    return devs.map(d=>meanTarget+d);
+  }
+  const k = 3, n = 3, N = k*n;
+  let groups, ssWithin, tries = 0, ok = false;
+  do{
+    const means = [randInt(2,5), randInt(5,9), randInt(9,13)];
+    groups = means.map(m=>makeGroup(m,n));
+    ok = groups.every(g=>g.every(v=>v>=0 && v<=18));
+    if(ok){
+      const gm = groups.map(g=>g.reduce((a,b)=>a+b,0)/n);
+      ssWithin = groups.reduce((acc,g,i)=>acc+g.reduce((a,b)=>a+(b-gm[i])**2,0),0);
+      if(ssWithin < 0.5) ok = false;
+    }
+    tries++;
+  } while(!ok && tries<80);
+
+  const allScores = groups.flat();
+  const grandMean = allScores.reduce((a,b)=>a+b,0)/N;
+  const groupMeans = groups.map(g=>g.reduce((a,b)=>a+b,0)/n);
+  const ssBetween = groupMeans.reduce((acc,m)=>acc+n*(m-grandMean)**2,0);
+  ssWithin = groups.reduce((acc,g,i)=>acc+g.reduce((a,b)=>a+(b-groupMeans[i])**2,0),0);
+  const dfBetween = k-1;
+  const dfWithin = N-k;
+  const msBetween = ssBetween/dfBetween;
+  const msWithin = ssWithin/dfWithin;
+  const F = msBetween/msWithin;
+
+  return {
+    typeLabel:'One-Way ANOVA F-Ratio',
+    given:`Group 1: ${groups[0].join(', ')}  |  Group 2: ${groups[1].join(', ')}  |  Group 3: ${groups[2].join(', ')}`,
+    prompt:'Compute the F-ratio for a one-way ANOVA comparing these three groups.',
+    answer:F, tol:Math.max(0.1, Math.abs(F)*0.04),
+    steps:[
+      `Group means: M1=${groupMeans[0].toFixed(2)}, M2=${groupMeans[1].toFixed(2)}, M3=${groupMeans[2].toFixed(2)}; grand mean = ${grandMean.toFixed(2)}`,
+      `SSbetween = Σ n(Mgroup − grand mean)² = ${ssBetween.toFixed(2)}`,
+      `SSwithin = Σ(X − Mgroup)² summed across all groups = ${ssWithin.toFixed(2)}`,
+      `dfbetween = k−1 = ${k}−1 = ${dfBetween}; dfwithin = N−k = ${N}−${k} = ${dfWithin}`,
+      `MSbetween = SSbetween/dfbetween = ${ssBetween.toFixed(2)}/${dfBetween} = ${msBetween.toFixed(3)}`,
+      `MSwithin = SSwithin/dfwithin = ${ssWithin.toFixed(2)}/${dfWithin} = ${msWithin.toFixed(3)}`,
+      `F = MSbetween / MSwithin = ${msBetween.toFixed(3)} / ${msWithin.toFixed(3)} = ${F.toFixed(2)}`
+    ]
+  };
+}
+
 const PRACTICE_TYPES = [
   {key:'descriptive', name:'Mean, SS, Variance & SD', gen: genDescriptive},
   {key:'zscore', name:'Z-Scores (raw ↔ z)', gen: genZScore},
   {key:'se', name:'Standard Error', gen: genSE},
-  {key:'ztest', name:'One-Sample Z-Test Statistic', gen: genZTest}
+  {key:'ztest', name:'One-Sample Z-Test Statistic', gen: genZTest},
+  {key:'indepttest', name:'Independent-Samples t-Test', gen: genIndepTTest},
+  {key:'depttest', name:'Dependent-Samples t-Test', gen: genDepTTest},
+  {key:'onewayanova', name:'One-Way ANOVA F-Ratio', gen: genOneWayANOVA}
 ];
 
 const practiceState = { typeKey:'descriptive', current:null, score:0, total:0 };
