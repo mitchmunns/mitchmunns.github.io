@@ -683,6 +683,10 @@ let distIconScale = 1.95;
 let distMaxStack = 999;
 const distAvailH = baseline - (contentTop+20);
 let distSplitY = 0;
+// how many circles deep we try to make a single column before falling back to "+n more"
+const DIST_TARGET_STACK = 12;
+const DIST_MIN_STEP = 14; // don't tighten past this or the circles start to collide
+const DIST_LABEL_HEADROOM = 20; // vertical room kept clear for the "+n more" overflow label
 function computeDistLayout(){
   distColWidth = (ZONE.dist.x1-ZONE.dist.x0)/colCount;
   if(sampleSize<=20){ distIconScale=1.95; distStepHeight=66; }
@@ -691,16 +695,31 @@ function computeDistLayout(){
   else { distIconScale=0.55; distStepHeight=19; }
   const currentLegendRows = Math.max(2, legendRowCount());
   const legendBottom = LEGEND_TOP + currentLegendRows*LEGEND_ROW_H + 10;
+  let availH;
   if(useSidewaysDist()){
+    // the sideways split shrinks the circles, so shrink the row spacing by the same factor —
+    // otherwise half-size circles sit on full-size rows and the stack is mostly empty air
     distIconScale *= 0.52;
+    distStepHeight *= 0.52;
     distSplitY = Math.max(legendBottom+34, distContentTop() + (baseline-distContentTop())*0.32);
-    const regularAvailH = baseline - distSplitY - 16;
-    distMaxStack = Math.max(3, Math.floor(regularAvailH/distStepHeight));
+    availH = baseline - distSplitY - 16;
     const lw = laneWidth()-28;
     distMaxStackSideways = Math.max(3, Math.floor(lw/12));
-    return;
+  } else {
+    availH = baseline - (legendBottom + 16);
   }
-  const availH = baseline - (legendBottom + 16);
+  // the step height above comes from sample size alone and ignores how tall the histogram band
+  // actually is, so a short band (the repeated-measures split leaves ~235px) used to truncate
+  // every column at 3. Tighten the spacing until a useful stack fits, keeping the circle size
+  // in proportion so the columns stay readable.
+  availH -= DIST_LABEL_HEADROOM; // leave the "+n more" label somewhere to sit above a full stack
+  const targetStack = Math.max(3, Math.min(perGroupN, DIST_TARGET_STACK));
+  const fitStep = availH/targetStack;
+  if(fitStep < distStepHeight){
+    const tightened = Math.max(DIST_MIN_STEP, fitStep);
+    distIconScale *= tightened/distStepHeight;
+    distStepHeight = tightened;
+  }
   distMaxStack = Math.max(3, Math.floor(availH/distStepHeight));
 }
 const distTargetY = stackIndex => baseline - stackIndex*distStepHeight;
