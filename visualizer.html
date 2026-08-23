@@ -1361,12 +1361,16 @@ function buildPopulationControls(){
   merged.select('.popMeanInput').property('value', g=>popMeanByGroup[g])
     .on('input', function(event,g){
       popMeanByGroup[g] = +this.value;
+      // the score cache is keyed by participant index, so it has to be dropped here or the
+      // next run just re-serves the scores drawn under the old μ and the slider does nothing
+      participantScoreCache = {};
       resetStudy();
     });
   merged.select('.popMeanVal').text(g=>popMeanByGroup[g].toFixed(1));
   merged.select('.popSDInput').property('value', g=>popSDByGroup[g])
     .on('input', function(event,g){
       popSDByGroup[g] = +this.value;
+      participantScoreCache = {};
       resetStudy();
     });
   merged.select('.popSDVal').text(g=>popSDByGroup[g].toFixed(1));
