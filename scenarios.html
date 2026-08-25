@@ -1088,8 +1088,27 @@ RENDER.menu = (card)=>{
     <div class="scenario-box center" style="margin-top:8px;">
       <p style="margin-bottom:6px;"><strong>Feeling confident?</strong></p>
       <p class="muted small">Challenge Mode gives you all six test types, one at a time in random order, with 5 lives shared across the whole run. Any wrong answer costs a life &mdash; but reveals a hint. Lose all five and the run ends. Each test you clear gives you less help up front on the next one.</p>
-      <div class="btnrow"><button class="primary" onclick="Tutor.startChallenge()">Start Challenge Mode</button></div>
+      <div class="btnrow">
+        <button class="primary" onclick="Tutor.startChallenge()">Start Challenge Mode</button>
+        <button onclick="goto('leaderboard')">&#127942; View Leaderboard</button>
+      </div>
     </div>`));
+};
+
+RENDER.leaderboard = (card)=>{
+  card.appendChild(el(`<h2>Leaderboard</h2>`));
+  card.appendChild(el(`<p class="center muted">Top Challenge Mode runs &mdash; clear all six test types to add your name.</p>`));
+  const boardWrap = el(`<div></div>`);
+  boardWrap.appendChild(el(`<p class="center muted">Loading&hellip;</p>`));
+  card.appendChild(boardWrap);
+  loadLeaderboard().then(board=>{
+    boardWrap.innerHTML = '';
+    boardWrap.appendChild(leaderboardTableEl(board));
+  }).catch(()=>{
+    boardWrap.innerHTML = '';
+    boardWrap.appendChild(el(`<p class="center muted">Couldn't load the leaderboard right now &mdash; try again later.</p>`));
+  });
+  card.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('menu')">Back to Menu</button></div>`));
 };
 
 RENDER.scenario = (card)=>{
