@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stats Self-Quiz — Weeks 1–4 Checkpoint</title>
+<title>Stats Self-Quiz — Weeks 1–6 Checkpoint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -157,6 +157,10 @@
   .lecture-badge.lec-10{ color:#D2D6FF; background:rgba(120,130,255,0.18); border-color:rgba(120,130,255,0.55); box-shadow:0 0 8px rgba(120,130,255,0.4); }
   .lecture-badge.lec-11{ color:#FFE4AD; background:rgba(255,179,0,0.16); border-color:rgba(255,179,0,0.55); box-shadow:0 0 8px rgba(255,179,0,0.4); }
   .lecture-badge.lec-12{ color:#C2EFFF; background:rgba(80,190,255,0.16); border-color:rgba(80,190,255,0.55); box-shadow:0 0 8px rgba(80,190,255,0.4); }
+  .lecture-badge.lec-13{ color:#FFD3D9; background:rgba(255,99,132,0.16); border-color:rgba(255,99,132,0.55); box-shadow:0 0 8px rgba(255,99,132,0.4); }
+  .lecture-badge.lec-14{ color:#B8FFF8; background:rgba(34,197,194,0.16); border-color:rgba(34,197,194,0.55); box-shadow:0 0 8px rgba(34,197,194,0.4); }
+  .lecture-badge.lec-15{ color:#EAD6FF; background:rgba(192,84,255,0.18); border-color:rgba(192,84,255,0.55); box-shadow:0 0 8px rgba(192,84,255,0.4); }
+  .lecture-badge.lec-16{ color:#FFE7B0; background:rgba(202,138,4,0.2); border-color:rgba(202,138,4,0.55); box-shadow:0 0 8px rgba(202,138,4,0.4); }
   .lecture-badge.lec-multi{
     color:#F1D8FF;
     background:linear-gradient(90deg, rgba(199,125,255,0.2), rgba(255,107,74,0.2));
@@ -459,6 +463,10 @@
   [data-theme="light"] .lecture-badge.lec-10{color:#3a3f9e; border-color:rgba(100,110,220,.6);}
   [data-theme="light"] .lecture-badge.lec-11{color:#7a5200; border-color:rgba(200,145,0,.6);}
   [data-theme="light"] .lecture-badge.lec-12{color:#005f80; border-color:rgba(40,150,200,.6);}
+  [data-theme="light"] .lecture-badge.lec-13{color:#a3123a; border-color:rgba(220,60,90,.6);}
+  [data-theme="light"] .lecture-badge.lec-14{color:#0a6e6a; border-color:rgba(20,160,155,.6);}
+  [data-theme="light"] .lecture-badge.lec-15{color:#6b1fa0; border-color:rgba(160,70,220,.6);}
+  [data-theme="light"] .lecture-badge.lec-16{color:#7a5200; border-color:rgba(180,120,10,.6);}
   [data-theme="light"] .lecture-badge.lec-multi{color:#6b1f4a; border-color:rgba(180,80,110,.6);}
   [data-theme="light"] .btn-primary{background:var(--ink);color:#fff;box-shadow:none;}
   [data-theme="light"] .btn-primary:disabled{background:#B9C2C4;color:#fff;border-color:transparent;}
@@ -492,7 +500,7 @@
   <div class="top">
     <div class="brand">
       <h1>Self-Quiz</h1>
-      <span class="tag">Weeks 1&ndash;4 checkpoint</span>
+      <span class="tag">Weeks 1&ndash;6 checkpoint</span>
     </div>
     <div class="top-controls">
       <div class="account-bar">
@@ -522,7 +530,7 @@
       <button class="auth-guest-link" id="authGuestBtn">Continue as guest &rarr;</button>
     </div>
   </div>
-  <p class="sub">Pick the topics you want to practice, answer at your own pace, and see exactly where to focus before Quiz&nbsp;1 or Quiz&nbsp;2. This is separate from the Population&rarr;Sample&rarr;Measure&rarr;Distribution visualizer &mdash; but several questions are easiest to reason through if you actually run the scenario there first.</p>
+  <p class="sub">Pick the topics you want to practice, answer at your own pace, and see exactly where to focus before Quiz&nbsp;1, Quiz&nbsp;2, or the final. This is separate from the Population&rarr;Sample&rarr;Measure&rarr;Distribution visualizer &mdash; but several questions are easiest to reason through if you actually run the scenario there first.</p>
   <div class="visualizer-note">Stuck on a calculation question? <b>Open the visualizer</b> and build the small dataset described. </div>
 
   <div class="mode-tabs">
@@ -629,7 +637,7 @@
     </div>
   </div>
 
-  <footer>Built as a companion to the sampling &amp; distribution visualizer &middot; covers material through Week 4, Lecture 12</footer>
+  <footer>Built as a companion to the sampling &amp; distribution visualizer &middot; covers material through Week 6, Lecture 16</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -652,7 +660,12 @@ const TOPICS = [
   {key:'anova-logic', name:'ANOVA Logic & the F-Ratio', lectures:[9]},
   {key:'oneway-anova', name:'One-Way ANOVA & Post-Hoc Tests', lectures:[10]},
   {key:'rm-anova', name:'Repeated-Measures ANOVA', lectures:[11]},
-  {key:'twoway-anova', name:'Two-Way ANOVA', lectures:[12]}
+  {key:'twoway-anova', name:'Two-Way ANOVA', lectures:[12]},
+  {key:'measurement', name:'Reliability & Validity', lectures:[13]},
+  {key:'correlation', name:'Correlation', lectures:[14]},
+  {key:'regression', name:'Regression', lectures:[15]},
+  {key:'chi-square', name:'Chi-Square Tests', lectures:[16]},
+  {key:'test-selection', name:'Choosing the Right Test', lectures:[]}
 ];
 
 // type: 'mc' (choices+answer index), 'tf' (True/False, answer boolean), 'numeric' (answer number, tolerance optional)
@@ -1121,9 +1134,8 @@ const QUESTIONS = [
 {topic:'twoway-anova', type:'mc', q:"A 'main effect' in a two-way ANOVA refers to:",
  choices:["The effect of one independent variable, averaged across all levels of the other independent variable","The effect of both independent variables combined into a single score","The largest cell mean in the design","The correlation between the two independent variables"],
  answer:0, explain:"Each factor gets its own main effect \u2014 essentially asking 'does this IV matter, ignoring the other IV for a moment?'"},
-{topic:'twoway-anova', type:'mc', q:"An 'interaction effect' in a two-way ANOVA means:",
- choices:["The two independent variables are correlated with each other","The effect of one independent variable depends on the specific level of the other independent variable","Neither independent variable had any effect","The main effects can't be computed"],
- answer:1, explain:"An interaction is the 'it depends' result \u2014 e.g., a drug might help at low doses but hurt at high doses, so the effect of dose depends on which drug you gave."},
+{topic:'twoway-anova', type:'tf', q:"A significant A\u00d7B interaction means that the size (or direction) of Factor A's effect changes depending on which level of Factor B you're looking at.",
+ answer:true, explain:"An interaction is the 'it depends' result \u2014 e.g., a drug might help at low doses but hurt at high doses, so the effect of dose depends on which drug you gave."},
 {topic:'twoway-anova', type:'mc', q:"How many F-ratios does a standard two-way ANOVA produce?",
  choices:["One","Two","Three: main effect A, main effect B, and the A\u00d7B interaction","Four"],
  answer:2, explain:"You get a separate significance test for each main effect plus one for the interaction between the two factors \u2014 three F-ratios total."},
@@ -1134,7 +1146,143 @@ const QUESTIONS = [
  answer:true, explain:"A significant interaction means the story is more complicated than either main effect alone suggests \u2014 the effect of one IV genuinely changes depending on the other IV, so an averaged-across-conditions 'main effect' can be misleading."},
 {topic:'twoway-anova', type:'short', q:"Give one advantage of running a single two-way (factorial) study with two independent variables, instead of running two completely separate one-way studies.",
  sample:"e.g., a factorial design lets you detect interactions between the variables (something two separate studies never could), and it's more efficient \u2014 you get information about both IVs (and their interaction) from one combined sample.",
- explain:"Separate studies can never reveal whether the two variables interact, since each study only ever varies one factor at a time. A factorial design is also more efficient, often needing fewer total participants to learn about both IVs."}
+ explain:"Separate studies can never reveal whether the two variables interact, since each study only ever varies one factor at a time. A factorial design is also more efficient, often needing fewer total participants to learn about both IVs."},
+{topic:'twoway-anova', type:'numeric', q:"A two-way ANOVA has SS(Factor A) = 32 with df(Factor A) = 1, and MSerror = 4. What is the F-ratio for the main effect of Factor A?",
+ answer:8, tol:0.2, explain:"MS(Factor A) = SS/df = 32/1 = 32. F = MS(Factor A) / MSerror = 32/4 = 8."},
+{topic:'twoway-anova', type:'numeric', q:"The same study has SS(A\u00d7B interaction) = 12 with df(A\u00d7B) = 2, and MSerror = 4. What is F for the interaction?",
+ answer:1.5, tol:0.1, explain:"MS(A\u00d7B) = SS/df = 12/2 = 6. F = MS(A\u00d7B) / MSerror = 6/4 = 1.5."},
+{topic:'twoway-anova', type:'numeric', q:"A two-way ANOVA has SS(Factor A) = 8, SS(Factor B) = 32, SS(A\u00d7B interaction) = 16, and SS(Error) = 24. What proportion of the total variability is accounted for by the main effect of Factor B (\u03b7\u00b2 for B)?",
+ answer:0.4, tol:0.02, explain:"First find SStotal = 8 + 32 + 16 + 24 = 80. Then \u03b7\u00b2(B) = SS(Factor B) / SStotal = 32/80 = 0.40."},
+{topic:'twoway-anova', type:'mc', q:"In a two-way ANOVA, calculating \u03b7\u00b2 separately for the A\u00d7B interaction term specifically tells you:",
+ choices:["The proportion of total variability uniquely accounted for by the interaction between the two factors","The correlation between Factor A and Factor B","The total sample size needed for adequate power","Whether either main effect is statistically significant"],
+ answer:0, explain:"Just like \u03b7\u00b2 for a main effect, \u03b7\u00b2 for the interaction is a share-of-variance number \u2014 here, the share attributable specifically to the 'it depends' pattern between the two factors, separate from either main effect."},
+{topic:'twoway-anova', type:'tf', q:"If Factor A shows no significant main effect on its own, it's still possible for the A\u00d7B interaction to be statistically significant.",
+ answer:true, explain:"Main effects and the interaction are separate, independently-tested pieces of variability \u2014 a classic 'crossover' pattern can produce a significant interaction even when neither main effect is significant by itself."},
+
+// ---------------- measurement (Lecture 13) ----------------
+{topic:'measurement', type:'mc', q:"Reliability, in the context of psychological measurement, refers to:",
+ choices:["Whether a measure actually measures the construct it claims to measure","The consistency or stability of a measure across repeated administrations","The average score obtained on a measure","The number of items included on a scale"],
+ answer:1, explain:"Reliability is about consistency \u2014 do you get similar results each time you use the measure, assuming nothing about the person actually changed?"},
+{topic:'measurement', type:'mc', q:"Validity, in the context of psychological measurement, refers to:",
+ choices:["How many items a scale contains","Whether a measure actually assesses the construct it's intended to measure","How consistent scores are across two administrations","The sample size used to develop the measure"],
+ answer:1, explain:"Validity asks a different question than reliability: not 'is this consistent?' but 'is this actually measuring the right thing?'"},
+{topic:'measurement', type:'tf', q:"A measure can be highly reliable (very consistent) without being valid (actually measuring what it claims to measure).",
+ answer:true, explain:"Classic example: a bathroom scale that's off by exactly 10 pounds every time is perfectly reliable (consistent) but not a valid measure of your true weight. Consistency doesn't guarantee you're measuring the right construct."},
+{topic:'measurement', type:'mc', q:"Test-retest reliability is assessed by:",
+ choices:["Comparing scores on two different scales measuring different constructs","Giving the same test to the same people at two different points in time and correlating the two sets of scores","Asking experts whether the items look appropriate","Computing the mean and standard deviation of a single administration"],
+ answer:1, explain:"Test-retest reliability specifically checks stability over time \u2014 if the underlying trait hasn't changed, scores from the same people should be similar on both occasions."},
+{topic:'measurement', type:'short', q:"Why does low reliability tend to weaken (attenuate) the observed correlation or treatment effect between two variables, even if the true underlying relationship is strong?",
+ sample:"e.g., an unreliable measure adds random noise/measurement error to the scores, and that extra noise obscures the true relationship, pulling the observed correlation or effect size toward zero.",
+ explain:"Random measurement error is, by definition, unrelated to anything else \u2014 so the more of it that's mixed into your scores, the more it dilutes and obscures any real relationship that's actually there."},
+{topic:'measurement', type:'mc', q:"A researcher creates a new depression questionnaire. Scores on the new questionnaire correlate strongly with diagnoses from a clinician's structured interview (the established 'gold standard'). This is evidence of:",
+ choices:["Internal consistency reliability","Criterion validity \u2014 the new measure relates to an outside standard it should be related to","Test-retest reliability","Face validity only"],
+ answer:1, explain:"When a measure is checked against an established outside criterion (like an expert diagnosis), and it lines up well, that's criterion validity."},
+{topic:'measurement', type:'tf', q:"Reliability is necessary but not sufficient for validity \u2014 a measure must be reasonably reliable to have a chance at being valid, but being reliable doesn't guarantee it's valid.",
+ answer:true, explain:"You can't validly measure something with a measure that gives you a different answer every time (unreliable), but consistency alone doesn't guarantee you're measuring the right construct \u2014 validity requires more."},
+
+// ---------------- correlation (Lecture 14) ----------------
+{topic:'correlation', type:'mc', q:"The Pearson correlation coefficient, r, measures:",
+ choices:["The average of two variables combined","The direction and strength of the LINEAR relationship between two variables","Whether one variable causes changes in another","The difference between two group means"],
+ answer:1, explain:"r is specifically about linear association \u2014 how closely the data points cluster around a straight line, and whether that line trends up or down."},
+{topic:'correlation', type:'mc', q:"The Pearson correlation coefficient, r, can range from:",
+ choices:["0 to 1","-1 to +1","-100 to +100","0 to infinity"],
+ answer:1, explain:"r = -1 is a perfect negative linear relationship, r = +1 is a perfect positive linear relationship, and r = 0 means no linear relationship."},
+{topic:'correlation', type:'numeric', q:"Two variables have SP = 18, SSX = 36, and SSY = 16. What is the Pearson correlation, r?",
+ answer:0.75, tol:0.01, explain:"r = SP / \u221a(SSX \u00d7 SSY) = 18 / \u221a(36 \u00d7 16) = 18 / \u221a576 = 18/24 = 0.75."},
+{topic:'correlation', type:'mc', q:"Which of these correlation values represents the strongest linear relationship, regardless of direction?",
+ choices:["r = .60","r = -.30","r = -.85","r = .10"],
+ answer:2, explain:"Strength is about the magnitude (absolute value) of r, not its sign \u2014 |-.85| = .85 is larger than any of the other options, making it the strongest relationship here, even though it's negative."},
+{topic:'correlation', type:'tf', q:"An r value of 0 means the two variables are completely unrelated to each other in every sense.",
+ answer:false, explain:"r = 0 only rules out a LINEAR relationship. Two variables could still have a strong curved (nonlinear) relationship and still produce an r near 0 \u2014 which is exactly why you should look at a scatterplot, not just the number."},
+{topic:'correlation', type:'mc', q:"A researcher computes a correlation using data that only includes very high-performing students (a narrow, restricted range of scores). What is the most likely consequence for the correlation, compared to using a full range of students?",
+ choices:["The correlation will be artificially inflated (too strong)","The correlation will tend to be artificially weakened (too close to zero), even if a real relationship exists across the full range","There will be no effect on the correlation at all","The correlation will automatically become negative"],
+ answer:1, explain:"Restriction of range is a classic way correlations mislead \u2014 when you only look at a narrow slice of one variable, there's less room for the two variables to co-vary, which tends to shrink the observed r."},
+{topic:'correlation', type:'short', q:"Why is it good practice to look at a scatterplot of your data before (or alongside) computing and reporting r?",
+ sample:"e.g., a scatterplot can reveal a nonlinear relationship, outliers, or restricted range that a single r value would hide or misrepresent \u2014 the same r can come from very different-looking data patterns.",
+ explain:"Just like with the mean and a histogram, a single summary number (r) can look identical for very differently-shaped relationships \u2014 an outlier or a curved pattern can produce a misleading r that only a plot would reveal."},
+{topic:'correlation', type:'mc', q:"The squared correlation, r\u00b2, is best interpreted as:",
+ choices:["The strength of the causal relationship between the variables","The proportion of variability in one variable that is statistically explained by (shared with) the other variable","The slope of the best-fit line","Always exactly half of r"],
+ answer:1, explain:"r\u00b2 is a proportion-of-shared-variance measure \u2014 an r of .80 means r\u00b2 = .64, or 64% of the variability in one variable is statistically accounted for by the other."},
+{topic:'correlation', type:'tf', q:"A strong correlation between two variables is sufficient evidence, on its own, that one variable causes the other.",
+ answer:false, explain:"Correlation never proves causation by itself \u2014 a third variable, or reverse causation, could produce the exact same correlational pattern."},
+
+// ---------------- regression (Lecture 15) ----------------
+{topic:'regression', type:'mc', q:"The logic of linear regression is to find the straight line that:",
+ choices:["Passes through the most individual data points exactly","Minimizes the total squared distance between the actual Y scores and the line's predicted Y scores","Maximizes the correlation between X and Y","Always has a slope of exactly 1"],
+ answer:1, explain:"Regression finds the 'least-squares' line \u2014 the one specific line that makes the sum of squared prediction errors as small as possible."},
+{topic:'regression', type:'mc', q:"In the regression equation \u0176 = a + bX, the value 'a' represents:",
+ choices:["The slope \u2014 how much Y changes per one-unit increase in X","The Y-intercept \u2014 the predicted value of Y when X = 0","The correlation between X and Y","The total sample size"],
+ answer:1, explain:"'a' is where the regression line crosses the Y-axis \u2014 the model's predicted Y value when X is exactly zero."},
+{topic:'regression', type:'mc', q:"In the regression equation \u0176 = a + bX, a researcher finds b = -2.5. How should this be interpreted?",
+ choices:["For every one-unit increase in X, Y is predicted to decrease by 2.5 units","X and Y are unrelated","For every one-unit increase in X, Y is predicted to increase by 2.5 units","2.5% of the variability in Y is explained by X"],
+ answer:0, explain:"The slope tells you the predicted change in Y per one-unit increase in X \u2014 a negative slope means the predicted Y goes down as X goes up."},
+{topic:'regression', type:'numeric', q:"A regression analysis has SSX = 50 and SP = 25. What is the slope, b?",
+ answer:0.5, tol:0.02, explain:"b = SP / SSX = 25/50 = 0.5."},
+{topic:'regression', type:'numeric', q:"A researcher has MX = 4, MY = 70, SSX = 40, and SP = 60. What is the Y-intercept, a?",
+ answer:64, tol:1, explain:"First find the slope, b = SP/SSX = 60/40 = 1.5. Then a = MY \u2212 b(MX) = 70 \u2212 1.5(4) = 70 \u2212 6 = 64."},
+{topic:'regression', type:'numeric', q:"Given the regression equation \u0176 = 3 + 1.5X, what is the predicted Y when X = 4?",
+ answer:9, tol:0.1, explain:"\u0176 = 3 + 1.5(4) = 3 + 6 = 9."},
+{topic:'regression', type:'mc', q:"Compared to just reporting a correlation coefficient, what extra information does a regression equation provide?",
+ choices:["Nothing \u2014 they provide exactly the same information","A specific equation that can generate an actual predicted score for any given X value, not just the strength/direction of the relationship","Regression always proves causation while correlation never does","Regression eliminates the need for a scatterplot"],
+ answer:1, explain:"Correlation tells you how strong and in what direction two variables relate; regression goes a step further and gives you a usable formula for predicting specific scores."},
+{topic:'regression', type:'tf', q:"The regression line always passes through the point defined by the mean of X and the mean of Y (MX, MY).",
+ answer:true, explain:"This is a built-in mathematical property of the least-squares regression line \u2014 it's guaranteed to pass through that exact point, which is a handy fact for sanity-checking a computed line."},
+{topic:'regression', type:'short', q:"Even with a well-fit regression line, an individual person's actual Y score often differs somewhat from their predicted \u0176. What causes that gap?",
+ sample:"e.g., other unmeasured variables that also influence Y, plus ordinary random variability/measurement error \u2014 the regression line captures the overall linear trend, not every individual influence on Y.",
+ explain:"Unless r = \u00b11.00 exactly, X never perfectly determines Y \u2014 some of Y's variability comes from things the model doesn't capture, which shows up as the gap between actual and predicted scores (the residual)."},
+
+// ---------------- chi-square (Lecture 16) ----------------
+{topic:'chi-square', type:'mc', q:"A chi-square goodness-of-fit test is used to determine whether:",
+ choices:["Two continuous variables are correlated","The distribution of a single categorical variable matches a hypothesized (expected) distribution","Two categorical variables are associated with each other","Two group means differ significantly"],
+ answer:1, explain:"Goodness-of-fit compares one categorical variable's observed frequencies against some expected/hypothesized pattern (like 'equal preference across categories')."},
+{topic:'chi-square', type:'mc', q:"A chi-square test of independence is used to determine whether:",
+ choices:["A sample mean differs from a known population mean","Two categorical variables are related/associated with each other, rather than independent","A single categorical variable matches a hypothesized distribution","Two continuous variables share a linear relationship"],
+ answer:1, explain:"Test of independence checks whether being in one category (e.g., a demographic group) is associated with being in a category on a second variable (e.g., a preference) \u2014 or whether the two are unrelated."},
+{topic:'chi-square', type:'mc', q:"The chi-square statistic is calculated using the general formula:",
+ choices:["\u03c7\u00b2 = \u03a3(O \u2212 E) / E","\u03c7\u00b2 = \u03a3(O \u2212 E)\u00b2 / E","\u03c7\u00b2 = \u03a3(O \u2212 E)\u00b2","\u03c7\u00b2 = \u03a3O / \u03a3E"],
+ answer:1, explain:"You sum, across every cell/category, the squared difference between observed (O) and expected (E) frequencies, divided by that cell's expected frequency."},
+{topic:'chi-square', type:'numeric', q:"A researcher asks n = 90 people to pick their favorite of three ice cream flavors, expecting equal preference (expected = 30 per flavor). Observed choices: Chocolate = 40, Vanilla = 20, Strawberry = 30. What is \u03c7\u00b2?",
+ answer:6.67, tol:0.1, explain:"\u03c7\u00b2 = (40\u221230)\u00b2/30 + (20\u221230)\u00b2/30 + (30\u221230)\u00b2/30 = 100/30 + 100/30 + 0/30 = 3.33 + 3.33 + 0 = 6.67."},
+{topic:'chi-square', type:'numeric', q:"A study of N = 150 people (75 pet owners, 75 non-owners) crosses pet ownership with life-satisfaction category (High vs. Low), where the column totals are also 75 High and 75 Low. What is the expected frequency for each individual cell of this 2\u00d72 table?",
+ answer:37.5, tol:0.5, explain:"Expected frequency = (row total \u00d7 column total) / N = (75 \u00d7 75) / 150 = 5625/150 = 37.5 for every cell, since both row and column totals are evenly split here."},
+{topic:'chi-square', type:'numeric', q:"Using the same study (expected = 37.5 per cell), the observed frequencies are: pet owners/High = 45, pet owners/Low = 30, non-owners/High = 30, non-owners/Low = 45. What is \u03c7\u00b2?",
+ answer:6.0, tol:0.2, explain:"Each cell contributes (45\u221237.5)\u00b2/37.5 = 56.25/37.5 = 1.5, or (30\u221237.5)\u00b2/37.5 = 56.25/37.5 = 1.5 \u2014 all four cells give 1.5 each. \u03c7\u00b2 = 1.5\u00d74 = 6.0."},
+{topic:'chi-square', type:'numeric', q:"A chi-square test of independence uses a contingency table with 3 rows and 4 columns. What are the degrees of freedom?",
+ answer:6, tol:0.01, explain:"df = (rows \u2212 1)(columns \u2212 1) = (3\u22121)(4\u22121) = 2 \u00d7 3 = 6."},
+{topic:'chi-square', type:'tf', q:"A chi-square value close to 0 suggests that the observed frequencies closely match the expected frequencies.",
+ answer:true, explain:"Since \u03c7\u00b2 is built from squared O\u2212E differences, a small \u03c7\u00b2 means those differences were small across the board \u2014 the data looked about like what was expected."},
+{topic:'chi-square', type:'short', q:"What's the key difference between when you'd use a chi-square goodness-of-fit test versus a chi-square test of independence?",
+ sample:"e.g., goodness-of-fit involves just ONE categorical variable, compared against some hypothesized distribution; test of independence involves TWO categorical variables, testing whether they're associated with each other rather than independent.",
+ explain:"The number of categorical variables in play is the tell: one variable being checked against an expectation (goodness-of-fit) versus two variables being checked for association (independence)."},
+
+// ---------------- test-selection (choosing the right test) ----------------
+{topic:'test-selection', type:'mc', q:"A researcher wants to know whether weekly exercise minutes and resting heart rate are linearly related, without manipulating either variable, in a sample of 60 adults. Which statistical test is most appropriate?",
+ choices:["Independent-samples t-test","Pearson correlation","Chi-square test of independence","One-way ANOVA"],
+ answer:1, explain:"Two continuous variables, neither manipulated, asking about a linear relationship \u2014 that's the textbook use case for a Pearson correlation."},
+{topic:'test-selection', type:'mc', q:"A researcher randomly assigns participants to a caffeine group or a placebo group and compares their average scores on a vigilance task. Which test is most appropriate?",
+ choices:["Independent-samples t-test","Dependent-samples t-test","Chi-square goodness-of-fit test","Linear regression"],
+ answer:0, explain:"Two separate, unrelated groups compared on one continuous measure \u2014 the classic setup for an independent-samples t-test."},
+{topic:'test-selection', type:'mc', q:"The same group of participants rates their anxiety before, immediately after, and one week after a single relaxation session \u2014 three time points for the same people. Which test is most appropriate?",
+ choices:["Independent-samples t-test","One-way ANOVA (independent groups)","Repeated-measures ANOVA","Chi-square test of independence"],
+ answer:2, explain:"Three or more conditions, but the SAME people go through all of them \u2014 that's a repeated-measures design, calling for a repeated-measures ANOVA rather than an independent-groups one."},
+{topic:'test-selection', type:'mc', q:"A company wants to predict next month's sales revenue (a continuous variable) from how much it spends on advertising that month (also continuous), and wants an actual equation to generate that prediction. Which test is most appropriate?",
+ choices:["Pearson correlation","Linear regression","One-way ANOVA","Chi-square goodness-of-fit test"],
+ answer:1, explain:"Wanting a specific predicted score \u2014 not just a strength-of-relationship number \u2014 calls for regression, which produces a usable prediction equation."},
+{topic:'test-selection', type:'mc', q:"A researcher manipulates both room temperature (cool vs. warm) and background noise (quiet vs. loud) at the same time, and measures how each combination affects test performance. Which test is most appropriate?",
+ choices:["Two-way ANOVA","One-way ANOVA","Repeated-measures ANOVA","Pearson correlation"],
+ answer:0, explain:"Two independent variables manipulated together (temperature and noise) calls for a two-way (factorial) ANOVA, which can also test for an interaction between them."},
+{topic:'test-selection', type:'mc', q:"A researcher wants to know if political party affiliation (three categories) is associated with preferred news source (four categories) in a sample of voters. Every voter is classified into exactly one party category and one news-source category. Which test is most appropriate?",
+ choices:["Chi-square goodness-of-fit test","Chi-square test of independence","Pearson correlation","Two-way ANOVA"],
+ answer:1, explain:"Two categorical variables, and the question is whether they're associated \u2014 that's a chi-square test of independence, not a correlation (which needs continuous variables)."},
+{topic:'test-selection', type:'mc', q:"A researcher wants to know whether a six-sided die is fair, by rolling it many times and comparing the observed frequency of each face to what would be expected if every face came up equally often. Which test is most appropriate?",
+ choices:["Chi-square test of independence","Chi-square goodness-of-fit test","One-way ANOVA","Dependent-samples t-test"],
+ answer:1, explain:"One categorical variable (which face came up), being checked against a hypothesized expected pattern (equal frequency) \u2014 that's a goodness-of-fit test."},
+{topic:'test-selection', type:'mc', q:"Each participant completes a stress questionnaire once, then completes it again exactly one month later, with no intervention in between. The researcher wants to know if the two sets of scores are related to each other. Which test is most appropriate?",
+ choices:["Independent-samples t-test","Dependent-samples t-test","Pearson correlation","One-way ANOVA"],
+ answer:2, explain:"Note the key word: 'related to each other,' not 'different from each other.' Testing whether two sets of paired scores co-vary \u2014 rather than comparing their means \u2014 calls for a correlation (this is actually how test-retest reliability itself is assessed)."},
+{topic:'test-selection', type:'mc', q:"A researcher compares average recovery time across patients randomly assigned to one of four different physical therapy programs (four separate, unrelated groups of patients). Which test is most appropriate?",
+ choices:["One-way ANOVA","Repeated-measures ANOVA","Two-way ANOVA","Chi-square test of independence"],
+ answer:0, explain:"Four independent, unrelated groups compared on one continuous outcome \u2014 the standard use case for a one-way (single-factor) ANOVA."}
 ];
 
 // ---------------- sound effects (synthesized, no audio files) ----------------
@@ -1389,7 +1537,11 @@ const LECTURE_COLORS = {
   9: [255,80,80],   // crimson
   10: [120,130,255],// indigo
   11: [255,179,0],  // amber
-  12: [80,190,255]  // sky
+  12: [80,190,255], // sky
+  13: [255,99,132], // coral
+  14: [34,197,194], // turquoise
+  15: [192,84,255], // violet
+  16: [202,138,4]   // bronze
 };
 function renderTopicGrid(){
   const grid = document.getElementById('topicGrid');
@@ -1976,6 +2128,127 @@ function genOneWayANOVA(){
   };
 }
 
+function genCorrelation(){
+  const targetR = choice([-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,0.4,0.5,0.6,0.7,0.8,0.9]);
+  const SSX = choice([16,25,36,49,64]);
+  const SSY = choice([16,25,36,49,64]);
+  const SP = +(targetR*Math.sqrt(SSX*SSY)).toFixed(2);
+  const r = SP/Math.sqrt(SSX*SSY);
+  return {
+    typeLabel:'Pearson Correlation (r)',
+    given:`SP = ${SP}, SSX = ${SSX}, SSY = ${SSY}`,
+    prompt:'Compute the Pearson correlation, r, for these values.',
+    answer:r, tol:Math.max(0.02, Math.abs(r)*0.03),
+    steps:[
+      `r = SP / √(SSX × SSY)`,
+      `r = ${SP} / √(${SSX} × ${SSY}) = ${SP} / √${SSX*SSY} = ${SP} / ${Math.sqrt(SSX*SSY).toFixed(2)} = ${r.toFixed(3)}`
+    ]
+  };
+}
+
+function genRegression(){
+  const SSX = choice([10,20,25,40,50]);
+  const b = choice([0.4,0.5,0.8,1.2,1.5,2,2.5,-0.5,-1,-1.5]);
+  const SP = +(b*SSX).toFixed(2);
+  const MX = randInt(2,10);
+  const MY = randInt(20,80);
+  const a = +(MY - b*MX).toFixed(2);
+  const askWhat = choice(['b','a','predict']);
+  const given = `MX = ${MX}, MY = ${MY}, SSX = ${SSX}, SP = ${SP}`;
+  let prompt, answer, tol, steps;
+  if(askWhat==='b'){
+    prompt = 'Find the slope, b, of the regression equation.';
+    answer = b; tol = Math.max(0.02, Math.abs(b)*0.03);
+    steps = [`b = SP / SSX`, `b = ${SP} / ${SSX} = ${b}`];
+  } else if(askWhat==='a'){
+    prompt = 'Find the Y-intercept, a, of the regression equation.';
+    answer = a; tol = Math.max(0.1, Math.abs(a)*0.03);
+    steps = [`b = SP/SSX = ${SP}/${SSX} = ${b}`, `a = MY − b(MX) = ${MY} − ${b}(${MX}) = ${a}`];
+  } else {
+    const newX = MX + choice([1,2,3,-1,-2]);
+    const predY = +(a + b*newX).toFixed(2);
+    prompt = `Using the full regression equation, find the predicted Y when X = ${newX}.`;
+    answer = predY; tol = Math.max(0.2, Math.abs(predY)*0.03);
+    steps = [`b = SP/SSX = ${SP}/${SSX} = ${b}`, `a = MY − b(MX) = ${MY} − ${b}(${MX}) = ${a}`, `Ŷ = a + bX = ${a} + ${b}(${newX}) = ${predY}`];
+  }
+  return {typeLabel:'Regression Equation', given, prompt, answer, tol, steps};
+}
+
+function genChiSquareGoF(){
+  const k = choice([3,4]);
+  const perCat = choice([15,20,25,30]);
+  const devs = [];
+  for(let i=0;i<k-1;i++) devs.push(randInt(-10,10));
+  devs.push(-devs.reduce((a,b)=>a+b,0));
+  const observed = devs.map(d=>perCat+d);
+  const chi2 = observed.reduce((acc,o)=>acc + Math.pow(o-perCat,2)/perCat, 0);
+  const labels = ['Category A','Category B','Category C','Category D'].slice(0,k);
+  const given = labels.map((l,i)=>`${l}: observed = ${observed[i]}, expected = ${perCat}`).join('; ');
+  return {
+    typeLabel:'Chi-Square Goodness-of-Fit',
+    given,
+    prompt:'Compute the chi-square (χ²) statistic for this goodness-of-fit test.',
+    answer:chi2, tol:Math.max(0.1, chi2*0.03),
+    steps: labels.map((l,i)=>`${l}: (O−E)²/E = (${observed[i]}−${perCat})²/${perCat} = ${(Math.pow(observed[i]-perCat,2)/perCat).toFixed(2)}`).concat([`χ² = sum of all terms = ${chi2.toFixed(2)}`])
+  };
+}
+
+function genChiSquareIndependence(){
+  const o11 = randInt(8,40), o12 = randInt(8,40), o21 = randInt(8,40), o22 = randInt(8,40);
+  const row1 = o11+o12, row2 = o21+o22;
+  const col1 = o11+o21, col2 = o12+o22;
+  const N = row1+row2;
+  const e11 = row1*col1/N, e12 = row1*col2/N, e21 = row2*col1/N, e22 = row2*col2/N;
+  const cells = [
+    {label:'Group A / Outcome 1', o:o11, e:e11},
+    {label:'Group A / Outcome 2', o:o12, e:e12},
+    {label:'Group B / Outcome 1', o:o21, e:e21},
+    {label:'Group B / Outcome 2', o:o22, e:e22}
+  ];
+  const chi2 = cells.reduce((acc,c)=>acc + Math.pow(c.o-c.e,2)/c.e, 0);
+  const given = `Group A: Outcome 1 = ${o11}, Outcome 2 = ${o12} (row total = ${row1}). Group B: Outcome 1 = ${o21}, Outcome 2 = ${o22} (row total = ${row2}). Column totals: Outcome 1 = ${col1}, Outcome 2 = ${col2}. N = ${N}.`;
+  return {
+    typeLabel:'Chi-Square Test of Independence',
+    given,
+    prompt:'Compute the chi-square (χ²) statistic for this 2×2 test of independence.',
+    answer:chi2, tol:Math.max(0.1, chi2*0.03),
+    steps: cells.map(c=>`${c.label}: E = (row total × column total)/N = ${c.e.toFixed(2)}; (O−E)²/E = (${c.o}−${c.e.toFixed(2)})²/${c.e.toFixed(2)} = ${(Math.pow(c.o-c.e,2)/c.e).toFixed(2)}`).concat([`χ² = sum of all four terms = ${chi2.toFixed(2)}`])
+  };
+}
+
+function genTwoWayANOVA(){
+  const dfA = choice([1,2]);
+  const dfB = choice([1,2]);
+  const dfAB = dfA*dfB;
+  const dfError = choice([12,16,20,24]);
+  const msError = choice([2,3,4,5,6]);
+  const SSerror = msError*dfError;
+  const msA = choice([4,6,8,10,12,16]);
+  const SSA = msA*dfA;
+  const msB = choice([4,6,8,10,12,16]);
+  const SSB = msB*dfB;
+  const msAB = choice([2,3,4,5,6,8]);
+  const SSAB = msAB*dfAB;
+  const which = choice(['A','B','AB']);
+  const labels = {A:'Factor A', B:'Factor B', AB:'the A×B interaction'};
+  const SSmap = {A:SSA,B:SSB,AB:SSAB};
+  const dfmap = {A:dfA,B:dfB,AB:dfAB};
+  const msMap = {A:msA,B:msB,AB:msAB};
+  const F = +(msMap[which]/msError).toFixed(3);
+  const given = `SS(Factor A) = ${SSA}, df(Factor A) = ${dfA}; SS(Factor B) = ${SSB}, df(Factor B) = ${dfB}; SS(A×B) = ${SSAB}, df(A×B) = ${dfAB}; SS(Error) = ${SSerror}, df(Error) = ${dfError}`;
+  return {
+    typeLabel:'Two-Way ANOVA F-Ratio',
+    given,
+    prompt:`Compute the F-ratio for ${labels[which]}.`,
+    answer:F, tol:Math.max(0.05, Math.abs(F)*0.03),
+    steps:[
+      `MSerror = SSerror/dferror = ${SSerror}/${dfError} = ${msError}`,
+      `MS(${labels[which]}) = SS/df = ${SSmap[which]}/${dfmap[which]} = ${msMap[which]}`,
+      `F = MS(${labels[which]}) / MSerror = ${msMap[which]} / ${msError} = ${F}`
+    ]
+  };
+}
+
 const PRACTICE_TYPES = [
   {key:'descriptive', name:'Mean, SS, Variance & SD', gen: genDescriptive},
   {key:'zscore', name:'Z-Scores (raw ↔ z)', gen: genZScore},
@@ -1983,7 +2256,12 @@ const PRACTICE_TYPES = [
   {key:'ztest', name:'One-Sample Z-Test Statistic', gen: genZTest},
   {key:'indepttest', name:'Independent-Samples t-Test', gen: genIndepTTest},
   {key:'depttest', name:'Dependent-Samples t-Test', gen: genDepTTest},
-  {key:'onewayanova', name:'One-Way ANOVA F-Ratio', gen: genOneWayANOVA}
+  {key:'onewayanova', name:'One-Way ANOVA F-Ratio', gen: genOneWayANOVA},
+  {key:'twowayanova', name:'Two-Way ANOVA F-Ratio', gen: genTwoWayANOVA},
+  {key:'correlation', name:'Pearson Correlation (r)', gen: genCorrelation},
+  {key:'regression', name:'Regression Equation', gen: genRegression},
+  {key:'chisquare', name:'Chi-Square Goodness-of-Fit', gen: genChiSquareGoF},
+  {key:'chisquareindep', name:'Chi-Square Test of Independence', gen: genChiSquareIndependence}
 ];
 
 const practiceState = { typeKey:'descriptive', current:null, score:0, total:0 };
