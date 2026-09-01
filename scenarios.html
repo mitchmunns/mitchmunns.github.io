@@ -283,6 +283,29 @@ const DATA_RM = {
     high: { label: "High Noise", scores: [6,2,7,4,6] }
   }
 };
+const DATA_CORR = {
+  xLabel: "Hours of Exercise per Week", yLabel: "Resting Heart Rate (bpm)",
+  x: [1,2,3,5,6,7], y: [82,78,75,68,64,63]
+};
+const DATA_REG = {
+  xLabel: "Hours Studied", yLabel: "Exam Score",
+  x: [1,2,3,4,5,6], y: [55,60,68,72,80,85],
+  predictX: 7
+};
+const DATA_CHI_GOF = {
+  categoryLabel: "Study Location", label: "Number of Students",
+  categories: [
+    { label: "Library", observed: 25 },
+    { label: "Coffee Shop", observed: 40 },
+    { label: "Dorm Room", observed: 25 }
+  ]
+};
+const DATA_CHI_INDEP = {
+  rowVar: "Engagement Level", colVar: "Voting Method",
+  rows: ["High Engagement","Low Engagement"],
+  cols: ["Mail-In","In-Person"],
+  table: [ [38,12], [22,28] ]
+};
 
 const SCENARIOS = {
   indep_t: {
@@ -472,9 +495,138 @@ const SCENARIOS = {
     statNotation:(s)=>`F(${s.df1}, ${s.df2})`,
     testFullName:'One-way ANOVA',
     conclusionSubject:'exam scores among the three study techniques'
+  },
+  correlation: {
+    key:'correlation', enabled:true, startStep:'corr_scenario',
+    menuTitle:'Relationship Between Two Variables',
+    menuBlurb:'See whether two continuous variables are linearly related.',
+    lecture:'14',
+    data: DATA_CORR,
+    introHTML: `<p><strong>Design:</strong> A researcher wants to know whether hours of exercise per week are related to resting heart rate. She measures both variables in the same <strong>6 adults</strong> &mdash; nothing is manipulated, both variables are simply observed.</p>
+      <p><strong>Sample:</strong> n = 6 adults, two scores per person.</p>
+      <p><strong>Variables:</strong> ${DATA_CORR.xLabel} (X) and ${DATA_CORR.yLabel} (Y)</p>`,
+    decision:{
+      correctQ1:'relationship',
+      q1Hint:"Think about what's being asked — is this about group differences, or about whether two continuous variables move together?",
+      correctQ2:'describe',
+      q2Hint:"Reread the goal — are we trying to generate a specific predicted score, or just describe the strength and direction of the relationship?",
+      resultLead:'Two continuous variables, describing their relationship &rarr;',
+      testName:'Pearson Correlation',
+      afterResult:'hypotheses'
+    },
+    hyp:{
+      symbols:[{id:'rho',label:'ρ'},{id:'zero',label:'0'},{id:'eq',label:'='},{id:'neq',label:'≠'}],
+      h0:['rho','eq','zero'], h1:['rho','neq','zero'],
+      explanation:'Correct! H₀: ρ = 0 (no linear relationship in the population). H₁: ρ ≠ 0 (a linear relationship exists), two-tailed.',
+      summaryText:'ρ = 0  /  ρ ≠ 0',
+      afterHyp:'alpha'
+    },
+    afterAlpha:'r_critical',
+    statSymbol:'r', hasDf:true,
+    statNotation:(s)=>`r(${s.dfVal})`,
+    testFullName:'Pearson correlation',
+    conclusionVerb:'relationship between',
+    conclusionSubject:`${DATA_CORR.xLabel.toLowerCase()} and ${DATA_CORR.yLabel.toLowerCase()}`
+  },
+  regression: {
+    key:'regression', enabled:true, startStep:'reg_scenario',
+    menuTitle:'Predicting One Score from Another',
+    menuBlurb:'Use one continuous variable to predict another, then test whether the relationship is significant.',
+    lecture:'15',
+    data: DATA_REG,
+    introHTML: `<p><strong>Design:</strong> A researcher wants to know whether hours studied can predict exam scores. She measures both variables in the same <strong>6 students</strong> and wants an equation that generates an actual predicted score, not just a strength-of-relationship number.</p>
+      <p><strong>Sample:</strong> n = 6 students, two scores per person.</p>
+      <p><strong>Variables:</strong> ${DATA_REG.xLabel} (X, predictor) and ${DATA_REG.yLabel} (Y, outcome)</p>`,
+    decision:{
+      correctQ1:'relationship',
+      q1Hint:"Think about what's being asked — is this about group differences, or about whether two continuous variables move together?",
+      correctQ2:'predict',
+      q2Hint:"Reread the goal — are we trying to generate a specific predicted score for a new X, or just describe the relationship's strength?",
+      resultLead:'Two continuous variables, predicting one from the other &rarr;',
+      testName:'Linear Regression',
+      afterResult:'hypotheses'
+    },
+    hyp:{
+      symbols:[{id:'beta',label:'β'},{id:'zero',label:'0'},{id:'eq',label:'='},{id:'neq',label:'≠'}],
+      h0:['beta','eq','zero'], h1:['beta','neq','zero'],
+      explanation:'Correct! H₀: β = 0 (X does not predict Y). H₁: β ≠ 0 (X significantly predicts Y), two-tailed.',
+      summaryText:'β = 0  /  β ≠ 0',
+      afterHyp:'alpha'
+    },
+    afterAlpha:'r_critical',
+    statSymbol:'r', hasDf:true,
+    statNotation:(s)=>`r(${s.dfVal})`,
+    testFullName:'Linear regression (slope test)',
+    conclusionVerb:'relationship between',
+    conclusionSubject:`${DATA_REG.xLabel.toLowerCase()} and ${DATA_REG.yLabel.toLowerCase()}`
+  },
+  chi_gof: {
+    key:'chi_gof', enabled:true, startStep:'chigof_scenario',
+    menuTitle:'Chi-Square: Goodness-of-Fit',
+    menuBlurb:'Test whether one categorical variable matches an expected pattern.',
+    lecture:'16',
+    data: DATA_CHI_GOF,
+    introHTML: `<p><strong>Design:</strong> A campus researcher wants to know whether students have an <strong>equal preference</strong> among three study locations, or whether some locations are preferred more than others. She surveys <strong>90 students</strong> and records which location each one prefers.</p>
+      <p><strong>Sample:</strong> N = 90 students, one categorical response each.</p>
+      <p><strong>Variable:</strong> ${DATA_CHI_GOF.categoryLabel} (${DATA_CHI_GOF.categories.map(c=>c.label).join(', ')})</p>`,
+    decision:{
+      correctQ1:'frequencies',
+      q1Hint:"Think about the data here — are these continuous scores, or counts of how many people fell into each category?",
+      correctQ2:'onevar',
+      q2Hint:"Reread the goal — is there only ONE categorical variable being checked against an expected pattern, or are we checking whether TWO categorical variables are related?",
+      resultLead:'One categorical variable vs. an expected pattern &rarr;',
+      testName:'Chi-Square Goodness-of-Fit Test',
+      afterResult:'hypotheses'
+    },
+    hyp:{
+      symbols:[{id:'obs',label:'The observed distribution'},{id:'match',label:'matches'},{id:'notmatch',label:'does not match'},{id:'exp',label:'the expected (equal) distribution'}],
+      h0:['obs','match','exp'], h1:['obs','notmatch','exp'],
+      explanation:'Correct! H₀: the observed distribution matches the expected (equal-preference) distribution. H₁: it does not match — preferences are not equal.',
+      summaryText:'Observed matches expected  /  Observed does not match expected',
+      afterHyp:'alpha'
+    },
+    afterAlpha:'chi_critical',
+    hasDf:true,
+    statSymbol:'χ²', criticalSigned:false,
+    statNotation:(s)=>`χ²(${s.dfVal})`,
+    testFullName:'Chi-square goodness-of-fit test',
+    conclusionSubject:'observed vs. expected preference among the three study locations'
+  },
+  chi_indep: {
+    key:'chi_indep', enabled:true, startStep:'chiindep_scenario',
+    menuTitle:'Chi-Square: Test of Independence',
+    menuBlurb:'Test whether two categorical variables are associated with each other.',
+    lecture:'16',
+    data: DATA_CHI_INDEP,
+    introHTML: `<p><strong>Design:</strong> A researcher wants to know whether political engagement level is associated with preferred voting method. She surveys <strong>100 voters</strong>, classifying each one into exactly one engagement category and one voting-method category.</p>
+      <p><strong>Sample:</strong> N = 100 voters, two categorical classifications each.</p>
+      <p><strong>Variables:</strong> ${DATA_CHI_INDEP.rowVar} (${DATA_CHI_INDEP.rows.join(', ')}) and ${DATA_CHI_INDEP.colVar} (${DATA_CHI_INDEP.cols.join(', ')})</p>`,
+    decision:{
+      correctQ1:'frequencies',
+      q1Hint:"Think about the data here — are these continuous scores, or counts of how many people fell into each category?",
+      correctQ2:'twovar',
+      q2Hint:"Reread the goal — is there only ONE categorical variable being checked against an expected pattern, or are we checking whether TWO categorical variables are related?",
+      resultLead:'Two categorical variables, checking association &rarr;',
+      testName:'Chi-Square Test of Independence',
+      afterResult:'hypotheses'
+    },
+    hyp:{
+      symbols:[{id:'vars',label:'The two variables'},{id:'indep',label:'are independent'},{id:'assoc',label:'are associated'}],
+      h0:['vars','indep'], h1:['vars','assoc'],
+      explanation:'Correct! H₀: the two variables are independent (no association). H₁: the two variables are associated.',
+      summaryText:'Independent  /  Associated',
+      afterHyp:'alpha'
+    },
+    afterAlpha:'chi_critical',
+    hasDf:true,
+    statSymbol:'χ²', criticalSigned:false,
+    statNotation:(s)=>`χ²(${s.dfVal})`,
+    testFullName:'Chi-square test of independence',
+    conclusionVerb:'association between',
+    conclusionSubject:`${DATA_CHI_INDEP.rowVar.toLowerCase()} and ${DATA_CHI_INDEP.colVar.toLowerCase()}`
   }
 };
-const SCENARIO_ORDER = ['indep_t','paired_t','one_sample_t','one_sample_z','rm_anova','one_way_anova'];
+const SCENARIO_ORDER = ['indep_t','paired_t','one_sample_t','one_sample_z','rm_anova','one_way_anova','correlation','regression','chi_gof','chi_indep'];
 
 const PHASES = ["Scenario","Descriptives","Choose Test","Run the Test","Conclude"];
 const STEP_PHASE = {
@@ -490,6 +642,11 @@ const STEP_PHASE = {
   os_df:3, os_critical:3, os_se:3, os_tcalc:3, os_z_critical:3, os_z_se:3, os_zcalc:3,
   ao_grand_mean:3, ao_ss_between:3, ao_ss_within:3, ao_anova_table:3, ao_critical:3, ao_compare:4,
   rm_grand_mean:3, rm_subject_means:3, rm_ss_total:3, rm_ss_treatments:3, rm_ss_subjects:3, rm_ss_error:3, rm_anova_table:3, rm_critical:3,
+  corr_scenario:0, corr_raw:0, corr_given:1, corr_formula:3, r_critical:3,
+  reg_scenario:0, reg_raw:0, reg_given:1, reg_slope:1, reg_intercept:1, reg_predict:1,
+  chigof_scenario:0, chigof_raw:0, chigof_expected:1, chigof_table:3,
+  chiindep_scenario:0, chiindep_raw:0, chiindep_expected:1, chiindep_table:3,
+  chi_critical:3, compare_unsigned:4,
   compare:4, conclusion:4, summary:4, challenge_over:0
 };
 
@@ -532,7 +689,7 @@ function renderLives(){
   if(!challenge || !challenge.active){ bar.style.display='none'; return; }
   bar.style.display='flex';
   const hearts = Array.from({length:CHALLENGE_LIVES}).map((_,i)=> `<span${i<challenge.lives?'':' class="lost"'}>&hearts;</span>`).join('');
-  bar.innerHTML = `<span>Challenge &middot; ${challenge.completed}/6 complete</span><span class="hearts">${hearts}</span>`;
+  bar.innerHTML = `<span>Challenge &middot; ${challenge.completed}/${SCENARIO_ORDER.length} complete</span><span class="hearts">${hearts}</span>`;
 }
 function hideHint(){
   document.getElementById('hintbar').style.display='none';
@@ -857,7 +1014,7 @@ function fmt(n){ return Number.isInteger(n) ? n : Math.round(n*1000)/1000; }
 function poss(word){ return word.endsWith('s') ? word+"'" : word+"'s"; }
 
 /* ---------- sampling distribution chart with shaded critical region ---------- */
-function distributionChart(kind, criticalValue){
+function distributionChart(kind, criticalValue, critLabel){
   const W = 400, H = 130, baseline = 106, padX = 22, curveHeight = 82;
   const isF = kind === 'F';
   const domain = isF ? [0, 6] : [-4, 4];
@@ -881,7 +1038,7 @@ function distributionChart(kind, criticalValue){
       <clipPath id="clipShadeF"><rect x="${cx}" y="0" width="${W-cx}" height="${H}"/></clipPath>
       <path d="${fillPath}" fill="var(--bad)" fill-opacity=".35" clip-path="url(#clipShadeF)"/>
       <line x1="${cx}" y1="14" x2="${cx}" y2="${baseline}" stroke="var(--bad)" stroke-width="1.5" stroke-dasharray="3,3"/>
-      <text x="${cx}" y="11" font-size="11" fill="var(--bad)" text-anchor="middle">F crit</text>`;
+      <text x="${cx}" y="11" font-size="11" fill="var(--bad)" text-anchor="middle">${critLabel || 'F crit'}</text>`;
   } else {
     const cxPos = xScale(Math.min(criticalValue, domain[1])).toFixed(1);
     const cxNeg = xScale(Math.max(-criticalValue, domain[0])).toFixed(1);
@@ -1087,7 +1244,7 @@ RENDER.menu = (card)=>{
   card.appendChild(el(`
     <div class="scenario-box center" style="margin-top:8px;">
       <p style="margin-bottom:6px;"><strong>Feeling confident?</strong></p>
-      <p class="muted small">Challenge Mode gives you all six test types, one at a time in random order, with 5 lives shared across the whole run. Any wrong answer costs a life &mdash; but reveals a hint. Lose all five and the run ends. Each test you clear gives you less help up front on the next one.</p>
+      <p class="muted small">Challenge Mode gives you all ${SCENARIO_ORDER.length} test types, one at a time in random order, with 5 lives shared across the whole run. Any wrong answer costs a life &mdash; but reveals a hint. Lose all five and the run ends. Each test you clear gives you less help up front on the next one.</p>
       <div class="btnrow">
         <button class="primary" onclick="Tutor.startChallenge()">Start Challenge Mode</button>
         <button onclick="goto('leaderboard')">&#127942; View Leaderboard</button>
@@ -1097,7 +1254,7 @@ RENDER.menu = (card)=>{
 
 RENDER.leaderboard = (card)=>{
   card.appendChild(el(`<h2>Leaderboard</h2>`));
-  card.appendChild(el(`<p class="center muted">Top Challenge Mode runs &mdash; clear all six test types to add your name.</p>`));
+  card.appendChild(el(`<p class="center muted">Top Challenge Mode runs &mdash; clear all ${SCENARIO_ORDER.length} test types to add your name.</p>`));
   const boardWrap = el(`<div></div>`);
   boardWrap.appendChild(el(`<p class="center muted">Loading&hellip;</p>`));
   card.appendChild(boardWrap);
@@ -3946,6 +4103,770 @@ RENDER.rm_critical = (card)=>{
   card.appendChild(wrap);
 };
 
+/* ==================== CORRELATION ==================== */
+
+RENDER.corr_scenario = (card)=>{
+  const sc = state.scenario;
+  card.appendChild(el(`
+    <div>
+      <h2>Step 1 &mdash; The Research Scenario</h2>
+      <p class="center muted small">Lecture ${sc.lecture}</p>
+      <div class="scenario-box">${sc.introHTML}</div>
+      <p class="muted center small">We'll keep the numbers small and clean so you can focus on the process, not the arithmetic.</p>
+      <div class="btnrow"><button class="primary" onclick="goto('corr_raw')">See the raw data</button></div>
+    </div>`));
+};
+
+function corrDataEl(){
+  const d = state.scenario.data;
+  const wrap = el(`<div class="desc-panel"><div class="desc-caption">Paired Scores</div></div>`);
+  const tbl = document.createElement('table'); tbl.className='desc-table';
+  tbl.insertAdjacentHTML('beforeend', `<tr><th></th><th>${d.xLabel}</th><th>${d.yLabel}</th></tr>`);
+  d.x.forEach((xv,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="muted">P${i+1}</td>`;
+    const xTd = document.createElement('td'); xTd.appendChild(chipEl('col_X', xv));
+    const yTd = document.createElement('td'); yTd.appendChild(chipEl('col_Y', d.y[i]));
+    tr.appendChild(xTd); tr.appendChild(yTd);
+    tbl.appendChild(tr);
+  });
+  wrap.appendChild(tbl);
+  return wrap;
+}
+
+RENDER.corr_raw = (card)=>{
+  const wrap = document.createElement('div');
+  wrap.appendChild(corrDataEl());
+  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('corr_given')">Next: See the Computed Sums</button></div>`));
+  card.appendChild(wrap);
+};
+
+function corrGivenTableEl(){
+  const d = state.desc;
+  const wrap = el(`<div class="desc-panel"><div class="desc-caption">Your Sums</div></div>`);
+  const tbl = el(`<table class="desc-table"><tr><th>n</th><th>SS<span class="sub">X</span></th><th>SS<span class="sub">Y</span></th><th>SP</th></tr></table>`);
+  const tr = document.createElement('tr');
+  [['n_CORR',d.n_CORR],['SSX_CORR',d.SSX_CORR],['SSY_CORR',d.SSY_CORR],['SP_CORR',d.SP_CORR]].forEach(([id,val])=>{
+    const td = document.createElement('td'); td.appendChild(chipEl(id, fmt(val)));
+    tr.appendChild(td);
+  });
+  tbl.appendChild(tr);
+  wrap.appendChild(tbl);
+  return wrap;
+}
+
+RENDER.corr_given = (card)=>{
+  const sc = state.scenario, d = sc.data;
+  const n = d.x.length;
+  const mx = d.x.reduce((a,b)=>a+b,0)/n;
+  const my = d.y.reduce((a,b)=>a+b,0)/n;
+  const ssx = d.x.reduce((a,x)=>a+(x-mx)**2,0);
+  const ssy = d.y.reduce((a,y)=>a+(y-my)**2,0);
+  const sp = d.x.reduce((a,x,i)=>a+(x-mx)*(d.y[i]-my),0);
+  state.desc.n_CORR=n; state.desc.SSX_CORR=ssx; state.desc.SSY_CORR=ssy; state.desc.SP_CORR=sp;
+  state.dfVal = n-2;
+  card.appendChild(el(`<h2>Step 2 &mdash; From Raw Data to Sums</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(el(`<p class="center muted">Your TA has already calculated these values from the raw scores above &mdash; you'll use them to find r.</p>`));
+  wrap.appendChild(corrGivenTableEl());
+  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('corr_formula')">Next: Calculate r</button></div>`));
+  card.appendChild(wrap);
+};
+
+RENDER.corr_formula = (card)=>{
+  card.appendChild(el(`<h2>Step 2 &mdash; Calculate r</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">Drag SP into the numerator, then SSX and SSY into the denominator.</p>`));
+  wrap.appendChild(corrGivenTableEl());
+  wrap.appendChild(formulaRef(`r = SP / &radic;(SS<span class="sub">X</span> &times; SS<span class="sub">Y</span>)`));
+
+  const SP = state.desc.SP_CORR, SSX = state.desc.SSX_CORR, SSY = state.desc.SSY_CORR;
+  const filled = {};
+  const formula = el(`<div class="formula">r = <span id="sp"></span> / &radic;( <span id="ssx"></span> &times; <span id="ssy"></span> ) = <span id="res" class="result" style="display:inline; margin:0;"></span></div>`);
+  const spSlot = slotEl('r_sp','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SP_CORR'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SP); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.sp=true; tryCalc();
+  });
+  const ssxSlot = slotEl('r_ssx','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SSX_CORR'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SSX); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.ssx=true; tryCalc();
+  });
+  const ssySlot = slotEl('r_ssy','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SSY_CORR'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SSY); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.ssy=true; tryCalc();
+  });
+  formula.querySelector('#sp').replaceWith(spSlot);
+  formula.querySelector('#ssx').replaceWith(ssxSlot);
+  formula.querySelector('#ssy').replaceWith(ssySlot);
+  wrap.appendChild(formula);
+
+  const btnrow = el(`<div class="btnrow"></div>`);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+
+  function tryCalc(){
+    if(filled.sp && filled.ssx && filled.ssy){
+      const r = SP/Math.sqrt(SSX*SSY);
+      state.tobt = r;
+      formula.querySelector('#res').textContent = fmt(r);
+      const cont = el(`<button class="primary">Continue: Choose the Right Analysis</button>`);
+      cont.addEventListener('click', ()=> goto('decision_q1'));
+      btnrow.appendChild(cont);
+    }
+  }
+};
+
+/* ==================== LINEAR REGRESSION ==================== */
+
+RENDER.reg_scenario = (card)=>{
+  const sc = state.scenario;
+  card.appendChild(el(`
+    <div>
+      <h2>Step 1 &mdash; The Research Scenario</h2>
+      <p class="center muted small">Lecture ${sc.lecture}</p>
+      <div class="scenario-box">${sc.introHTML}</div>
+      <p class="muted center small">We'll keep the numbers small and clean so you can focus on the process, not the arithmetic.</p>
+      <div class="btnrow"><button class="primary" onclick="goto('reg_raw')">See the raw data</button></div>
+    </div>`));
+};
+
+function regDataEl(){
+  const d = state.scenario.data;
+  const wrap = el(`<div class="desc-panel"><div class="desc-caption">Paired Scores</div></div>`);
+  const tbl = document.createElement('table'); tbl.className='desc-table';
+  tbl.insertAdjacentHTML('beforeend', `<tr><th></th><th>${d.xLabel}</th><th>${d.yLabel}</th></tr>`);
+  d.x.forEach((xv,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="muted">P${i+1}</td>`;
+    const xTd = document.createElement('td'); xTd.appendChild(chipEl('rcol_X', xv));
+    const yTd = document.createElement('td'); yTd.appendChild(chipEl('rcol_Y', d.y[i]));
+    tr.appendChild(xTd); tr.appendChild(yTd);
+    tbl.appendChild(tr);
+  });
+  wrap.appendChild(tbl);
+  return wrap;
+}
+
+RENDER.reg_raw = (card)=>{
+  const wrap = document.createElement('div');
+  wrap.appendChild(regDataEl());
+  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('reg_given')">Next: See the Computed Sums</button></div>`));
+  card.appendChild(wrap);
+};
+
+function regGivenTableEl(){
+  const d = state.desc;
+  const wrap = el(`<div class="desc-panel"><div class="desc-caption">Your Sums</div></div>`);
+  const tbl = el(`<table class="desc-table"><tr><th>M<span class="sub">X</span></th><th>M<span class="sub">Y</span></th><th>SS<span class="sub">X</span></th><th>SP</th></tr></table>`);
+  const tr = document.createElement('tr');
+  [['MX_REG',d.MX_REG],['MY_REG',d.MY_REG],['SSX_REG',d.SSX_REG],['SP_REG',d.SP_REG]].forEach(([id,val])=>{
+    const td = document.createElement('td'); td.appendChild(chipEl(id, fmt(val)));
+    tr.appendChild(td);
+  });
+  tbl.appendChild(tr);
+  wrap.appendChild(tbl);
+  return wrap;
+}
+
+RENDER.reg_given = (card)=>{
+  const sc = state.scenario, d = sc.data;
+  const n = d.x.length;
+  const mx = d.x.reduce((a,b)=>a+b,0)/n;
+  const my = d.y.reduce((a,b)=>a+b,0)/n;
+  const ssx = d.x.reduce((a,x)=>a+(x-mx)**2,0);
+  const ssy = d.y.reduce((a,y)=>a+(y-my)**2,0);
+  const sp = d.x.reduce((a,x,i)=>a+(x-mx)*(d.y[i]-my),0);
+  state.desc.n_REG=n; state.desc.MX_REG=mx; state.desc.MY_REG=my;
+  state.desc.SSX_REG=ssx; state.desc.SSY_REG=ssy; state.desc.SP_REG=sp;
+  state.dfVal = n-2;
+  card.appendChild(el(`<h2>Step 2 &mdash; From Raw Data to Sums</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(el(`<p class="center muted">Your TA has already calculated these values from the raw scores above &mdash; you'll use them to build the regression equation.</p>`));
+  wrap.appendChild(regGivenTableEl());
+  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('reg_slope')">Next: Find the Slope</button></div>`));
+  card.appendChild(wrap);
+};
+
+RENDER.reg_slope = (card)=>{
+  card.appendChild(el(`<h2>Step 2 &mdash; The Slope (b)</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">Drag SP and SSX from your descriptives.</p>`));
+  wrap.appendChild(regGivenTableEl());
+  wrap.appendChild(formulaRef(`b = SP / SS<span class="sub">X</span>`));
+  const SP = state.desc.SP_REG, SSX = state.desc.SSX_REG;
+  const filled = {};
+  const formula = el(`<div class="formula">b = <span id="sp"></span> / <span id="ssx"></span> = <span id="res" class="result" style="display:inline; margin:0;"></span></div>`);
+  const spSlot = slotEl('b_sp','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SP_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SP); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.sp=true; tryCalc();
+  });
+  const ssxSlot = slotEl('b_ssx','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SSX_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SSX); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.ssx=true; tryCalc();
+  });
+  formula.querySelector('#sp').replaceWith(spSlot);
+  formula.querySelector('#ssx').replaceWith(ssxSlot);
+  wrap.appendChild(formula);
+  const btnrow = el(`<div class="btnrow"></div>`);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+  function tryCalc(){
+    if(filled.sp && filled.ssx){
+      const b = SP/SSX;
+      state.desc.b_REG = b;
+      formula.querySelector('#res').textContent = fmt(b);
+      const cont = el(`<button class="primary">Continue</button>`);
+      cont.addEventListener('click', ()=> goto('reg_intercept'));
+      btnrow.appendChild(cont);
+    }
+  }
+};
+
+RENDER.reg_intercept = (card)=>{
+  card.appendChild(el(`<h2>Step 2 &mdash; The Intercept (a)</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">Drag MY and MX, and drag b from your result above.</p>`));
+  wrap.appendChild(regGivenTableEl());
+  wrap.appendChild(formulaRef(`a = M<span class="sub">Y</span> &minus; b(M<span class="sub">X</span>)`));
+  const MY = state.desc.MY_REG, MX = state.desc.MX_REG, b = state.desc.b_REG;
+  const bChip = el(`<div class="desc-panel"><div class="desc-caption">Your slope</div></div>`);
+  const bTbl = el(`<table class="desc-table"><tr><th>b</th></tr></table>`);
+  const bTr = document.createElement('tr'); const bTd = document.createElement('td');
+  bTd.appendChild(chipEl('b_REG', fmt(b))); bTr.appendChild(bTd); bTbl.appendChild(bTr);
+  bChip.appendChild(bTbl);
+  wrap.appendChild(bChip);
+
+  const filled = {};
+  const formula = el(`<div class="formula">a = <span id="my"></span> &minus; ( <span id="b"></span> )( <span id="mx"></span> ) = <span id="res" class="result" style="display:inline; margin:0;"></span></div>`);
+  const mySlot = slotEl('a_my','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='MY_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(MY); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.my=true; tryCalc();
+  });
+  const bSlot = slotEl('a_b','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='b_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(b); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.b=true; tryCalc();
+  });
+  const mxSlot = slotEl('a_mx','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='MX_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(MX); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.mx=true; tryCalc();
+  });
+  formula.querySelector('#my').replaceWith(mySlot);
+  formula.querySelector('#b').replaceWith(bSlot);
+  formula.querySelector('#mx').replaceWith(mxSlot);
+  wrap.appendChild(formula);
+  const btnrow = el(`<div class="btnrow"></div>`);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+  function tryCalc(){
+    if(filled.my && filled.b && filled.mx){
+      const a = MY - b*MX;
+      state.desc.a_REG = a;
+      formula.querySelector('#res').textContent = fmt(a);
+      const cont = el(`<button class="primary">Continue: Make a Prediction</button>`);
+      cont.addEventListener('click', ()=> goto('reg_predict'));
+      btnrow.appendChild(cont);
+    }
+  }
+};
+
+RENDER.reg_predict = (card)=>{
+  const sc = state.scenario, d = sc.data;
+  const a = state.desc.a_REG, b = state.desc.b_REG;
+  const predictX = d.predictX;
+  card.appendChild(el(`<h2>Step 2 &mdash; Predict a New Score</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">Drag a and b into the regression equation, then type the X value to predict.</p>`));
+  wrap.appendChild(formulaRef(`&Yacute; = a + bX`));
+
+  const giveChips = el(`<div class="desc-panel"><div class="desc-caption">Your regression equation pieces</div></div>`);
+  const gTbl = el(`<table class="desc-table"><tr><th>a</th><th>b</th></tr></table>`);
+  const gTr = document.createElement('tr');
+  const gA = document.createElement('td'); gA.appendChild(chipEl('a_REG', fmt(a)));
+  const gB = document.createElement('td'); gB.appendChild(chipEl('b_REG', fmt(b)));
+  gTr.appendChild(gA); gTr.appendChild(gB); gTbl.appendChild(gTr);
+  giveChips.appendChild(gTbl);
+  wrap.appendChild(giveChips);
+
+  wrap.appendChild(el(`<p class="center muted">What score would we predict for a new student with X = ${predictX}?</p>`));
+
+  const filled = {};
+  const formula = el(`<div class="formula">&Yacute; = <span id="a"></span> + ( <span id="b"></span> )( </div>`);
+  const aSlot = slotEl('p_a','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='a_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(a); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.a=true; checkReady();
+  });
+  const bSlot = slotEl('p_b','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='b_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(b); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.b=true; checkReady();
+  });
+  formula.appendChild(aSlot);
+  formula.appendChild(el(`<span> + ( </span>`));
+  formula.appendChild(bSlot);
+  formula.appendChild(el(`<span> )( </span>`));
+  const xInput = numInput('p_x', predictX, checkReady);
+  formula.appendChild(xInput);
+  formula.appendChild(el(`<span> ) = </span>`));
+  const resultSpan = el(`<span></span>`);
+  formula.appendChild(resultSpan);
+  wrap.appendChild(formula);
+
+  const btnrow = el(`<div class="btnrow"></div>`);
+  const calcBtn = el(`<button class="primary" style="display:none;">Calculate &Yacute;</button>`);
+  btnrow.appendChild(calcBtn);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+
+  function checkReady(){
+    if(filled.a && filled.b && xInput.classList.contains('filled')) calcBtn.style.display='inline-block';
+  }
+  calcBtn.addEventListener('click', ()=>{
+    const yhat = a + b*predictX;
+    resultSpan.innerHTML = `<strong>${fmt(yhat)}</strong>`;
+    calcBtn.style.display='none';
+    const SSY = state.desc.SSY_REG, SP = state.desc.SP_REG, SSX = state.desc.SSX_REG;
+    state.tobt = SP/Math.sqrt(SSX*SSY);
+    const cont = el(`<button class="primary">Continue: Is This Significant?</button>`);
+    cont.addEventListener('click', ()=> goto('decision_q1'));
+    btnrow.innerHTML=''; btnrow.appendChild(cont);
+  });
+};
+
+/* ==================== SHARED: r-critical (correlation & regression) ==================== */
+
+RENDER.r_critical = (card)=>{
+  const dfVal = state.dfVal;
+  card.appendChild(el(`
+    <div>
+      <h2>Find the Critical Value</h2>
+      <p class="center muted">&alpha; = .05, two-tailed, df = ${dfVal}. Click the correct row.</p>
+    </div>`));
+  const wrap = el(`<div></div>`);
+  const rows = [ {df:4, val:.811}, {df:5, val:.754}, {df:6, val:.707}, {df:7, val:.666}, {df:8, val:.632} ];
+  wrap.appendChild(distributionChart('t', (rows.find(r=>r.df===dfVal) || rows[0]).val));
+  const tbl = el(`<table class="desc-table"><tr><th>df</th><th>r-critical (&alpha;=.05, two-tailed)</th></tr></table>`);
+  const fb = el(`<div class="feedback"></div>`);
+  const btnrow = el(`<div class="btnrow"></div>`);
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.df}</td>`;
+    const td = document.createElement('td');
+    const cell = el(`<span class="slot" style="min-width:70px;">${r.val.toFixed(3)}</span>`);
+    cell.addEventListener('click', ()=>{
+      if(r.df === dfVal){
+        mark(true);
+        state.tcrit = r.val;
+        cell.classList.add('filled');
+        fb.className='feedback good';
+        fb.textContent = `Correct — r-critical = ${r.val}`;
+        const cont = el(`<button class="primary">Continue</button>`);
+        cont.addEventListener('click', ()=> goto('compare'));
+        btnrow.innerHTML=''; btnrow.appendChild(cont);
+      } else {
+        mark(false);
+        cell.classList.add('wrong'); setTimeout(()=>cell.classList.remove('wrong'),300);
+        fb.className='feedback bad';
+        fb.textContent = `That row is for df = ${r.df}. Our df is ${dfVal} — look for that row.`;
+      }
+    });
+    td.appendChild(cell);
+    tr.appendChild(td);
+    tbl.appendChild(tr);
+  });
+  wrap.appendChild(tbl);
+  wrap.appendChild(fb);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+};
+
+/* ==================== CHI-SQUARE: GOODNESS-OF-FIT ==================== */
+
+RENDER.chigof_scenario = (card)=>{
+  const sc = state.scenario;
+  card.appendChild(el(`
+    <div>
+      <h2>Step 1 &mdash; The Research Scenario</h2>
+      <p class="center muted small">Lecture ${sc.lecture}</p>
+      <div class="scenario-box">${sc.introHTML}</div>
+      <div class="btnrow"><button class="primary" onclick="goto('chigof_raw')">See the observed data</button></div>
+    </div>`));
+};
+
+RENDER.chigof_raw = (card)=>{
+  const d = state.scenario.data;
+  const n = d.categories.reduce((a,c)=>a+c.observed,0);
+  state.desc.N_CHIGOF = n;
+  const wrap = document.createElement('div');
+  wrap.appendChild(el(`<p class="center muted">N = ${n} students total.</p>`));
+  const tbl = el(`<table class="desc-table"><tr><th>${d.categoryLabel}</th><th>Observed (O)</th></tr></table>`);
+  d.categories.forEach(c=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="muted">${c.label}</td>`;
+    const td = document.createElement('td'); td.textContent = c.observed;
+    tr.appendChild(td);
+    tbl.appendChild(tr);
+  });
+  wrap.appendChild(tbl);
+  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('chigof_expected')">Next: Find the Expected Frequencies</button></div>`));
+  card.appendChild(wrap);
+};
+
+RENDER.chigof_expected = (card)=>{
+  const d = state.scenario.data;
+  const N = state.desc.N_CHIGOF;
+  const k = d.categories.length;
+  card.appendChild(el(`<h2>Step 2 &mdash; Expected Frequencies</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">If preferences were perfectly equal, how many would we expect in EACH category?</p>`));
+  wrap.appendChild(formulaRef(`E = N / k`));
+  const formula = el(`<div class="formula">E = ${N} / ${k} = </div>`);
+  const btnrow = el(`<div class="btnrow"></div>`);
+  const eInput = numInput('e_input', N/k, ()=>{
+    state.desc.E_CHIGOF = N/k;
+    const cont = el(`<button class="primary">Continue</button>`);
+    cont.addEventListener('click', ()=> goto('chigof_table'));
+    btnrow.innerHTML=''; btnrow.appendChild(cont);
+  });
+  formula.appendChild(eInput);
+  wrap.appendChild(formula);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+};
+
+RENDER.chigof_table = (card)=>{
+  const d = state.scenario.data;
+  const E = state.desc.E_CHIGOF;
+  card.appendChild(el(`<h2>Step 2 &mdash; Compute &chi;&sup2;</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">Click Calculate to see (O &minus; E)&sup2; / E for each category, then the total.</p>`));
+  wrap.appendChild(formulaRef(`&chi;&sup2; = &Sigma; (O &minus; E)&sup2; / E`));
+
+  const rows = d.categories.map(c=>{
+    const oTd = document.createElement('td'); oTd.textContent = c.observed;
+    const eTd = document.createElement('td'); eTd.textContent = fmt(E);
+    const devTd = document.createElement('td'); devTd.className='muted'; devTd.textContent='—';
+    const sqTd = document.createElement('td'); sqTd.className='muted'; sqTd.textContent='—';
+    return {label:c.label, observed:c.observed, oTd, eTd, devTd, sqTd};
+  });
+  const tbl = document.createElement('table'); tbl.className='desc-table';
+  tbl.insertAdjacentHTML('beforeend', `<tr><th>${d.categoryLabel}</th><th>O</th><th>E</th><th>(O&minus;E)&sup2;</th><th>(O&minus;E)&sup2;/E</th></tr>`);
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    const labelTd = document.createElement('td'); labelTd.className='muted'; labelTd.textContent=r.label;
+    tr.appendChild(labelTd); tr.appendChild(r.oTd); tr.appendChild(r.eTd); tr.appendChild(r.devTd); tr.appendChild(r.sqTd);
+    tbl.appendChild(tr);
+  });
+  wrap.appendChild(tbl);
+
+  const btnrow = el(`<div class="btnrow"></div>`);
+  const calcBtn = el(`<button class="primary">Calculate &chi;&sup2;</button>`);
+  btnrow.appendChild(calcBtn);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+
+  calcBtn.addEventListener('click', ()=>{
+    calcBtn.style.display='none';
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stepGap = reduced ? 0 : 260;
+    const hold = reduced ? 0 : 1000;
+    let chi2 = 0;
+    rows.forEach((r,i)=>{
+      const sq = Math.pow(r.observed - E, 2);
+      const term = sq/E;
+      chi2 += term;
+      const t0 = i*stepGap;
+      setTimeout(()=>{ r.devTd.textContent = `(${r.observed}−${fmt(E)})²`; r.devTd.className='compute-flash'; }, t0);
+      setTimeout(()=>{ r.devTd.textContent = fmt(sq); r.devTd.className=''; }, t0+hold);
+      const t1 = t0 + hold + 200;
+      setTimeout(()=>{ r.sqTd.textContent = `${fmt(sq)}/${fmt(E)}`; r.sqTd.className='compute-flash'; }, t1);
+      setTimeout(()=>{ r.sqTd.textContent = fmt(term); r.sqTd.className=''; }, t1+hold);
+    });
+    const totalTime = rows.length*stepGap + 2*hold + 400;
+    setTimeout(()=>{
+      state.tobt = chi2;
+      state.dfVal = d.categories.length - 1;
+      const result = el(`<div class="result">&chi;&sup2; = ${fmt(chi2)}</div>`);
+      wrap.insertBefore(result, btnrow);
+      const cont = el(`<button class="primary">Continue: Choose the Right Analysis</button>`);
+      cont.addEventListener('click', ()=> goto('decision_q1'));
+      btnrow.innerHTML=''; btnrow.appendChild(cont);
+    }, totalTime);
+  });
+};
+
+/* ==================== CHI-SQUARE: TEST OF INDEPENDENCE ==================== */
+
+RENDER.chiindep_scenario = (card)=>{
+  const sc = state.scenario;
+  card.appendChild(el(`
+    <div>
+      <h2>Step 1 &mdash; The Research Scenario</h2>
+      <p class="center muted small">Lecture ${sc.lecture}</p>
+      <div class="scenario-box">${sc.introHTML}</div>
+      <div class="btnrow"><button class="primary" onclick="goto('chiindep_raw')">See the observed data</button></div>
+    </div>`));
+};
+
+function chiIndepTotals(){
+  const d = state.scenario.data;
+  const rowTotals = d.table.map(row=>row.reduce((a,b)=>a+b,0));
+  const colTotals = d.cols.map((_,ci)=>d.table.reduce((a,row)=>a+row[ci],0));
+  const N = rowTotals.reduce((a,b)=>a+b,0);
+  return {rowTotals, colTotals, N};
+}
+
+RENDER.chiindep_raw = (card)=>{
+  const d = state.scenario.data;
+  const {rowTotals, colTotals, N} = chiIndepTotals();
+  state.desc.N_CHIINDEP = N;
+  const wrap = document.createElement('div');
+  wrap.appendChild(el(`<p class="center muted">N = ${N} voters total.</p>`));
+  const tbl = document.createElement('table'); tbl.className='desc-table';
+  let head = `<tr><th></th>`; d.cols.forEach(c=> head += `<th>${c}</th>`); head += `<th>Row Total</th></tr>`;
+  tbl.insertAdjacentHTML('beforeend', head);
+  d.rows.forEach((rLabel,ri)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="muted">${rLabel}</td>`;
+    d.table[ri].forEach(v=>{ const td=document.createElement('td'); td.textContent=v; tr.appendChild(td); });
+    const totalTd = document.createElement('td'); totalTd.className='muted'; totalTd.textContent=rowTotals[ri];
+    tr.appendChild(totalTd);
+    tbl.appendChild(tr);
+  });
+  const footTr = document.createElement('tr');
+  footTr.innerHTML = `<td class="muted">Column Total</td>`;
+  colTotals.forEach(v=>{ const td=document.createElement('td'); td.className='muted'; td.textContent=v; footTr.appendChild(td); });
+  const grandTd = document.createElement('td'); grandTd.className='muted'; grandTd.textContent=N;
+  footTr.appendChild(grandTd);
+  tbl.appendChild(footTr);
+  wrap.appendChild(tbl);
+  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('chiindep_expected')">Next: Find the Expected Frequencies</button></div>`));
+  card.appendChild(wrap);
+};
+
+RENDER.chiindep_expected = (card)=>{
+  const d = state.scenario.data;
+  const {rowTotals, colTotals, N} = chiIndepTotals();
+  card.appendChild(el(`<h2>Step 2 &mdash; Expected Frequencies</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">For each cell: E = (row total &times; column total) / N. Type each expected value.</p>`));
+  wrap.appendChild(formulaRef(`E = (row total &times; column total) / N`));
+
+  const tbl = document.createElement('table'); tbl.className='desc-table';
+  let head = `<tr><th></th>`; d.cols.forEach(c=> head += `<th>${c} (E)</th>`); head += `</tr>`;
+  tbl.insertAdjacentHTML('beforeend', head);
+  const expected = []; const inputs = [];
+  d.rows.forEach((rLabel,ri)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="muted">${rLabel} (row total = ${rowTotals[ri]})</td>`;
+    const rowExp = [];
+    d.cols.forEach((cLabel,ci)=>{
+      const e = (rowTotals[ri]*colTotals[ci])/N;
+      rowExp.push(e);
+      const td = document.createElement('td');
+      const inp = numInput(`e_${ri}_${ci}`, e, checkAllDone);
+      td.appendChild(inp);
+      inputs.push(inp);
+      tr.appendChild(td);
+    });
+    expected.push(rowExp);
+    tbl.appendChild(tr);
+  });
+  wrap.appendChild(el(`<p class="center muted small">Column totals: ${d.cols.map((c,i)=>`${c} = ${colTotals[i]}`).join(', ')}. N = ${N}.</p>`));
+  wrap.appendChild(tbl);
+  const btnrow = el(`<div class="btnrow"></div>`);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+
+  function checkAllDone(){
+    if(inputs.every(i=>i.classList.contains('filled'))){
+      state.desc.expected_CHIINDEP = expected;
+      const cont = el(`<button class="primary">Continue</button>`);
+      cont.addEventListener('click', ()=> goto('chiindep_table'));
+      btnrow.innerHTML=''; btnrow.appendChild(cont);
+    }
+  }
+};
+
+RENDER.chiindep_table = (card)=>{
+  const d = state.scenario.data;
+  const expected = state.desc.expected_CHIINDEP;
+  card.appendChild(el(`<h2>Step 2 &mdash; Compute &chi;&sup2;</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">Click Calculate to see (O &minus; E)&sup2; / E for each cell, then the total.</p>`));
+  wrap.appendChild(formulaRef(`&chi;&sup2; = &Sigma; (O &minus; E)&sup2; / E`));
+
+  const cells = [];
+  d.rows.forEach((rLabel,ri)=>{
+    d.cols.forEach((cLabel,ci)=>{
+      cells.push({label:`${rLabel} / ${cLabel}`, observed:d.table[ri][ci], expected:expected[ri][ci]});
+    });
+  });
+  const tbl = document.createElement('table'); tbl.className='desc-table';
+  tbl.insertAdjacentHTML('beforeend', `<tr><th>Cell</th><th>O</th><th>E</th><th>(O&minus;E)&sup2;</th><th>(O&minus;E)&sup2;/E</th></tr>`);
+  const rowEls = cells.map(c=>{
+    const tr = document.createElement('tr');
+    const devTd = document.createElement('td'); devTd.className='muted'; devTd.textContent='—';
+    const sqTd = document.createElement('td'); sqTd.className='muted'; sqTd.textContent='—';
+    tr.innerHTML = `<td class="muted">${c.label}</td><td>${c.observed}</td><td>${fmt(c.expected)}</td>`;
+    tr.appendChild(devTd); tr.appendChild(sqTd);
+    tbl.appendChild(tr);
+    return {...c, devTd, sqTd};
+  });
+  wrap.appendChild(tbl);
+
+  const btnrow = el(`<div class="btnrow"></div>`);
+  const calcBtn = el(`<button class="primary">Calculate &chi;&sup2;</button>`);
+  btnrow.appendChild(calcBtn);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+
+  calcBtn.addEventListener('click', ()=>{
+    calcBtn.style.display='none';
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stepGap = reduced ? 0 : 260;
+    const hold = reduced ? 0 : 1000;
+    let chi2 = 0;
+    rowEls.forEach((r,i)=>{
+      const sq = Math.pow(r.observed - r.expected, 2);
+      const term = sq/r.expected;
+      chi2 += term;
+      const t0 = i*stepGap;
+      setTimeout(()=>{ r.devTd.textContent = `(${r.observed}−${fmt(r.expected)})²`; r.devTd.className='compute-flash'; }, t0);
+      setTimeout(()=>{ r.devTd.textContent = fmt(sq); r.devTd.className=''; }, t0+hold);
+      const t1 = t0 + hold + 200;
+      setTimeout(()=>{ r.sqTd.textContent = `${fmt(sq)}/${fmt(r.expected)}`; r.sqTd.className='compute-flash'; }, t1);
+      setTimeout(()=>{ r.sqTd.textContent = fmt(term); r.sqTd.className=''; }, t1+hold);
+    });
+    const totalTime = rowEls.length*stepGap + 2*hold + 400;
+    setTimeout(()=>{
+      state.tobt = chi2;
+      state.dfVal = (d.rows.length-1)*(d.cols.length-1);
+      const result = el(`<div class="result">&chi;&sup2; = ${fmt(chi2)}</div>`);
+      wrap.insertBefore(result, btnrow);
+      const cont = el(`<button class="primary">Continue: Choose the Right Analysis</button>`);
+      cont.addEventListener('click', ()=> goto('decision_q1'));
+      btnrow.innerHTML=''; btnrow.appendChild(cont);
+    }, totalTime);
+  });
+};
+
+/* ==================== SHARED: chi-square critical value & unsigned compare ==================== */
+
+RENDER.chi_critical = (card)=>{
+  const dfVal = state.dfVal;
+  card.appendChild(el(`
+    <div>
+      <h2>Find the Critical Value</h2>
+      <p class="center muted">&alpha; = .05, df = ${dfVal}. &chi;&sup2; tests only have a right-hand tail &mdash; click the correct cell.</p>
+    </div>`));
+  const wrap = el(`<div></div>`);
+  const rows = [ {df:1, val:3.84}, {df:2, val:5.99}, {df:3, val:7.81}, {df:4, val:9.49} ];
+  wrap.appendChild(distributionChart('F', (rows.find(r=>r.df===dfVal) || rows[0]).val, 'χ² crit'));
+  const tbl = el(`<table class="desc-table"><tr><th>df</th><th>&chi;&sup2;-critical (&alpha;=.05)</th></tr></table>`);
+  const fb = el(`<div class="feedback"></div>`);
+  const btnrow = el(`<div class="btnrow"></div>`);
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.df}</td>`;
+    const td = document.createElement('td');
+    const cell = el(`<span class="slot" style="min-width:70px;">${r.val.toFixed(2)}</span>`);
+    cell.addEventListener('click', ()=>{
+      if(r.df === dfVal){
+        mark(true);
+        state.tcrit = r.val;
+        cell.classList.add('filled');
+        fb.className='feedback good';
+        fb.textContent = `Correct — χ²-critical = ${r.val}`;
+        const cont = el(`<button class="primary">Continue</button>`);
+        cont.addEventListener('click', ()=> goto('compare_unsigned'));
+        btnrow.innerHTML=''; btnrow.appendChild(cont);
+      } else {
+        mark(false);
+        cell.classList.add('wrong'); setTimeout(()=>cell.classList.remove('wrong'),300);
+        fb.className='feedback bad';
+        fb.textContent = `That row is for df = ${r.df}. Our df is ${dfVal} — look for that row.`;
+      }
+    });
+    td.appendChild(cell);
+    tr.appendChild(td);
+    tbl.appendChild(tr);
+  });
+  wrap.appendChild(tbl);
+  wrap.appendChild(fb);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+};
+
+RENDER.compare_unsigned = (card)=>{
+  const sym = state.scenario.statSymbol || 'F';
+  const F = state.tobt, Fc = state.tcrit;
+  const maxVal = Math.max(F, Fc) * 1.25;
+  const scale = 340/maxVal;
+  const xF = 40 + F*scale;
+  const xFc = 40 + Fc*scale;
+  card.appendChild(el(`
+    <div>
+      <h2>Step 5 &mdash; Compare &amp; Decide</h2>
+      <svg viewBox="0 0 420 90" width="100%" height="90">
+        <line x1="40" y1="45" x2="400" y2="45" stroke="var(--border)" stroke-width="2"/>
+        <line x1="${xFc}" y1="25" x2="${xFc}" y2="65" stroke="var(--bad)" stroke-width="2"/>
+        <text x="${xFc}" y="20" font-size="11" fill="var(--bad)" text-anchor="middle">${sym} crit</text>
+        <circle cx="${xF}" cy="45" r="6" fill="var(--accent)"/>
+        <text x="${xF}" y="75" font-size="11" fill="var(--accent)" text-anchor="middle">${sym} obt</text>
+      </svg>
+      <p class="center">${sym}<span class="sub">obt</span> = ${fmt(F)} &nbsp;&nbsp; ${sym}<span class="sub">crit</span> = ${fmt(Fc)}</p>
+      <p class="center muted">Like F, ${sym} is never negative and the rejection region is only on the right. If ${sym} obt exceeds ${sym} critical, the result falls in the rejection region.</p>
+    </div>`));
+  const wrap = el(`<div></div>`);
+  const row = el(`<div class="btnrow"></div>`);
+  const fb = el(`<div class="feedback"></div>`);
+  const b1 = el(`<button>Reject H₀</button>`);
+  const b2 = el(`<button>Fail to Reject H₀</button>`);
+  const shouldReject = F > Fc;
+  function choose(val){
+    const correct = (val==='reject') === shouldReject;
+    state.decisionMade = val;
+    if(correct){
+      mark(true);
+      fb.className='feedback good';
+      fb.textContent = shouldReject
+        ? `Right — ${fmt(F)} exceeds ${fmt(Fc)}, so the result falls in the rejection region.`
+        : `Right — ${fmt(F)} does not exceed ${fmt(Fc)}, so we don't have enough evidence.`;
+      const cont = el(`<button class="primary">Continue</button>`);
+      cont.addEventListener('click', ()=> goto('conclusion'));
+      row.innerHTML=''; row.appendChild(cont);
+    } else {
+      mark(false);
+      fb.className='feedback bad';
+      fb.textContent = `Check the number line again — is the blue dot past the red line?`;
+    }
+  }
+  b1.addEventListener('click', ()=> choose('reject'));
+  b2.addEventListener('click', ()=> choose('fail'));
+  row.appendChild(b1); row.appendChild(b2);
+  wrap.appendChild(row); wrap.appendChild(fb);
+  card.appendChild(wrap);
+};
+
 /* ---------- decision tree (scenario-driven) ---------- */
 RENDER.decision_q1 = (card)=>{
   const dec = state.scenario.decision;
@@ -3955,7 +4876,9 @@ RENDER.decision_q1 = (card)=>{
   const opts = [
     {id:'sample', label:'Comparing one sample to a known/population value'},
     {id:'repeated', label:'One group of people, measured across multiple conditions or time points'},
-    {id:'groups', label:'Two or more separate, independent groups of people'}
+    {id:'groups', label:'Two or more separate, independent groups of people'},
+    {id:'relationship', label:'Looking at the relationship between two continuous variables (not group differences)'},
+    {id:'frequencies', label:'Comparing categorical/frequency data (counts, not scores)'}
   ];
   opts.forEach(o=>{
     const b = el(`<button class="choice-btn">${o.label}</button>`);
@@ -3986,6 +4909,12 @@ RENDER.decision_q2 = (card)=>{
   } else if(branch==='repeated'){
     question = 'How many conditions or time points does that group experience?';
     opts = [{id:'2', label:'2 conditions'}, {id:'3+', label:'3 or more conditions'}];
+  } else if(branch==='relationship'){
+    question = 'What is the goal — describing the relationship, or predicting a specific score?';
+    opts = [{id:'describe', label:'Describe/test the strength & direction of the relationship'}, {id:'predict', label:'Predict a specific score from another variable'}];
+  } else if(branch==='frequencies'){
+    question = 'Is this ONE categorical variable checked against an expected pattern, or checking whether TWO categorical variables are related?';
+    opts = [{id:'onevar', label:'One categorical variable vs. an expected pattern'}, {id:'twovar', label:'Whether two categorical variables are related'}];
   } else {
     question = 'Do you know the population standard deviation (&sigma;)?';
     opts = [{id:'yes', label:'Yes, &sigma; is known'}, {id:'no', label:'No, only sample data'}];
@@ -4412,7 +5341,7 @@ RENDER.conclusion = (card)=>{
       <option value="sig">a significant</option>
       <option value="ns">no significant</option>
     </select>
-    difference in ${sc.conclusionSubject},
+    ${sc.conclusionVerb || 'difference in'} ${sc.conclusionSubject},
     ${statNotation} = ${fmt(state.tobt)}, p
     <select id="sel2">
       <option value="">— select —</option>
@@ -4486,7 +5415,7 @@ RENDER.summary = (card)=>{
         <tr><td class="muted">${sym} obtained</td><td>${fmt(state.tobt)}</td></tr>
         <tr><td class="muted">Decision</td><td>${decisionText}</td></tr>
       </table>
-      <p class="center" style="margin-top:18px;">There was ${sigWord} difference in ${sc.conclusionSubject}, ${statNotationHTML} = ${fmt(state.tobt)}, <em>p</em> ${pWord} .05.</p>
+      <p class="center" style="margin-top:18px;">There was ${sigWord} ${sc.conclusionVerb || 'difference in'} ${sc.conclusionSubject}, ${statNotationHTML} = ${fmt(state.tobt)}, <em>p</em> ${pWord} .05.</p>
       <div class="center"><span class="score-tag">${state.correct} / ${total} correct on first try</span></div>
     </div>`));
 
@@ -4495,7 +5424,7 @@ RENDER.summary = (card)=>{
       challenge.active = false;
       const finalLives = challenge.lives;
       const panel = el(`<div class="center">
-        <p style="font-weight:600; margin-top:18px;">Challenge complete &mdash; all six test types cleared with ${finalLives} ${finalLives===1?'life':'lives'} to spare!</p>
+        <p style="font-weight:600; margin-top:18px;">Challenge complete &mdash; all ${SCENARIO_ORDER.length} test types cleared with ${finalLives} ${finalLives===1?'life':'lives'} to spare!</p>
       </div>`);
 
       const boardWrap = el(`<div></div>`);
@@ -4537,7 +5466,7 @@ RENDER.summary = (card)=>{
       card.appendChild(panel);
     } else {
       const btnrow = el(`<div class="btnrow"></div>`);
-      const next = el(`<button class="primary">Next Challenge Test (${challenge.completed}/6 done)</button>`);
+      const next = el(`<button class="primary">Next Challenge Test (${challenge.completed}/${SCENARIO_ORDER.length} done)</button>`);
       next.addEventListener('click', ()=> Tutor.nextChallengeTest());
       btnrow.appendChild(next);
       card.appendChild(btnrow);
