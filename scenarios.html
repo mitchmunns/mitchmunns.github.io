@@ -521,7 +521,7 @@ const SCENARIOS = {
       summaryText:'ρ = 0  /  ρ ≠ 0',
       afterHyp:'alpha'
     },
-    afterAlpha:'r_critical',
+    afterAlpha:'corr_formula',
     statSymbol:'r', hasDf:true,
     statNotation:(s)=>`r(${s.dfVal})`,
     testFullName:'Pearson correlation',
@@ -553,7 +553,7 @@ const SCENARIOS = {
       summaryText:'β = 0  /  β ≠ 0',
       afterHyp:'alpha'
     },
-    afterAlpha:'r_critical',
+    afterAlpha:'reg_sig',
     statSymbol:'r', hasDf:true,
     statNotation:(s)=>`r(${s.dfVal})`,
     testFullName:'Linear regression (slope test)',
@@ -585,7 +585,7 @@ const SCENARIOS = {
       summaryText:'Observed matches expected  /  Observed does not match expected',
       afterHyp:'alpha'
     },
-    afterAlpha:'chi_critical',
+    afterAlpha:'chigof_table',
     hasDf:true,
     statSymbol:'χ²', criticalSigned:false,
     statNotation:(s)=>`χ²(${s.dfVal})`,
@@ -617,7 +617,7 @@ const SCENARIOS = {
       summaryText:'Independent  /  Associated',
       afterHyp:'alpha'
     },
-    afterAlpha:'chi_critical',
+    afterAlpha:'chiindep_table',
     hasDf:true,
     statSymbol:'χ²', criticalSigned:false,
     statNotation:(s)=>`χ²(${s.dfVal})`,
@@ -643,7 +643,7 @@ const STEP_PHASE = {
   ao_grand_mean:3, ao_ss_between:3, ao_ss_within:3, ao_anova_table:3, ao_critical:3, ao_compare:4,
   rm_grand_mean:3, rm_subject_means:3, rm_ss_total:3, rm_ss_treatments:3, rm_ss_subjects:3, rm_ss_error:3, rm_anova_table:3, rm_critical:3,
   corr_scenario:0, corr_raw:0, corr_given:1, corr_formula:3, r_critical:3,
-  reg_scenario:0, reg_raw:0, reg_given:1, reg_slope:1, reg_intercept:1, reg_predict:1,
+  reg_scenario:0, reg_raw:0, reg_given:1, reg_slope:1, reg_intercept:1, reg_predict:1, reg_sig:3,
   chigof_scenario:0, chigof_raw:0, chigof_expected:1, chigof_table:3,
   chiindep_scenario:0, chiindep_raw:0, chiindep_expected:1, chiindep_table:3,
   chi_critical:3, compare_unsigned:4,
@@ -4169,7 +4169,7 @@ RENDER.corr_given = (card)=>{
   const wrap = document.createElement('div');
   wrap.appendChild(el(`<p class="center muted">Your TA has already calculated these values from the raw scores above &mdash; you'll use them to find r.</p>`));
   wrap.appendChild(corrGivenTableEl());
-  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('corr_formula')">Next: Calculate r</button></div>`));
+  wrap.appendChild(el(`<div class="btnrow"><button class="primary" onclick="goto('decision_q1')">Next: Choose the Right Analysis</button></div>`));
   card.appendChild(wrap);
 };
 
@@ -4215,8 +4215,8 @@ RENDER.corr_formula = (card)=>{
       const r = SP/Math.sqrt(SSX*SSY);
       state.tobt = r;
       formula.querySelector('#res').textContent = fmt(r);
-      const cont = el(`<button class="primary">Continue: Choose the Right Analysis</button>`);
-      cont.addEventListener('click', ()=> goto('decision_q1'));
+      const cont = el(`<button class="primary">Continue</button>`);
+      cont.addEventListener('click', ()=> goto('r_critical'));
       btnrow.appendChild(cont);
     }
   }
@@ -4419,10 +4419,8 @@ RENDER.reg_predict = (card)=>{
     node.textContent=fmt(b); node.classList.add('filled'); markUsed(id); mark(true);
     filled.b=true; checkReady();
   });
-  formula.appendChild(aSlot);
-  formula.appendChild(el(`<span> + ( </span>`));
-  formula.appendChild(bSlot);
-  formula.appendChild(el(`<span> )( </span>`));
+  formula.querySelector('#a').replaceWith(aSlot);
+  formula.querySelector('#b').replaceWith(bSlot);
   const xInput = numInput('p_x', predictX, checkReady);
   formula.appendChild(xInput);
   formula.appendChild(el(`<span> ) = </span>`));
@@ -4443,12 +4441,73 @@ RENDER.reg_predict = (card)=>{
     const yhat = a + b*predictX;
     resultSpan.innerHTML = `<strong>${fmt(yhat)}</strong>`;
     calcBtn.style.display='none';
-    const SSY = state.desc.SSY_REG, SP = state.desc.SP_REG, SSX = state.desc.SSX_REG;
-    state.tobt = SP/Math.sqrt(SSX*SSY);
-    const cont = el(`<button class="primary">Continue: Is This Significant?</button>`);
+    const cont = el(`<button class="primary">Continue: Choose the Right Analysis</button>`);
     cont.addEventListener('click', ()=> goto('decision_q1'));
     btnrow.innerHTML=''; btnrow.appendChild(cont);
   });
+};
+
+function regSigTableEl(){
+  const d = state.desc;
+  const wrap = el(`<div class="desc-panel"><div class="desc-caption">Your Sums</div></div>`);
+  const tbl = el(`<table class="desc-table"><tr><th>n</th><th>SS<span class="sub">X</span></th><th>SS<span class="sub">Y</span></th><th>SP</th></tr></table>`);
+  const tr = document.createElement('tr');
+  [['n_REG',d.n_REG],['SSX_REG',d.SSX_REG],['SSY_REG',d.SSY_REG],['SP_REG',d.SP_REG]].forEach(([id,val])=>{
+    const td = document.createElement('td'); td.appendChild(chipEl(id, fmt(val)));
+    tr.appendChild(td);
+  });
+  tbl.appendChild(tr);
+  wrap.appendChild(tbl);
+  return wrap;
+}
+
+RENDER.reg_sig = (card)=>{
+  card.appendChild(el(`<h2>Is the Relationship Significant?</h2>`));
+  const wrap = document.createElement('div');
+  wrap.appendChild(stepGuide(`<p class="center muted">Drag SP into the numerator, then SSX and SSY into the denominator to test the correlation behind the slope.</p>`));
+  wrap.appendChild(regSigTableEl());
+  wrap.appendChild(formulaRef(`r = SP / &radic;(SS<span class="sub">X</span> &times; SS<span class="sub">Y</span>)`));
+
+  const SP = state.desc.SP_REG, SSX = state.desc.SSX_REG, SSY = state.desc.SSY_REG;
+  const filled = {};
+  const formula = el(`<div class="formula">r = <span id="sp"></span> / &radic;( <span id="ssx"></span> &times; <span id="ssy"></span> ) = <span id="res" class="result" style="display:inline; margin:0;"></span></div>`);
+  const spSlot = slotEl('rs_sp','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SP_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SP); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.sp=true; tryCalc();
+  });
+  const ssxSlot = slotEl('rs_ssx','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SSX_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SSX); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.ssx=true; tryCalc();
+  });
+  const ssySlot = slotEl('rs_ssy','?', (id,node)=>{
+    if(node.classList.contains('filled')) return;
+    if(id!=='SSY_REG'){ shake(node); mark(false); return; }
+    node.textContent=fmt(SSY); node.classList.add('filled'); markUsed(id); mark(true);
+    filled.ssy=true; tryCalc();
+  });
+  formula.querySelector('#sp').replaceWith(spSlot);
+  formula.querySelector('#ssx').replaceWith(ssxSlot);
+  formula.querySelector('#ssy').replaceWith(ssySlot);
+  wrap.appendChild(formula);
+
+  const btnrow = el(`<div class="btnrow"></div>`);
+  wrap.appendChild(btnrow);
+  card.appendChild(wrap);
+
+  function tryCalc(){
+    if(filled.sp && filled.ssx && filled.ssy){
+      const r = SP/Math.sqrt(SSX*SSY);
+      state.tobt = r;
+      formula.querySelector('#res').textContent = fmt(r);
+      const cont = el(`<button class="primary">Continue</button>`);
+      cont.addEventListener('click', ()=> goto('r_critical'));
+      btnrow.appendChild(cont);
+    }
+  }
 };
 
 /* ==================== SHARED: r-critical (correlation & regression) ==================== */
@@ -4542,8 +4601,8 @@ RENDER.chigof_expected = (card)=>{
   const btnrow = el(`<div class="btnrow"></div>`);
   const eInput = numInput('e_input', N/k, ()=>{
     state.desc.E_CHIGOF = N/k;
-    const cont = el(`<button class="primary">Continue</button>`);
-    cont.addEventListener('click', ()=> goto('chigof_table'));
+    const cont = el(`<button class="primary">Next: Choose the Right Analysis</button>`);
+    cont.addEventListener('click', ()=> goto('decision_q1'));
     btnrow.innerHTML=''; btnrow.appendChild(cont);
   });
   formula.appendChild(eInput);
@@ -4606,8 +4665,8 @@ RENDER.chigof_table = (card)=>{
       state.dfVal = d.categories.length - 1;
       const result = el(`<div class="result">&chi;&sup2; = ${fmt(chi2)}</div>`);
       wrap.insertBefore(result, btnrow);
-      const cont = el(`<button class="primary">Continue: Choose the Right Analysis</button>`);
-      cont.addEventListener('click', ()=> goto('decision_q1'));
+      const cont = el(`<button class="primary">Continue</button>`);
+      cont.addEventListener('click', ()=> goto('chi_critical'));
       btnrow.innerHTML=''; btnrow.appendChild(cont);
     }, totalTime);
   });
@@ -4699,8 +4758,8 @@ RENDER.chiindep_expected = (card)=>{
   function checkAllDone(){
     if(inputs.every(i=>i.classList.contains('filled'))){
       state.desc.expected_CHIINDEP = expected;
-      const cont = el(`<button class="primary">Continue</button>`);
-      cont.addEventListener('click', ()=> goto('chiindep_table'));
+      const cont = el(`<button class="primary">Next: Choose the Right Analysis</button>`);
+      cont.addEventListener('click', ()=> goto('decision_q1'));
       btnrow.innerHTML=''; btnrow.appendChild(cont);
     }
   }
@@ -4762,8 +4821,8 @@ RENDER.chiindep_table = (card)=>{
       state.dfVal = (d.rows.length-1)*(d.cols.length-1);
       const result = el(`<div class="result">&chi;&sup2; = ${fmt(chi2)}</div>`);
       wrap.insertBefore(result, btnrow);
-      const cont = el(`<button class="primary">Continue: Choose the Right Analysis</button>`);
-      cont.addEventListener('click', ()=> goto('decision_q1'));
+      const cont = el(`<button class="primary">Continue</button>`);
+      cont.addEventListener('click', ()=> goto('chi_critical'));
       btnrow.innerHTML=''; btnrow.appendChild(cont);
     }, totalTime);
   });
