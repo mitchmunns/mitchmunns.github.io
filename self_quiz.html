@@ -210,6 +210,30 @@
     letter-spacing:.05em; color:var(--accent-ink); background:#3a2a0a; border:1px solid var(--line-strong); padding:3px 8px; border-radius:5px;
   }
   .qscore{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted);}
+  /* ---------- question values (harder questions pay more) ---------- */
+  .qvalue{
+    font-family:'Share Tech Mono',monospace; font-size:15.5px; letter-spacing:.5px;
+    color:var(--accent-ink); background:rgba(255,176,0,.10);
+    border:1.4px solid rgba(255,176,0,.45); border-radius:5px; padding:2px 9px;
+    text-shadow:0 0 10px rgba(255,176,0,.35); white-space:nowrap; cursor:help;
+  }
+  .qvalue.provisional{border-style:dashed; opacity:.75;}
+  .earnbar{
+    display:flex; align-items:baseline; gap:11px; flex-wrap:wrap;
+    margin:0 0 12px; padding:10px 16px; border-radius:9px;
+    border:1.4px solid var(--line); background:linear-gradient(180deg,var(--card2),var(--card));
+  }
+  .earnbar-label{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--muted);}
+  .earnbar-amt{
+    font-family:'Share Tech Mono',monospace; font-size:27px; line-height:1; color:var(--accent);
+    text-shadow:0 0 14px rgba(255,176,0,.4); transition:transform .16s ease;
+  }
+  .earnbar-amt.bump{transform:scale(1.17);}
+  .earnbar-sub{font-size:12.5px; color:var(--muted); margin-left:auto;}
+  .bankline{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted); margin:2px 0 0;}
+  .bankline b{color:var(--accent-ink); font-family:'Share Tech Mono',monospace; font-size:15px;}
+  .result-money{font-family:'Share Tech Mono',monospace; font-size:20px; color:var(--accent); margin:2px 0 16px; text-shadow:0 0 12px rgba(255,176,0,.3);}
+  .result-money span{font-family:'Inter',sans-serif; font-size:13.5px; color:var(--muted); text-shadow:none;}
   .qtext{font-family:'Share Tech Mono',monospace; font-size:21px; font-weight:400; line-height:1.4; margin:0 0 20px; color:var(--ink); letter-spacing:.01em;}
   .choices{display:flex; flex-direction:column; gap:9px;}
   .choice{
@@ -480,6 +504,10 @@
   [data-theme="light"] .feedback.good{color:#0F5C46;border-color:#BFE4D6;}
   [data-theme="light"] .feedback.bad{color:#8A3319;border-color:#EFC7B4;}
   [data-theme="light"] .score-big{font-family:'Fraunces',serif;color:var(--ink);text-shadow:none;}
+  [data-theme="light"] .qvalue{background:#F6E4CC;color:#7A4A00;border-color:#D9B483;text-shadow:none;}
+  [data-theme="light"] .earnbar-amt{font-family:'Fraunces',serif;color:var(--ink);text-shadow:none;}
+  [data-theme="light"] .result-money{font-family:'Fraunces',serif;color:var(--ink);text-shadow:none;}
+  [data-theme="light"] .bankline b{color:#7A4A00;}
   [data-theme="light"] .bd-bar-track{background:#EDEFEA;border-color:transparent;}
   [data-theme="light"] .mode-tab{background:transparent;}
   [data-theme="light"] .mode-tab.on{background:#FDF7EE;box-shadow:none;}
@@ -559,6 +587,7 @@
       <button class="btn btn-primary" id="startBtn" disabled>Start quiz</button>
       <span class="picked-count" id="pickedCount">No topics selected yet</span>
     </div>
+    <p class="bankline" id="bankLine"></p>
   </div>
 
   <!-- ================= SCREEN 2: QUIZ ================= -->
@@ -569,9 +598,15 @@
       <div class="ruler-fill" id="rulerFill"></div>
       <div class="ruler-label" id="rulerLabel">1 / 1</div>
     </div>
+    <div class="earnbar">
+      <span class="earnbar-label">Earned</span>
+      <span class="earnbar-amt" id="earnedTotal">$0</span>
+      <span class="earnbar-sub" id="earnedPossible">of $0 played for</span>
+    </div>
     <div class="card quiz-card">
       <div class="qmeta">
         <span class="qtopic" id="qTopicLabel">Topic</span>
+        <span class="qvalue" id="qValueLabel">$400</span>
         <span class="qscore" id="qScoreLabel">Score: 0 / 0</span>
       </div>
       <p class="qtext" id="qText"></p>
@@ -596,6 +631,7 @@
         <div class="score-big" id="resultScore">0%</div>
         <div class="score-label" id="resultLabel">0 of 0 correct</div>
       </div>
+      <div class="result-money" id="resultMoney">$0 <span>earned this round</span></div>
       <div class="breakdown" id="breakdownList"></div>
       <div class="start-row">
         <button class="btn btn-primary" id="retryMissedBtn">Retry missed questions</button>
@@ -1340,6 +1376,9 @@ const state = {
   quizQuestions: [],
   currentIndex: 0,
   score: 0,
+  earned: 0,        // money banked this round
+  possible: 0,      // money played for so far this round
+  currentValue: 0,  // what the question on screen is worth
   answered: false,
   missed: [],
   perTopicResults: {} // topic -> {correct, total}
@@ -1417,6 +1456,108 @@ async function showQuestionDifficulty(questionText){
     el.innerHTML = `<b>${pct}%</b> of students have gotten this question right (${attempts} attempt${attempts===1?'':'s'} so far)`;
     el.classList.remove('hidden');
   }catch(e){ /* supplementary info only -- fail silently */ }
+}
+
+// ---------------- question values (harder questions pay more) ----------------
+// Each question is worth a dollar amount set by how often students actually miss it,
+// read from the same aggregated question_stats view as the difficulty note. A question
+// nobody has attempted yet tells us nothing about difficulty, so until it clears a
+// minimum number of attempts it carries a provisional value based on its type and is
+// flagged as such in the UI.
+// Values come from where a question ranks against the rest of the bank, not from a fixed
+// accuracy cutoff: students get most questions right, so absolute cutoffs pile almost half
+// the bank into the cheapest tier and the money stops saying anything. Ranking keeps a real
+// spread and matches what "harder" actually means here — more students miss it than miss
+// the others. Shares run hardest-first and are deliberately top-light, like a real board.
+const MONEY_LADDER = [
+  {value:1000, share:0.10},
+  {value:800,  share:0.15},
+  {value:600,  share:0.20},
+  {value:400,  share:0.20},
+  {value:200,  share:0.20},
+  {value:100,  share:0.15}
+];
+const MONEY_MIN_ATTEMPTS = 5;
+const MONEY_TYPE_PRIOR = {mc:400, tf:200, numeric:800, short:400};
+// Short-answer items are self-graded and credited automatically, so their recorded accuracy
+// is always 100% and says nothing about difficulty. They keep the type prior instead.
+const MONEY_UNRANKABLE_TYPES = ['short'];
+
+let questionStatsCache = {};
+async function loadQuestionStats(){
+  if(!sbClient) return;
+  try{
+    const {data, error} = await sbClient.from('question_stats').select('question_text, attempts, correct_count');
+    if(error || !data) return;
+    const acc = {};
+    data.forEach(r=>{
+      const cur = acc[r.question_text] || {attempts:0, correct:0};
+      cur.attempts += r.attempts;
+      cur.correct += r.correct_count;
+      acc[r.question_text] = cur;
+    });
+    questionStatsCache = acc;
+    rebuildQuestionValues();
+    updateBankLine();
+  }catch(e){ /* values simply stay provisional */ }
+}
+
+// Rank every question that has enough attempts, hardest first, and deal out the ladder.
+let questionValueMap = {};
+function rebuildQuestionValues(){
+  questionValueMap = {};
+  const ranked = QUESTIONS
+    .filter(q=> !MONEY_UNRANKABLE_TYPES.includes(q.type))
+    .map(q=>{
+      const s = questionStatsCache[q.q];
+      if(!s || s.attempts < MONEY_MIN_ATTEMPTS) return null;
+      return {text:q.q, pct: 100*s.correct/s.attempts};
+    })
+    .filter(Boolean)
+    .sort((a,b)=> a.pct - b.pct);
+  if(!ranked.length) return;
+  let i = 0;
+  MONEY_LADDER.forEach((tier, ti)=>{
+    const isLast = ti === MONEY_LADDER.length-1;
+    const take = isLast ? ranked.length - i : Math.round(ranked.length * tier.share);
+    for(let k=0; k<take && i<ranked.length; k++, i++){
+      questionValueMap[ranked[i].text] = {value:tier.value, live:true, pct:Math.round(ranked[i].pct)};
+    }
+  });
+}
+
+function questionValue(q){
+  return questionValueMap[q.q] || {value: MONEY_TYPE_PRIOR[q.type] || 400, live:false};
+}
+
+function fmtMoney(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
+
+// lifetime winnings, kept next to the per-topic progress in localStorage
+function loadBank(){ const n = parseInt(localStorage.getItem('psy10b-bank'),10); return Number.isFinite(n) ? n : 0; }
+let lifetimeBank = loadBank();
+function addToBank(amount){
+  lifetimeBank += amount;
+  try{ localStorage.setItem('psy10b-bank', String(lifetimeBank)); }catch(e){}
+}
+function updateBankLine(){
+  const el = document.getElementById('bankLine');
+  if(!el) return;
+  el.innerHTML = lifetimeBank > 0
+    ? `Career winnings: <b>${fmtMoney(lifetimeBank)}</b> &mdash; harder questions (the ones more students miss) pay more.`
+    : `Every question is worth money &mdash; the harder it is (the more students miss it), the more it pays.`;
+}
+
+function updateEarnBar(justEarned){
+  const amt = document.getElementById('earnedTotal');
+  if(!amt) return;
+  amt.textContent = fmtMoney(state.earned);
+  document.getElementById('earnedPossible').textContent = 'of '+fmtMoney(state.possible)+' played for';
+  if(justEarned){
+    amt.classList.remove('bump');
+    void amt.offsetWidth; // restart the animation on back-to-back correct answers
+    amt.classList.add('bump');
+    setTimeout(()=> amt.classList.remove('bump'), 200);
+  }
 }
 
 // topic_stats is the same fully-aggregated, non-identifying pattern as question_stats,
@@ -1612,6 +1753,8 @@ function startQuiz(){
   state.quizQuestions = shuffle(pool);
   state.currentIndex = 0;
   state.score = 0;
+  state.earned = 0;
+  state.possible = 0;
   state.missed = [];
   state.perTopicResults = {};
   TOPICS.forEach(t=>{ state.perTopicResults[t.key] = {correct:0,total:0}; });
@@ -1646,6 +1789,16 @@ function showQuestion(){
   document.getElementById('qTopicLabel').textContent = topicName(q.topic);
   document.getElementById('qScoreLabel').textContent = 'Score: '+state.score+' / '+idx;
   document.getElementById('qText').textContent = q.q;
+
+  const val = questionValue(q);
+  state.currentValue = val.value;
+  const valEl = document.getElementById('qValueLabel');
+  valEl.textContent = fmtMoney(val.value);
+  valEl.classList.toggle('provisional', !val.live);
+  valEl.title = val.live
+    ? `${val.pct}% of students get this one right — that ranks it in the ${fmtMoney(val.value)} tier.`
+    : `Provisional value based on question type — it will adjust once ${MONEY_MIN_ATTEMPTS} or more students have tried it.`;
+  updateEarnBar(false);
 
   const body = document.getElementById('qBody');
   body.innerHTML = '';
@@ -1773,6 +1926,12 @@ function checkAnswer(){
 
   state.answered = true;
   if(correct) state.score++;
+  state.possible += state.currentValue;
+  if(correct){
+    state.earned += state.currentValue;
+    addToBank(state.currentValue);
+  }
+  updateEarnBar(correct);
   const tRes = state.perTopicResults[q.topic];
   tRes.total++;
   if(correct) tRes.correct++;
@@ -1794,10 +1953,13 @@ function checkAnswer(){
   const verdict = document.getElementById('fbVerdict');
   const text = document.getElementById('fbText');
   if(q.type==='short'){
-    verdict.textContent = 'Sample answer';
+    verdict.textContent = 'Sample answer  +' + fmtMoney(state.currentValue);
     text.textContent = q.sample + ' ' + q.explain;
   } else {
-    verdict.textContent = correct ? 'Correct' : (q.type==='numeric' ? ('Not quite \u2014 answer: '+q.answer) : 'Not quite');
+    verdict.textContent = correct
+      ? ('Correct  +' + fmtMoney(state.currentValue))
+      : (q.type==='numeric' ? ('Not quite \u2014 answer: '+q.answer) : 'Not quite')
+        + '  (' + fmtMoney(state.currentValue) + ' left on the table)';
     text.textContent = q.explain;
   }
   if(/visualizer/i.test(q.explain) || q.type==='numeric'){
@@ -1826,6 +1988,8 @@ document.getElementById('quitBtn').addEventListener('click', ()=>{
   renderTopicGrid();
   updateTopicUI();
   loadTopicStats();
+  loadQuestionStats();
+  updateBankLine();
 });
 
 // ---------------- SCREEN 3: results ----------------
@@ -1836,6 +2000,8 @@ function showResults(){
   const pct = total>0 ? Math.round(100*state.score/total) : 0;
   document.getElementById('resultScore').textContent = pct+'%';
   document.getElementById('resultLabel').textContent = state.score+' of '+total+' correct';
+  document.getElementById('resultMoney').innerHTML =
+    `${fmtMoney(state.earned)} <span>earned of ${fmtMoney(state.possible)} played for &middot; career total ${fmtMoney(lifetimeBank)}</span>`;
 
   const list = document.getElementById('breakdownList');
   list.innerHTML = '';
@@ -1862,6 +2028,8 @@ document.getElementById('backToTopicsBtn').addEventListener('click', ()=>{
   renderTopicGrid();
   updateTopicUI();
   loadTopicStats();
+  loadQuestionStats();
+  updateBankLine();
 });
 
 document.getElementById('retryMissedBtn').addEventListener('click', ()=>{
@@ -1870,6 +2038,8 @@ document.getElementById('retryMissedBtn').addEventListener('click', ()=>{
   state.quizQuestions = shuffle(state.missed);
   state.currentIndex = 0;
   state.score = 0;
+  state.earned = 0;
+  state.possible = 0;
   state.missed = [];
   TOPICS.forEach(t=>{ state.perTopicResults[t.key] = {correct:0,total:0}; });
   document.getElementById('screenResults').classList.add('hidden');
@@ -2335,6 +2505,8 @@ document.getElementById('pNewBtn').addEventListener('click', newPracticeProblem)
 renderTopicGrid();
 updateTopicUI();
 loadTopicStats();
+updateBankLine();
+loadQuestionStats();
 renderPracticeTypeRow();
 newPracticeProblem();
 
