@@ -666,7 +666,7 @@ function freshState(){
 }
 
 /* ---------- challenge mode ---------- */
-const CHALLENGE_LIVES = 5;
+const CHALLENGE_LIVES = 9;
 const HINT_SKIP_STEPS = new Set(['decision_q1','decision_q2','alpha','compare','conclusion']);
 const STEP_HINT_FALLBACK = {
   hypotheses: 'H&#8320; always states there is no difference or effect; H&#8321; states a difference or effect exists. Match each symbol to its role.'
@@ -681,8 +681,16 @@ function shuffled(arr){
   }
   return a;
 }
+/* Scaffolding fades across the whole run rather than vanishing after two tests.
+   0 = full help, 1 = step guidance gone, 2 = formula reference gone too,
+   3 = wrong-answer hints and the test name withheld as well. */
 function challengeLevel(){
-  return challenge ? Math.min(challenge.completed, 2) : 0;
+  if(!challenge) return 0;
+  const progress = challenge.completed / SCENARIO_ORDER.length;
+  if(progress < 0.3) return 0;
+  if(progress < 0.6) return 1;
+  if(progress < 0.8) return 2;
+  return 3;
 }
 function renderLives(){
   const bar = document.getElementById('livesbar');
@@ -1002,13 +1010,16 @@ const Tutor = {
 function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
 function formulaRef(html){
   stepHint = stepHint || html;
-  if(challengeLevel()>=1) return el(`<div class="formula-ref" style="min-height:0;"></div>`);
+  if(challengeLevel()>=2) return el(`<div class="formula-ref" style="min-height:0;"></div>`);
   return el(`<div class="formula-ref">${html}</div>`);
 }
 function stepGuide(html){
   stepHint = stepHint || html;
   if(challengeLevel()>=1) return el(`<p class="center muted">No extra guidance this round &mdash; use what you've learned so far.</p>`);
-  return el(`<p class="center muted">${html}</p>`);
+  // Call sites supply their own <p class="center muted">…</p>; wrapping it in a
+  // second <p> makes the parser split them into siblings and el()'s firstChild
+  // returns the empty outer one, silently dropping the guidance text.
+  return el(html);
 }
 function fmt(n){ return Number.isInteger(n) ? n : Math.round(n*1000)/1000; }
 function poss(word){ return word.endsWith('s') ? word+"'" : word+"'s"; }
@@ -1244,7 +1255,7 @@ RENDER.menu = (card)=>{
   card.appendChild(el(`
     <div class="scenario-box center" style="margin-top:8px;">
       <p style="margin-bottom:6px;"><strong>Feeling confident?</strong></p>
-      <p class="muted small">Challenge Mode gives you all ${SCENARIO_ORDER.length} test types, one at a time in random order, with 5 lives shared across the whole run. Any wrong answer costs a life &mdash; but reveals a hint. Lose all five and the run ends. Each test you clear gives you less help up front on the next one.</p>
+      <p class="muted small">Challenge Mode gives you all ${SCENARIO_ORDER.length} test types, one at a time in random order, with ${CHALLENGE_LIVES} lives shared across the whole run. Any wrong answer costs a life &mdash; but reveals a hint. Lose all ${CHALLENGE_LIVES} and the run ends. Each test you clear gives you less help up front on the next one.</p>
       <div class="btnrow">
         <button class="primary" onclick="Tutor.startChallenge()">Start Challenge Mode</button>
         <button onclick="goto('leaderboard')">&#127942; View Leaderboard</button>
@@ -4949,7 +4960,7 @@ RENDER.decision_q1 = (card)=>{
       } else {
         mark(false);
         fb.className='feedback bad';
-        fb.textContent = challengeLevel()>=2 ? "Not quite — try again." : dec.q1Hint;
+        fb.textContent = challengeLevel()>=3 ? "Not quite — try again." : dec.q1Hint;
       }
     });
     wrap.appendChild(b);
@@ -4991,7 +5002,7 @@ RENDER.decision_q2 = (card)=>{
       } else {
         mark(false);
         fb.className='feedback bad';
-        fb.textContent = challengeLevel()>=2 ? "Not quite — try again." : dec.q2Hint;
+        fb.textContent = challengeLevel()>=3 ? "Not quite — try again." : dec.q2Hint;
       }
     });
     wrap.appendChild(b);
@@ -5002,7 +5013,7 @@ RENDER.decision_q2 = (card)=>{
 
 RENDER.decision_result = (card)=>{
   const dec = state.scenario.decision;
-  const testNameHTML = challengeLevel()>=2
+  const testNameHTML = challengeLevel()>=3
     ? `<p class="center muted">Correctly identified &mdash; the test name will be revealed once you've run it and reached the summary.</p>`
     : `<div class="result">${dec.testName}</div>`;
   card.appendChild(el(`
