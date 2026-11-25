@@ -286,6 +286,23 @@ a {
 
 .pub-venue em { font-style: italic; }
 
+.pub-toggle {
+  margin-left: 10px;
+  padding: 1px 9px;
+  font: inherit;
+  font-size: 12px;
+  color: rgba(255,255,255,0.95);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pub-toggle:hover {
+  background: rgba(255,255,255,0.12);
+}
+
 .pub-summary {
   font-size: 13px;
   line-height: 1.5;
@@ -409,8 +426,8 @@ async function loadPublications() {
       <li class="pub">
         <div class="pub-title"><a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.title)}</a></div>
         <div class="pub-authors">${boldMyName(p.authors)}</div>
-        <div class="pub-venue">${p.venue ? `<em>${esc(p.venue)}</em>` : ""}${p.venue && p.year ? ", " : ""}${p.year || ""}${p.cited_by ? `<span class="pub-cites">· cited by ${p.cited_by}</span>` : ""}</div>
-        ${p.summary ? `<div class="pub-summary">${esc(p.summary)}</div>` : ""}
+        <div class="pub-venue">${p.venue ? `<em>${esc(p.venue)}</em>` : ""}${p.venue && p.year ? ", " : ""}${p.year || ""}${p.cited_by ? `<span class="pub-cites">· cited by ${p.cited_by}</span>` : ""}${p.summary ? `<button type="button" class="pub-toggle" aria-expanded="false">Description +</button>` : ""}</div>
+        ${p.summary ? `<div class="pub-summary" hidden>${esc(p.summary)}</div>` : ""}
       </li>`).join("");
     const when = data.updated
       ? new Date(data.updated + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
@@ -422,6 +439,17 @@ async function loadPublications() {
 }
 
 loadPublications();
+
+// "Description +" opens the summary under a publication; "Description −" closes it.
+document.getElementById("pub-list").addEventListener("click", e => {
+  const btn = e.target.closest(".pub-toggle");
+  if (!btn) return;
+  const summary = btn.closest(".pub").querySelector(".pub-summary");
+  const open = btn.getAttribute("aria-expanded") !== "true";
+  summary.hidden = !open;
+  btn.setAttribute("aria-expanded", String(open));
+  btn.textContent = open ? "Description −" : "Description +";
+});
 
 /* ---------------- CANVAS ---------------- */
 
