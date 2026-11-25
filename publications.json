@@ -28,7 +28,7 @@
         "M. Hegarty"
       ],
       "url": "https://doi.org/10.1016/j.jenvp.2026.103286",
-      "summary": "We gave 258 people a questionnaire of everyday spatial activities and tested their small-scale spatial abilities (such as mental rotation) and their navigation in desktop and immersive VR. Only video gaming, not everyday navigation experience, related consistently to spatial ability, and more strongly to navigation than to small-scale tasks. Relying on GPS went with poorer navigation."
+      "summary": "N = 258 completed questionnaire of everyday spatial activities. Measured small-scale spatial abilities, like mental rotation, and large-scale spatial ability (navigation) in desktop and immersive VR. Video game experience positively correlated with spatial ability, GPS use negatively correlated with spatial ability."
     },
     {
       "title": "Measurement of spatial ability: Reevaluating and revising measures of mental rotation",
@@ -46,7 +46,7 @@
         "M. Hegarty"
       ],
       "url": "https://doi.org/10.1016/j.intell.2026.102040",
-      "summary": "We tested three common mental rotation tests with item response theory and kept their best items. Combined into one 35-item test, they measure a single mental rotation ability, with no separate ability for 2-D and 3-D figures. The combined test is reliable across a wide range of ability and less affected by strategy and time limits."
+      "summary": "Item response theory analyses of three mental rotation tests (Flags, Mental Rotations Test, Revised PSVT:R). Best items combined into a 35-item hybrid test. One general mental rotation ability, no separate ability for 2-D vs. 3-D figures. Hybrid test reliable across a wide range of ability."
     },
     {
       "title": "Wayfinding strategies in an outdoor environment: Effects of global landmarks, configural knowledge, and spatial anxiety",
@@ -70,7 +70,7 @@
         "M. Hegarty"
       ],
       "url": "https://doi.org/10.1080/13875868.2026.2650274",
-      "summary": "People learned an outdoor route; reminding half of them to notice a distant mountain range did not change how they found their way. People with better knowledge of the layout and less spatial anxiety took more shortcuts, and spatial anxiety explained sex differences in strategy."
+      "summary": "Participants learned an outdoor route; directing attention to a distant mountain range did not change wayfinding strategies. Better configural knowledge and lower spatial anxiety predicted shortcutting. Spatial anxiety mediated sex differences in strategy use."
     },
     {
       "title": "Systematically reviewing the rigour of immersive virtual reality research in STEM education: a deep dive into threats to internal validity",
@@ -104,7 +104,7 @@
         "R. E. Mayer"
       ],
       "url": "https://doi.org/10.1002/jcal.70165",
-      "summary": "We rated 44 studies (2013–2023) comparing immersive VR with conventional teaching in STEM against 13 checks of internal validity. None met all 13, studies averaged about five problems, and missing method details were common."
+      "summary": "Systematic review of 44 studies comparing immersive VR with conventional instruction in STEM (2013–2023), rated on 13 internal validity controls. No study met all 13, average of 5.36 control issues. Missing method details were a major problem."
     },
     {
       "title": "Confounded or controlled? A systematic review of media comparison studies involving immersive virtual reality for STEM education",
@@ -136,7 +136,7 @@
         "R. E. Mayer"
       ],
       "url": "https://doi.org/10.1007/s10648-024-09908-8",
-      "summary": "We reviewed 38 studies (2013–2022) comparing learning in immersive VR with conventional teaching in STEM. Only 26% of comparisons were fully matched on content and teaching method, and 40% had at least one confound, so the real benefit of VR is still unclear."
+      "summary": "Systematic review of 38 studies comparing immersive VR with conventional instruction in STEM (2013–2022). Only 26% of comparisons fully controlled on instructional method and content, 40% had at least one confound."
     },
     {
       "title": "Stress affects navigation strategies in immersive virtual reality",
@@ -168,7 +168,7 @@
         "M. Beyeler"
       ],
       "url": "https://doi.org/10.1038/s41598-024-56048-8",
-      "summary": "Forty-eight people learned a maze in immersive VR, then navigated it under normal or high-stress conditions (blocked paths, darkness, fog, a time limit). Under stress they took fewer shortcuts and navigated less efficiently, especially those with more spatial anxiety."
+      "summary": "N = 48 learned a maze in immersive VR, then navigated under control or high-stress conditions (blocked paths, darkness, fog, time limit). Stress reduced shortcutting and navigation efficiency. Higher trait spatial anxiety related to more stress and less efficient navigation."
     },
     {
       "title": "Visualizing cross-sections of 3D objects: Developing efficient measures using item response theory",
@@ -190,7 +190,7 @@
         "M. Hegarty"
       ],
       "url": "https://doi.org/10.3390/jintelligence11110205",
-      "summary": "We gave three tests of visualizing cross-sections of 3-D objects to 498 people and used item response theory to keep the most informative items. Two tests measured one general cross-sectioning ability, and their best items form an efficient combined test. The geology-based test was too hard, likely because it also required geology knowledge."
+      "summary": "N = 498 completed three tests of visualizing cross-sections of 3-D objects. Two tests measured one general cross-sectioning ability; item response theory used to combine their most informative items into an efficient test. Geology-based test too difficult. No sex or ethnicity differences after controls."
     },
     {
       "title": "Large-scale vs small-scale spatial abilities: Development of a broad spatial activities questionnaire",
@@ -207,7 +207,7 @@
       "doi": null,
       "full_authors": null,
       "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:u5HHmVD_uO8C",
-      "summary": "We built a questionnaire of everyday spatial activities that adds navigation activities to an existing one. Its navigation part related to self-reported sense of direction and childhood wayfinding experience, and showed no sex difference."
+      "summary": "New questionnaire of everyday spatial activities, adding navigation activities to an existing questionnaire. Principal component analysis found five components. Navigation component correlated with sense of direction and childhood wayfinding experience, no sex difference."
     }
   ]
 }
