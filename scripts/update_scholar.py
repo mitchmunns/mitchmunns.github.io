@@ -28,7 +28,9 @@ NOT_JOURNAL = re.compile(
     re.I)
 ONE_PAGE = re.compile(r"\b(\d+)-\1\b")
 # Fix a wrong call by putting a few words of the title here.
-ALWAYS_SHOW = []
+ALWAYS_SHOW = [
+    "development of a broad spatial activities questionnaire",  # CogSci 2022 full paper
+]
 NEVER_SHOW = []
 
 
