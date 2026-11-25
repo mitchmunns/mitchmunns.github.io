@@ -4,67 +4,210 @@
   "publications": [
     {
       "title": "Navigation ability is associated with video game experience and GPS use, but not with other everyday spatial activities",
-      "authors": "ME Munns, M Nelson, C He, A Topete, M Rashidi, ER Chrastil, M Hegarty",
+      "authors": [
+        "M. E. Munns",
+        "M. Nelson",
+        "C. He",
+        "A. Topete",
+        "M. Rashidi",
+        "E. R. Chrastil",
+        "M. Hegarty"
+      ],
       "venue": "Journal of Environmental Psychology, 103286",
       "year": 2026,
       "cited_by": 0,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:WF5omc3nYNoC"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:WF5omc3nYNoC",
+      "doi": "10.1016/j.jenvp.2026.103286",
+      "full_authors": [
+        "M. E. Munns",
+        "M. Nelson",
+        "C. He",
+        "A. Topete",
+        "M. Rashidi",
+        "E. R. Chrastil",
+        "M. Hegarty"
+      ],
+      "url": "https://doi.org/10.1016/j.jenvp.2026.103286",
+      "summary": ""
     },
     {
       "title": "Measurement of spatial ability: Reevaluating and revising measures of mental rotation",
-      "authors": "ME Munns, M Hegarty",
+      "authors": [
+        "M. E. Munns",
+        "M. Hegarty"
+      ],
       "venue": "Intelligence 117, 102040",
       "year": 2026,
       "cited_by": 1,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:W7OEmFMy1HYC"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:W7OEmFMy1HYC",
+      "doi": "10.1016/j.intell.2026.102040",
+      "full_authors": [
+        "M. E. Munns",
+        "M. Hegarty"
+      ],
+      "url": "https://doi.org/10.1016/j.intell.2026.102040",
+      "summary": "We tested three common mental rotation tests with item response theory and kept their best items. Combined into one 35-item test, they measure a single mental rotation ability, with no separate ability for 2-D and 3-D figures. The combined test is reliable across a wide range of ability and less affected by strategy and time limits."
     },
     {
       "title": "Wayfinding strategies in an outdoor environment: Effects of global landmarks, configural knowledge, and spatial anxiety",
-      "authors": "MM Zhou, C He, A Topete, ME Munns, M Hegarty",
+      "authors": [
+        "M. M. Zhou",
+        "C. He",
+        "A. Topete",
+        "M. E. Munns",
+        "M. Hegarty"
+      ],
       "venue": "Spatial Cognition & Computation 26 (2), 128-155",
       "year": 2026,
       "cited_by": 2,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:Y0pCki6q_DkC"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:Y0pCki6q_DkC",
+      "doi": "10.1080/13875868.2026.2650274",
+      "full_authors": [
+        "M. M. Zhou",
+        "C. He",
+        "A. Topete",
+        "M. E. Munns",
+        "M. Hegarty"
+      ],
+      "url": "https://doi.org/10.1080/13875868.2026.2650274",
+      "summary": "People learned an outdoor route; reminding half of them to notice a distant mountain range did not change how they found their way. People with better knowledge of the layout and less spatial anxiety took more shortcuts, and spatial anxiety explained sex differences in strategy."
     },
     {
       "title": "Systematically reviewing the rigour of immersive virtual reality research in STEM education: a deep dive into threats to internal validity",
-      "authors": "AM Martella, AP Lawson, RC Martella, K LaBonte, F Zhao, CY Delgado, ...",
+      "authors": [
+        "A. M. Martella",
+        "A. P. Lawson",
+        "R. C. Martella",
+        "K. LaBonte",
+        "F. Zhao",
+        "C. Y. Delgado",
+        "M. E. Munns",
+        "A. W. LeRoy",
+        "J. A. Gluck",
+        "R. E. Mayer"
+      ],
       "venue": "Journal of Computer Assisted Learning 42 (1), e70165",
       "year": 2026,
       "cited_by": 8,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:Tyk-4Ss8FVUC"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:Tyk-4Ss8FVUC",
+      "doi": "10.1002/jcal.70165",
+      "full_authors": [
+        "A. M. Martella",
+        "A. P. Lawson",
+        "R. C. Martella",
+        "K. LaBonte",
+        "F. Zhao",
+        "C. Y. Delgado",
+        "M. E. Munns",
+        "A. W. LeRoy",
+        "J. A. Gluck",
+        "R. E. Mayer"
+      ],
+      "url": "https://doi.org/10.1002/jcal.70165",
+      "summary": "We rated 44 studies (2013–2023) comparing immersive VR with conventional teaching in STEM against 13 checks of internal validity. None met all 13, studies averaged about five problems, and missing method details were common."
     },
     {
       "title": "Confounded or controlled? A systematic review of media comparison studies involving immersive virtual reality for STEM education",
-      "authors": "AP Lawson, AM Martella, K LaBonte, CY Delgado, F Zhao, JA Gluck, ...",
+      "authors": [
+        "A. P. Lawson",
+        "A. M. Martella",
+        "K. LaBonte",
+        "C. Y. Delgado",
+        "F. Zhao",
+        "J. A. Gluck",
+        "M. E. Munns",
+        "A. Wells LeRoy",
+        "R. E. Mayer"
+      ],
       "venue": "Educational Psychology Review 36 (3), 69",
       "year": 2024,
       "cited_by": 90,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:qjMakFHDy7sC"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:qjMakFHDy7sC",
+      "doi": "10.1007/s10648-024-09908-8",
+      "full_authors": [
+        "A. P. Lawson",
+        "A. M. Martella",
+        "K. LaBonte",
+        "C. Y. Delgado",
+        "F. Zhao",
+        "J. A. Gluck",
+        "M. E. Munns",
+        "A. Wells LeRoy",
+        "R. E. Mayer"
+      ],
+      "url": "https://doi.org/10.1007/s10648-024-09908-8",
+      "summary": "We reviewed 38 studies (2013–2022) comparing learning in immersive VR with conventional teaching in STEM. Only 26% of comparisons were fully matched on content and teaching method, and 40% had at least one confound, so the real benefit of VR is still unclear."
     },
     {
       "title": "Stress affects navigation strategies in immersive virtual reality",
-      "authors": "A Varshney, ME Munns, J Kasowski, M Zhou, C He, ST Grafton, ...",
+      "authors": [
+        "A. Varshney",
+        "M. E. Munns",
+        "J. Kasowski",
+        "M. Zhou",
+        "C. He",
+        "S. T. Grafton",
+        "B. Giesbrecht",
+        "M. Hegarty",
+        "M. Beyeler"
+      ],
       "venue": "Scientific Reports 14 (1), 5949",
       "year": 2024,
       "cited_by": 39,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:9yKSN-GCB0IC"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:9yKSN-GCB0IC",
+      "doi": "10.1038/s41598-024-56048-8",
+      "full_authors": [
+        "A. Varshney",
+        "M. E. Munns",
+        "J. Kasowski",
+        "M. Zhou",
+        "C. He",
+        "S. T. Grafton",
+        "B. Giesbrecht",
+        "M. Hegarty",
+        "M. Beyeler"
+      ],
+      "url": "https://doi.org/10.1038/s41598-024-56048-8",
+      "summary": "Forty-eight people learned a maze in immersive VR, then navigated it under normal or high-stress conditions (blocked paths, darkness, fog, a time limit). Under stress they took fewer shortcuts and navigated less efficiently, especially those with more spatial anxiety."
     },
     {
       "title": "Visualizing cross-sections of 3D objects: Developing efficient measures using item response theory",
-      "authors": "ME Munns, C He, A Topete, M Hegarty",
+      "authors": [
+        "M. E. Munns",
+        "C. He",
+        "A. Topete",
+        "M. Hegarty"
+      ],
       "venue": "Journal of intelligence 11 (11), 205",
       "year": 2023,
       "cited_by": 15,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:2osOgNQ5qMEC"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:2osOgNQ5qMEC",
+      "doi": "10.3390/jintelligence11110205",
+      "full_authors": [
+        "M. E. Munns",
+        "C. He",
+        "A. Topete",
+        "M. Hegarty"
+      ],
+      "url": "https://doi.org/10.3390/jintelligence11110205",
+      "summary": "We gave three tests of visualizing cross-sections of 3-D objects to 498 people and used item response theory to keep the most informative items. Two tests measured one general cross-sectioning ability, and their best items form an efficient combined test. The geology-based test was too hard, likely because it also required geology knowledge."
     },
     {
       "title": "Large-scale vs small-scale spatial abilities: Development of a broad spatial activities questionnaire",
-      "authors": "ME Munns, B Tranquada-Torres, E Chrastil, M Hegarty",
+      "authors": [
+        "M. E. Munns",
+        "B. Tranquada-Torres",
+        "E. Chrastil",
+        "M. Hegarty"
+      ],
       "venue": "Proceedings of the annual meeting of the Cognitive Science Society 44 (44)",
       "year": 2022,
       "cited_by": 11,
-      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:u5HHmVD_uO8C"
+      "scholar_url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:u5HHmVD_uO8C",
+      "doi": null,
+      "full_authors": null,
+      "url": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hJHejacAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=hJHejacAAAAJ:u5HHmVD_uO8C",
+      "summary": "We built a questionnaire of everyday spatial activities that adds navigation activities to an existing one. Its navigation part related to self-reported sense of direction and childhood wayfinding experience, and showed no sex difference."
     }
   ]
 }
