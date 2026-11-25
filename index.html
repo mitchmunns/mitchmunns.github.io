@@ -304,6 +304,48 @@ a {
 
 .pub-venue em { font-style: italic; }
 
+/* RESEARCH */
+.research-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.25);
+}
+
+.research-item:first-child { padding-top: 0; }
+.research-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.research-item h3 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  color: rgba(255,255,255,0.95);
+}
+
+.research-item p {
+  margin: 3px 0 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.research-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 8px 0 2px 0;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 999px;
+}
+
+.card a.pill:hover {
+  text-decoration: none;
+  background: rgba(255,255,255,0.12);
+}
+
 .pub-toggle {
   margin-left: 10px;
   padding: 1px 9px;
@@ -379,6 +421,56 @@ a {
     <p class="intro-line">I study spatial mental representations using individual differences, experiments, and computational models.</p>
   </div>
 </div>
+
+  <div class="section" id="research">
+    <h2>Research</h2>
+    <div class="card research">
+
+      <div class="research-item">
+        <h3>Spatial Ability Taxonomy &amp; Measurement</h3>
+        <p>Evaluating and refining commonly used measures of spatial ability using modern psychometric techniques such as Item Response Theory and Confirmatory Factor Analysis.</p>
+        <div class="research-links">
+          <a class="pill" href="https://doi.org/10.1016/j.intell.2026.102040" target="_blank" rel="noopener noreferrer">Mental Rotation IRT</a>
+          <a class="pill" href="https://doi.org/10.3390/jintelligence11110205" target="_blank" rel="noopener noreferrer">Mental Sectioning IRT</a>
+        </div>
+      </div>
+
+      <div class="research-item">
+        <h3>Online Spatial Tests and Assessments Repository</h3>
+        <p>Collaboration with David Uttal at Northwestern, Nora Newcombe at Temple, Joni Lakin &amp; Stefanie Wind at Alabama.</p>
+        <div class="research-links">
+          <a class="pill" href="https://spatialtesting.org" target="_blank" rel="noopener noreferrer">spatialtesting.org</a>
+        </div>
+        <p>Building an online platform for administering spatial tests and sharing data.</p>
+      </div>
+
+      <div class="research-item">
+        <h3>Sources of Individual Differences in Navigation Ability</h3>
+        <p>Collaboration with Liz Chrastil, Jeff Krichmar, and Craig Stark at UC Irvine.</p>
+        <p>260 participants &ndash; 40 measures of spatial ability, navigation, and general cognitive abilities.</p>
+        <div class="research-links">
+          <a class="pill" href="https://escholarship.org/uc/item/7h71g8q8" target="_blank" rel="noopener noreferrer">Southern California Spatial Activities Questionnaire (SoCalSAQ)</a>
+          <a class="pill" href="https://doi.org/10.1016/j.jenvp.2026.103286" target="_blank" rel="noopener noreferrer">Video games are positively correlated with navigation and spatial ability</a>
+        </div>
+      </div>
+
+      <div class="research-item">
+        <h3>Conceptual Spatial Ability</h3>
+        <p>Novel &lsquo;2D&rsquo; Transitive Inference Reasoning task.</p>
+        <p>Reasoning correlates with spatial ability.</p>
+        <div class="research-links">
+          <a class="pill" href="https://escholarship.org/uc/item/4dk740kh" target="_blank" rel="noopener noreferrer">CogSci 2025 poster</a>
+          <a class="pill" href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=en&amp;user=hJHejacAAAAJ&amp;citation_for_view=hJHejacAAAAJ:u-x6o8ySG0sC" target="_blank" rel="noopener noreferrer">CogSci 2023 poster</a>
+        </div>
+      </div>
+
+      <div class="research-item">
+        <h3>Computational Model of Spatial Representation System</h3>
+        <p>Creating a model of how the brain forms and transforms spatial representations.</p>
+      </div>
+
+    </div>
+  </div>
 
   <div class="section" id="publications">
     <h2>Publications</h2>
