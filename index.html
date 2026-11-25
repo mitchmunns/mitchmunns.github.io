@@ -368,7 +368,6 @@ a {
     <h2>Publications</h2>
     <div class="card">
       <ul class="pub-list" id="pub-list"><li class="pub">Loading publications…</li></ul>
-      <div class="pub-source" id="pub-source"></div>
     </div>
   </div>
 
@@ -415,7 +414,6 @@ function scholarLink() {
 
 async function loadPublications() {
   const list = document.getElementById("pub-list");
-  const source = document.getElementById("pub-source");
   try {
     const resp = await fetch("publications.json", { cache: "no-cache" });
     if (!resp.ok) throw new Error(resp.status);
@@ -429,10 +427,6 @@ async function loadPublications() {
         <div class="pub-venue">${p.venue ? `<em>${esc(p.venue)}</em>` : ""}${p.venue && p.year ? ", " : ""}${p.year || ""}${p.cited_by ? `<span class="pub-cites">· cited by ${p.cited_by}</span>` : ""}${p.summary ? `<button type="button" class="pub-toggle" aria-expanded="false">Description +</button>` : ""}</div>
         ${p.summary ? `<div class="pub-summary" hidden>${esc(p.summary)}</div>` : ""}
       </li>`).join("");
-    const when = data.updated
-      ? new Date(data.updated + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
-      : "";
-    source.innerHTML = `From ${scholarLink()}${when ? ` · updated ${esc(when)}` : ""}`;
   } catch (e) {
     list.innerHTML = `<li class="pub">See my publications on ${scholarLink()}.</li>`;
   }
