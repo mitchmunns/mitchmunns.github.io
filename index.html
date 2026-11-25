@@ -304,6 +304,45 @@ a {
 
 .pub-venue em { font-style: italic; }
 
+/* COLLAPSIBLE SECTIONS (Research, Publications): the heading is a button */
+.fold > summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 4px 14px;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 999px;
+  background: rgba(6, 9, 14, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  user-select: none;
+}
+
+.fold > summary::-webkit-details-marker { display: none; }
+
+.fold > summary h2 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.fold > summary::after {
+  content: "+";
+  font-size: 18px;
+  line-height: 1;
+  color: rgba(255,255,255,0.95);
+}
+
+.fold[open] > summary::after { content: "\2212"; }
+
+.fold > summary:hover { background: rgba(255,255,255,0.12); }
+
+.fold > summary:focus-visible { outline: 2px solid rgba(255,255,255,0.9); outline-offset: 2px; }
+
+.fold:not([open]) + .fold { margin-top: 14px; }
+
 /* RESEARCH */
 .research-item {
   padding: 12px 0;
@@ -422,8 +461,8 @@ a {
   </div>
 </div>
 
-  <div class="section" id="research">
-    <h2>Research</h2>
+  <details class="section fold" id="research">
+    <summary><h2>Research</h2></summary>
     <div class="card research">
 
       <div class="research-item">
@@ -473,14 +512,14 @@ a {
       </div>
 
     </div>
-  </div>
+  </details>
 
-  <div class="section" id="publications">
-    <h2>Publications</h2>
+  <details class="section fold" id="publications">
+    <summary><h2>Publications</h2></summary>
     <div class="card">
       <ul class="pub-list" id="pub-list"><li class="pub">Loading publications…</li></ul>
     </div>
-  </div>
+  </details>
 
   <div class="section">
     <h2>Projects</h2>
