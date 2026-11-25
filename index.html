@@ -82,7 +82,7 @@ body {
 
 .nav a {
   white-space: nowrap;
-  color: rgba(255,255,255,0.75);
+  color: rgba(255,255,255,0.95);
   text-decoration: none;
 }
 
@@ -160,17 +160,18 @@ h1 {
 h2 {
   font-size: 18px;
   margin-bottom: 12px;
-  color: rgba(255,255,255,0.70);
+  color: rgba(255,255,255,0.95);
 }
 
-/* CARDS */
+/* CARDS: white outline only, no fill */
 .card {
-  background: rgba(255,255,255,0.65);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.7);
   padding: 18px;
   border-radius: 12px;
   margin-bottom: 12px;
-
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  color: rgba(255,255,255,0.95);
+  font-size: 14px;
   transition: transform 0.2s ease;
 }
 
@@ -179,8 +180,12 @@ h2 {
 }
 
 a {
-  color: #2a6df4;
+  color: rgba(255,255,255,0.95);
   text-decoration: none;
+}
+
+.card a:hover, .intro a:hover {
+  text-decoration: underline;
 }
 
 .links a {
@@ -208,7 +213,7 @@ a {
 
 .project-subtitle {
   font-size: 13px;
-  color: rgba(0,0,0,0.6);
+  color: rgba(255,255,255,0.95);
   margin-top: 2px;
 }
 /* INTRO BAND: photo, name and three short lines in one narrow strip */
@@ -218,15 +223,15 @@ a {
   gap: 16px;
   padding: 12px 16px;
   border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.14);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.7);
 }
 
 .intro .profile-pic {
   width: 68px;
   height: 68px;
   flex-shrink: 0;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.7);
 }
 
 .intro h1 {
@@ -238,14 +243,14 @@ a {
   margin: 2px 0 0 0;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(255,255,255,0.88);
+  color: rgba(255,255,255,0.95);
 }
 
 .intro-line {
   margin: 2px 0 0 0;
   font-size: 12.5px;
   line-height: 1.4;
-  color: rgba(255,255,255,0.68);
+  color: rgba(255,255,255,0.95);
 }
 
 /* PUBLICATIONS */
@@ -257,7 +262,7 @@ a {
 
 .pub {
   padding: 10px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.25);
 }
 
 .pub:first-child { padding-top: 0; }
@@ -270,7 +275,7 @@ a {
 
 .pub-authors, .pub-venue {
   font-size: 13px;
-  color: rgba(0,0,0,0.68);
+  color: rgba(255,255,255,0.95);
   margin-top: 2px;
 }
 
@@ -278,7 +283,7 @@ a {
 
 .pub-cites {
   font-size: 12px;
-  color: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.95);
   margin-left: 6px;
   white-space: nowrap;
 }
@@ -286,8 +291,10 @@ a {
 .pub-source {
   margin-top: 12px;
   font-size: 12px;
-  color: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.95);
 }
+
+.pub-source a { text-decoration: underline; }
 
 @media (max-width: 600px) {
   .glass { padding: 28px 22px; }
@@ -327,13 +334,6 @@ a {
     <p class="intro-line">I study spatial mental representations using individual differences, experiments, and computational models.</p>
   </div>
 </div>
-
-  <div class="section">
-    <h2>Research Interests</h2>
-    <div class="card">
-      Spatial cognition · Cognitive mapping · Individual differences · VR navigation · Mental representations
-    </div>
-  </div>
 
   <div class="section" id="publications">
     <h2>Publications</h2>
