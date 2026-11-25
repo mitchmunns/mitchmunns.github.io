@@ -371,6 +371,53 @@ a {
   margin: 8px 0 2px 0;
 }
 
+/* CV (built from mm_CV.docx by scripts/cv_to_html.py) */
+.cv-download { margin: 0 0 4px 0; }
+
+.cv-head {
+  margin: 18px 0 6px 0;
+  padding-bottom: 4px;
+  font-size: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.25);
+}
+
+.cv-sub {
+  margin: 10px 0 4px 0;
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.cv-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 4px 0;
+}
+
+.cv-date {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cv-entry {
+  margin: 6px 0;
+  padding-left: 18px;
+  text-indent: -18px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cv a { text-decoration: underline; }
+.cv a.pill { text-decoration: none; }
+
+@media (max-width: 600px) {
+  .cv-row { grid-template-columns: 1fr; }
+  .cv-date { text-align: left; opacity: 0.85; }
+}
+
 .research-project {
   margin: 10px 0 0 0;
   flex-wrap: wrap;
@@ -461,7 +508,6 @@ a {
 <div class="glass">
 
 <div class="nav">
-  <a href="mm_CV.pdf" target="_blank" rel="noopener noreferrer">CV</a>
   <a href="mailto:mitchmunns@ucsb.edu">mitchmunns@ucsb.edu</a>
   <a href="psy10b.html">PSY 10B</a>
 </div>
@@ -541,6 +587,94 @@ a {
     <summary><h2>Publications</h2></summary>
     <div class="card">
       <ul class="pub-list" id="pub-list"><li class="pub">Loading publications…</li></ul>
+    </div>
+  </details>
+
+  <details class="section fold" id="cv">
+    <summary><h2>CV</h2></summary>
+    <div class="card cv">
+      <div class="research-links cv-download">
+        <a class="pill" href="mm_CV.pdf" target="_blank" rel="noopener noreferrer">Download PDF</a>
+      </div>
+<!-- CV-START -->
+<h3 class="cv-head">Education</h3>
+<div class="cv-row"><div><strong>PhD, Psychology, </strong><em>University of California, Santa Barbara,</em></div><div class="cv-date">2022 - 2027 (expected)</div></div>
+<div class="cv-row"><div>Advisor: Dr. Mary Hegarty; Cognition, Perception, and Cognitive Neuroscience<br>Committee Members: Rich Mayer, Jonathan Schooler, Andy Alexander</div><div class="cv-date"></div></div>
+<div class="cv-row"><div><strong>Bachelor of Science, Psychology, </strong><em>Northern Illinois University</em></div><div class="cv-date">2009-2010; 2019-2021</div></div>
+<div class="cv-row"><div>Departmental Honors, Summa Cum Laude</div><div class="cv-date"></div></div>
+<div class="cv-row"><div><strong>Associate of Science, Mathematics</strong><strong>,</strong><strong> </strong><em>Waubonsee Community College</em></div><div class="cv-date">2007-2009</div></div>
+<h3 class="cv-head">Research Experience</h3>
+<div class="cv-row"><div><strong>Consultant </strong><em>Spatial Thinking and Representations Lab,</em><strong> </strong><em>Northwestern University</em><br>Developing an online testing platform for spatial cognition researchers</div><div class="cv-date">2025-present</div></div>
+<div class="cv-row"><div><strong>Lab Manager (Junior Specialist) </strong><em>University of California, Santa Barbara</em><br>Organized data collection efforts involving 10+ research assistants<br>Adapted pencil and paper tests for large-scale online data collection<br>Developed a measure of spatial activity/hobby experience</div><div class="cv-date">2021-2022</div></div>
+<div class="cv-row"><div><strong>Undergraduate Research Assistant </strong><em>Northern Illinois University</em><br>Advisor: Dr. Katja Wiemer, Department of Psychology</div><div class="cv-date">2019-2021</div></div>
+<div class="cv-row"><div><strong>Student Coordinator </strong><em>CREATE Center,</em> <em>Northern Illinois University</em></div><div class="cv-date">2019-2020</div></div>
+<h3 class="cv-head">Teaching Experience</h3>
+<div class="cv-row"><div><strong>Instructor</strong> <em>University of California, Santa Barbara</em></div><div class="cv-date"></div></div>
+<div class="cv-row"><div>Statistical Methods in Psychological &amp; Brain Sciences</div><div class="cv-date">Summer 2026</div></div>
+<div class="cv-row"><div><strong>Teaching Assistant</strong> <em>University of California, Santa Barbara</em></div><div class="cv-date"></div></div>
+<div class="cv-row"><div>Statistical Methods in Psychological &amp; Brain Sciences</div><div class="cv-date">Winter 2026</div></div>
+<div class="cv-row"><div>Research Methods in Psychological &amp; Brain Sciences</div><div class="cv-date">Fall 2025; Spring 2026</div></div>
+<div class="cv-row"><div>Laboratory in Memory and Cognition</div><div class="cv-date">Fall 2024</div></div>
+<div class="cv-row"><div>Applications of Cognitive Psychology</div><div class="cv-date">Fall 2022</div></div>
+<h3 class="cv-head">Fellowships, Grants, and Awards</h3>
+<div class="cv-row"><div>UC President’s Dissertation Year Fellowship ($32,400)</div><div class="cv-date">2026-2027</div></div>
+<div class="cv-row"><div>Psychonomic Society Graduate Travel Award ($750)</div><div class="cv-date">2026</div></div>
+<div class="cv-row"><div>Academic Senate Doctoral Student Travel Grant (UCSB, $1500)</div><div class="cv-date">2026</div></div>
+<div class="cv-row"><div>Graduate Student Association Travel Grant (UCSB, declined)</div><div class="cv-date">2026</div></div>
+<div class="cv-row"><div>Conference Travel Grant  (PBS, UCSB, $1500)</div><div class="cv-date">2023, 2025</div></div>
+<div class="cv-row"><div>Editor’s Choice Award (<em>Journal of Intelligence</em>)</div><div class="cv-date">2023</div></div>
+<div class="cv-row"><div>Best Presentation (NIU Psychology undergraduate conference)</div><div class="cv-date">2021</div></div>
+<div class="cv-row"><div>Outstanding Research/Scholar Award (NIU)</div><div class="cv-date">2021</div></div>
+<div class="cv-row"><div>Woodruff Scholarship (NIU)</div><div class="cv-date">2019-2021</div></div>
+<div class="cv-row"><div>Presidential Scholarship (NIU)</div><div class="cv-date">2009-2010</div></div>
+<div class="cv-row"><div>WYSE Team competition scholarship (Waubonsee Community College)</div><div class="cv-date">2007-2009</div></div>
+<h3 class="cv-head">Publications</h3>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> Nelson, M., He, C., Topete, A., Rashidi, M., Chrastil, E. R., &amp; Hegarty, M. (in press) Everyday Spatial Experience, Video Games, and Their Influence on Spatial Abilities. <em>Journal of Environmental Psychology.</em></p>
+<p class="cv-entry">Hegarty, M., Topete, A., Zhou M., <strong>Munns, M. E.,</strong> Mayer, B. (2027) Learning Spatial Layout in Virtual Environments. In Plass, J., Mayer, R. &amp; Makransky, G. (Eds.), <em>The Handbook of Learning in Virtual Reality</em>. (pp. 463 - 486). MIT Press.</p>
+<p class="cv-entry"><strong>Munns, M. E.</strong>, &amp; Hegarty, M. (2026). Measuring spatial ability: Reevaluating and revising measures of mental rotation. <em>Intelligence. 117, </em>102040. 10.1016/j.intell.2026.102040</p>
+<p class="cv-entry">Zhou, M. M., He, C., Topete, A., <strong>Munns, M. E.,</strong> &amp; Hegarty, M. (2026). Wayfinding strategies in an outdoor environment: Effects of global landmarks, configural knowledge, and spatial anxiety. <em>Spatial Cognition &amp; Computation, 26</em>(2), 128–155. <a href="https://doi.org/10.1080/13875868.2026.2650274" target="_blank" rel="noopener noreferrer">https://doi.org/10.1080/13875868.2026.2650274</a></p>
+<p class="cv-entry">*Martella, A. M., *Lawson, A. P., Martella, R. C., LaBonte, K., Zhao, F., Delgado, C. Y., <strong>Munns, M. E., </strong>Wells LeRoy, A., Gluck, J. A., &amp; Mayer, R. E. (2026). Systematically reviewing the rigour of immersive virtual reality research in STEM education: A deep dive into threats to internal validity. <em>Journal of Computer Assisted Learning, 42</em>(1), e70165. <a href="https://doi.org/10.1002/jcal.70165" target="_blank" rel="noopener noreferrer">https://doi.org/10.1002/jcal.70165</a></p>
+<p class="cv-entry">*Lawson, A. P., *Martella, A. M., LaBonte, K., Delgado, C. Y., Zhao, F., Gluck, J. A., <strong>Munns, M. E.,</strong> Wells LeRoy, A., &amp; Mayer, R. E. (2024). Confounded or controlled? A systematic review of media comparison studies involving immersive virtual reality for STEM education. <em>Educational Psychology Review, 36</em>(3). <a href="https://doi.org/10.1007/s10648-024-09908-8" target="_blank" rel="noopener noreferrer">https://doi.org/10.1007/s10648-024-09908-8</a></p>
+<p class="cv-entry">*Varshney, A., <strong>*</strong><strong>Munns, M. E.,</strong> Kasowski, J., Zhou, M., He, C., Grafton, S. T., Giesbrecht, B., Hegarty, M., &amp; Beyeler, M. (2024). Stress affects navigation strategies in immersive virtual reality. <em>Scientific Reports, 14</em>(1), Article 5949. <a href="https://doi.org/10.1038/s41598-024-56048-8" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41598-024-56048-8</a></p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> He, C., Topete, A., &amp; Hegarty, M. (2023). Measures of visualizing cross sections of 3D objects: An assessment using item response theory. <em>Journal of Intelligence, 11</em>(11), Article 205. <a href="https://doi.org/10.3390/jintelligence11110205" target="_blank" rel="noopener noreferrer">https://doi.org/10.3390/jintelligence11110205</a></p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> Tranquada-Torres, B., Chrastil, E., &amp; Hegarty, M. (2022). Large-scale vs small-scale spatial abilities: Development of a broad spatial activities questionnaire. <em>Proceedings of the Annual Meeting of the Cognitive Science Society, 44</em>. <a href="https://escholarship.org/uc/item/7h71g8q8" target="_blank" rel="noopener noreferrer">https://escholarship.org/uc/item/7h71g8q8</a></p>
+<h4 class="cv-sub">In Preparation</h4>
+<p class="cv-entry"><strong>Munns, M. E.</strong> &amp; Hegarty, M. (in prep). Measures of Spatial Visualization Ability: Are Mental Rotation, Folding, and Sectioning Distinct Abilities?</p>
+<p class="cv-entry"><strong>Munns, M. E.</strong>, Tu, A, He, C., Rashidi, M., Zhou, M., Hatamian, N., Starrett, M. J., Stark, C. E. L., Krichmar, J. L., Chrastil, E. R., &amp; Hegarty, M. (in prep). Individual differences in human navigation ability: Representations, predictors, and strategies.</p>
+<p class="cv-entry"><strong>Munns, M.E. </strong>&amp; Hegarty, M. Evidence from Individual Differences for A Shared Spatial Mental Representation System for Navigation and Reasoning.</p>
+<p class="cv-entry"><strong>Munns, M.E.</strong> &amp; Hegarty, M. Measures of Mental Folding: An Assessment Using Item Response Theory.</p>
+<h3 class="cv-head">Conference Talks</h3>
+<p class="cv-entry"><strong>Munns, M. E.</strong>, Tu, A, He, C., Rashidi, M., Zhou, M., Hatamian, N., Starrett, M. J., Stark, C. E. L., Krichmar, J. L., Chrastil, E. R., Hegarty, M. (2026, August 24-28). <em>Individual differences in human navigation ability: Representations, predictors, and strategies.</em> [Talk given by Mary Hegarty]. International Conference on Spatial Cognition. Glasgow, Scotland.</p>
+<p class="cv-entry"><strong>Munns, M.E.</strong> &amp; Hegarty M. (2025, November 20th – November 23rd). <em>Towards a Taxonomy of Small-Scale Spatial Abilities. </em>[Talk]. Psychonomics Annual Meeting. Denver, CO, US.</p>
+<p class="cv-entry"><strong>Munns, M. E. </strong>&amp; Hegarty, M. (2025, July 12th – July 13th). <em>A Shared Spatial Mental Representation System for Navigation and Reasoning. </em>[Talk]. Visualization in Science and Education - Gordon Research Seminar: Navigating the Multidisciplinary Milieu of Research and Practice, Bates College, Lewiston, ME, US.</p>
+<p class="cv-entry"><strong>Munns, M. E.</strong>, Topete, A., Weisberg, S. M., Newcombe, N. S., &amp; Hegarty, M. (2024, June 25-28). <em>Measuring Individual Differences in Navigation: Refining the Virtual </em><em>SILCton</em><em> task with Item Response Theory.</em> [Symposium Talk]. Spatial Cognition, Dublin, Ireland.<em> </em></p>
+<p class="cv-entry"><strong>Munns, M. E.</strong> &amp; Hegarty, M. (2024, June 25-28). <em>Evaluating Psychometric Properties of Spatial Ability Measures using Item Response Theory: Tests of Mental Rotation, Cross Sectioning, and Paper Folding.</em> [Symposium Talk]. Spatial Cognition, Dublin, Ireland.</p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> &amp; Hegarty, M. <em>The Influence of Everyday Hobbies and Video Games on Different Types of Spatial Abilities.</em> (2023, July 31 – August 2). [Invited Talk] Spatial Reasoning in STEM Education Workshop. University of Canberra, Canberra, ACT, Australia.</p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> Tranquada-Torres, B., Chrastil, E., &amp; Hegarty, M. (2022). <em>Large-Scale vs Small-Scale Spatial Abilities: Development of a Broad Spatial Activities Questionnaire.</em> [Talk]. Annual Meeting of the Cognitive Science Society, Toronto, ON, Canada.</p>
+<h3 class="cv-head">Poster Presentations</h3>
+<p class="cv-entry"><strong>Munns, M. E.</strong>, Tu, A, He, C., Rashidi, M., Zhou, M., Hatamian, N., Starrett, M. J., Stark, C. E. L., Krichmar, J. L., Chrastil, E. R., Hegarty, M. (2026, July 6-10). <em>Individual differences in human navigation ability: Representations, predictors, and strategies.</em> [Poster Presentation]. iNAV, Banff, AB, Canada.</p>
+<p class="cv-entry"><strong>Munns, M.E.</strong> &amp; Hegarty, M. (2025, November 20th – November 23rd). <em>Evidence for Spatial Mental Representations When Solving Verbal Reasoning Problems. </em>[Poster Presentation]. Psychonomics Annual Meeting. Denver, CO, US.</p>
+<p class="cv-entry">Topete, A., <strong>Munns, M. E.,</strong> Weisberg, S. M., &amp; Hegarty, M. (2025, November 19th). <em>Developing and Validating an Efficient Measure of Navigation Ability. </em>[Poster Presentation]. Symposium for Individual Differences in Cognition, Denver, CO, US.</p>
+<p class="cv-entry"><strong>Munns, M. E. </strong>&amp; Hegarty, M. (2025, July 30th – August 2nd). <em>A Shared Spatial Mental Representation System for Navigation and Reasoning. </em>[Poster Presentation]. Annual Meeting of the Cognitive Science Society, San Francisco, CA, US.</p>
+<p class="cv-entry">Zhou, M., Varshney, A., <strong>Munns, M.</strong>, Grafton, S., Giesbrecht, B., Hegarty, M., Beyeler, M. (2024, June 16-21). <em>The Impact of Stress-Induced Training on Resilience to Stress and Navigation Efficiency</em>. [Poster Presentation]. iNAV, Merano, Italy.</p>
+<p class="cv-entry"><strong>Munns, M. E.</strong> &amp; Hegarty, M. (2024, June 16-21). <em>Cognitive maps in reasoning and mental models: a novel measure of abstract spatial representations.</em> [Poster Presentation]. iNAV, Merano, Italy.</p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> Nelson, M. Q., He, C., Chrastil, E. R., Hegarty, M. (2023, November 16-19).<em> Everyday Spatial Experience, Video Games, and Their Influence on Spatial Abilities. </em>[Poster Presentation].<em> </em>Psychonomics Annual Meeting. San Francisco, CA, US.</p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> Hegarty, M. (2023, November 16) <em>Tests of 2-D and 3-D Mental Rotation: An Assessment Using Item Response Theory. </em>[Poster Presentation]. Symposium for Individual Differences in Cognition, San Francisco, CA, US.</p>
+<p class="cv-entry">Hegarty, M., Topete, A., <strong>Munns, M. E.</strong> (2023, September 25th – 27th). <em>Comprehensive Spatial Testing for Selection and Training. </em>[Poster Presentation]. ONR Fall 2023 Technical Review and S&amp;T Expo, Quantico, VA, US.</p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> Stasiak, J. E., Hegarty, M. (2023, July 26th – 29th). <em>Uniform Patterns in Spatial Representations of Abstract Information: Development of a Novel Measure of Abstract Spatial Ability. </em>[Poster Presentation]. Annual Meeting of the Cognitive Science Society, Sydney, NSW, Australia.</p>
+<p class="cv-entry">Varshney, A., <strong>Munns, M. E.,</strong> Kasowski, J., Zhou, M., He, C., Grafton, S., Giesbrecht, B., Hegarty, M., Beyeler, M. (2023, May 19th – 24th). <em>Visual Navigation Under High-Stress Conditions. </em>[Poster Presentation]. Annual Meeting of the Vision Sciences Society, St. Petersburg, FL, US.</p>
+<p class="cv-entry"><strong>Munns, M. E.,</strong> Kunz, A., He, C., Hegarty, M. (2022, November). <em>Measures of Visualizing Cross Sections of 3D Objects: An Assessment Using Item Response Theory. </em>[Poster Presentation]. Psychonomics Annual Meeting, Boston, MA, US.</p>
+<p class="cv-entry"><strong>Munns, M., </strong>&amp; Wiemer, K. (2021, April). <em>Constructive Comprehension: Is Mental Scene Construction Key for Comprehending Abstract Concepts?. </em>(Pilot Study)<em> </em>[Poster Presentation].<em> </em>Conference on Undergraduate Research and Engagement, Dekalb, IL, US.</p>
+<p class="cv-entry"><strong>Munns, M.,</strong> &amp; Wiemer, K. (2020, December). <em>Constructive Comprehension: Is Mental Scene Construction Key for Comprehending Abstract Concepts?.  </em>(Proposal) [Poster Presentation]. Psychology Undergraduate Research Conference, Dekalb, IL, US.</p>
+<p class="cv-entry"><strong>Munns, M.,</strong> &amp; Wiemer, K. (2019, December). <em>Describing the Structure of Abstract Concepts using Feature Generation. </em>[Poster Presentation] Psychology Undergraduate Research Conference, Dekalb, IL, US.</p>
+<h3 class="cv-head">Leadership, Outreach, &amp; Service</h3>
+<div class="cv-row"><div><strong>Ad-hoc Reviewer: </strong>Cognition; Cognitive Research: Principles and Implications; Humanities and Social Sciences Communications; Journal of Cognitive Psychology; Journal of Environmental Psychology; Proceedings of the Annual Meeting of the Cognitive Science Society; Spatial Cognition and Computation</div><div class="cv-date"></div></div>
+<div class="cv-row"><div><strong>Mentorship: </strong>10 undergraduate research assistants, 6 Access Grads mentees</div><div class="cv-date"></div></div>
+<div class="cv-row"><div><strong>Co-President </strong>of Learning Unity for Virtual Reality Research</div><div class="cv-date">2022-present</div></div>
+<div class="cv-row"><div><strong>Planning Committee: </strong>Cognition, Perception, and Cognitive Neuroscience Weekly Seminar<strong> </strong></div><div class="cv-date">2022-2024</div></div>
+<div class="cv-row"><div><strong>Panelist: </strong>Center for Science and Engineering Program (CSEP)<strong> </strong><em>Grad School A–Z Workshop</em></div><div class="cv-date">2025</div></div>
+<div class="cv-row"><div><strong>Software:</strong> Developed a shell program for PsychoPy and Pavlovia and converted into a standalone website that allows users to create custom online testing batteries without requiring coding knowledge</div><div class="cv-date"></div></div>
+<!-- CV-END -->
     </div>
   </details>
 
