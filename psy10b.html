@@ -6,294 +6,243 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+/* Same look as the home page (index.html): glass panel with a rainbow
+   border, solid dark cards with white outlines, white text. */
 
 body {
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  min-height:100vh;
-  background:#0b0f14;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #0b0f14;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(255,255,255,0.95);
 }
 
 #bg {
   position: fixed;
   top: 0;
   left: 0;
-  width:100%;
-  height:100%;
-  z-index:0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }
-  
+
 .wrapper {
   position: relative;
   z-index: 1;
-  width:100%;
-  max-width:900px;
-  padding:40px 20px;
+  width: 100%;
+  max-width: 900px;
+  padding: 40px 20px;
 }
 
 .glass {
-
-  background:rgba(180,210,255,0.08);
-  backdrop-filter:blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border:1px solid rgba(200,220,255,.22);
-
+  position: relative;
+  background: rgba(180, 210, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow:
     0 25px 70px rgba(0,0,0,0.5),
     inset 0 1px 0 rgba(255,255,255,0.2);
-
-  border-radius:20px;
-  padding:40px 50px;
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-sizing: border-box;
 }
 
-h1 {
- color:white;
- margin-top:0;
-}
-
-h2 {
- color:rgba(255,255,255,.5);
- font-size:18px;
-}
-
-.subtitle {
- color:rgba(255,255,255,.7);
-}
-
-.section {
- margin-top:35px;
-}
-
-.card {
-
- background:rgba(255,255,255,.25);
-
- padding:20px;
- border-radius:12px;
-
- margin-bottom:12px;
-
- box-shadow:
- 0 4px 20px rgba(0,0,0,.15);
-
- transition:.2s;
-
-}
-
-.card:hover {
- transform:translateY(-3px);
+/* Rainbow border, as on the home page */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1.5px;
+  background: linear-gradient(135deg,
+    hsl(200, 80%, 65%), hsl(250, 80%, 68%), hsl(300, 75%, 65%),
+    hsl(350, 80%, 65%), hsl(30, 85%, 62%), hsl(60, 80%, 60%),
+    hsl(130, 70%, 58%), hsl(180, 75%, 60%), hsl(200, 80%, 65%));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0.9;
+  pointer-events: none;
 }
 
 a {
- color:#2a6df4;
- text-decoration:none;
-}
-
-.tool-card {
-  display:flex;
-  align-items:center;
-  gap:18px;
-  background:rgba(255,255,255,0.15);
-  padding:18px;
-  border-radius:14px;
-  margin-bottom:12px;
-  backdrop-filter:blur(5px);
-  transition:transform .2s ease;
-}
-
-.tool-card:hover {
-  transform:translateY(-4px);
-}
-
-.tool-icon {
-  width:55px;
-  height:55px;
-  border-radius:12px;
-  object-fit:cover;
-  background:rgba(255,255,255,0.15);
-}
-
-.tool-card strong {
-  font-size:17px;
-}
-
-.tool-card p {
-  margin:6px 0 0 0;
-  color:rgba(0,0,0,0.65);
-  font-size:14px;
-}
-  
-.links a {
- display:block;
- margin:8px 0;
- font-weight:500;
+  color: rgba(255,255,255,0.95);
+  text-decoration: none;
 }
 
 .nav {
- text-align:right;
- margin-bottom:25px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px 20px;
+  font-size: 14px;
+  margin-bottom: 16px;
 }
 
-.nav a {
- color:white;
- margin-left:20px;
+.nav a:hover { text-decoration: underline; }
+
+/* Header band */
+.intro {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.7);
+  background: #0a0e14;
 }
 
+.intro h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+}
 
+.intro p {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.section { margin-top: 32px; }
+
+h2 {
+  font-size: 18px;
+  margin: 0 0 12px 0;
+}
+
+.card {
+  background: #0a0e14;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 12px;
+  padding: 6px 18px;
+  font-size: 14px;
+}
+
+/* One row per tool */
+.tool-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.25);
+}
+
+.tool-card:last-child { border-bottom: none; }
+
+.tool-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.tool-card strong { font-size: 15px; }
+
+.tool-card a:hover strong { text-decoration: underline; }
+
+.tool-card p {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+  .glass { padding: 28px 22px; }
+  .tool-card { align-items: flex-start; }
+}
 </style>
 
 </head>
 
-
 <body>
 
 <canvas id="bg"></canvas>
-  
-<div class="wrapper">
 
+<div class="wrapper">
 <div class="glass">
 
-
 <div class="nav">
-<a href="index.html">Home</a>
+  <a href="index.html">Home</a>
 </div>
 
-
-<h1>PSY 10B: Statistics for Psychology</h1>
-
-<p class="subtitle">
-Intro to stats for psychology
-  
-Useful tools for understanding stats concepts
-</p>
+<div class="intro">
+  <h1>PSY 10B: Statistics for Psychology</h1>
+  <p>Intro to stats for psychology</p>
+  <p>Useful tools for understanding stats concepts</p>
+</div>
 
 <div class="section">
   <h2>Games</h2>
-  <div class="card links">
+  <div class="card">
     <div class="tool-card">
-      <img src="gizmo_logo.png" class="tool-icon">
+      <img src="gizmo_logo.png" class="tool-icon" alt="">
       <div>
-        <a href="10b_game">
-          <strong>In-class Game →</strong>
-        </a>
-        <p>
-          Navigation game for collecting data from ourselves to use in class. Test your spatial ability.
-        </p>
+        <a href="10b_game"><strong>In-class Game →</strong></a>
+        <p>Navigation game for collecting data from ourselves to use in class. Test your spatial ability.</p>
       </div>
     </div>
   </div>
 </div>
-  
+
 <div class="section">
-<h2>Interactive Tools</h2>
-<div class="card links">
+  <h2>Interactive Tools</h2>
+  <div class="card">
 
     <div class="tool-card">
-  
-    <img src="viz_icon.png" class="tool-icon">
-  
-    <div>
-      <a href="visualizer.html">
-        <strong>Visualizer →</strong>
-      </a>
-  
-      <p>
-        Watch animated step-by-step explanations of each part of the statistical testing process.
-      </p>
+      <img src="viz_icon.png" class="tool-icon" alt="">
+      <div>
+        <a href="visualizer.html"><strong>Visualizer →</strong></a>
+        <p>Watch animated step-by-step explanations of each part of the statistical testing process.</p>
+      </div>
     </div>
-  
-  </div>
-  
-  <div class="tool-card">
-  
-    <img src="clt_icon.png" class="tool-icon">
-  
-    <div>
-      <a href="central_limit_theorem_explorer.html">
-        <strong>Central Limit Theorem Explorer →</strong>
-      </a>
-  
-      <p>
-        Explore distributions of sample means and see how sample means become normally distributed as sample size increases.
-      </p>
-    </div>
-  
-  </div>
-
-  <div class="tool-card">
-  
-    <img src="quiz_icon.png" class="tool-icon">
-  
-    <div>
-      <a href="self_quiz.html">
-        <strong>Practice Quiz App →</strong>
-      </a>
-  
-      <p>
-        Test yourself with practice questions from all content areas in weeks 1 and 2. (AI generated, use at own risk).
-      </p>
-    </div>
-  
-  </div>
 
     <div class="tool-card">
-  
-    <img src="quiz_icon.png" class="tool-icon">
-  
-    <div>
-      <a href="scenarios.html">
-        <strong>Practice Analysis Scenarios →</strong>
-      </a>
-  
-      <p>
-        Test yourself with practice research scenarios and carry out guided analyses from weeks 2, 3, and 4. 
-      </p>
+      <img src="clt_icon.png" class="tool-icon" alt="">
+      <div>
+        <a href="central_limit_theorem_explorer.html"><strong>Central Limit Theorem Explorer →</strong></a>
+        <p>Explore distributions of sample means and see how sample means become normally distributed as sample size increases.</p>
+      </div>
     </div>
-  
-  </div>
-  
-  <div class="tool-card">
-  
-    <img src="anova_icon.png" class="tool-icon">
-  
-    <div>
-      <a href="one-way_ANOVA_visualizer.html">
-        <strong>One-Way ANOVA Visualizer →</strong>
-      </a>
-  
-      <p>
-        Visualize between-group and within-group variability and understand the F-ratio. See how an ANOVA table is created with visual references.
-      </p>
-    </div>
-  
-  </div>
-  
-  
-  <div class="tool-card">
-  
-    <img src="realistic_clt_icon.png" class="tool-icon">
-  
-    <div>
-      <a href="clt_realistic.html">
-        <strong>Realistic Central Limit Theorem →</strong>
-      </a>
-  
-      <p>
-        See how the distribution of sample means is affected by realistic, imperfect measurement.
-      </p>
-    </div>
-  
-  </div>
 
+    <div class="tool-card">
+      <img src="quiz_icon.png" class="tool-icon" alt="">
+      <div>
+        <a href="self_quiz.html"><strong>Practice Quiz App →</strong></a>
+        <p>Test yourself with practice questions from all content areas in weeks 1 and 2. (AI generated, use at own risk).</p>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <img src="quiz_icon.png" class="tool-icon" alt="">
+      <div>
+        <a href="scenarios.html"><strong>Practice Analysis Scenarios →</strong></a>
+        <p>Test yourself with practice research scenarios and carry out guided analyses from weeks 2, 3, and 4.</p>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <img src="anova_icon.png" class="tool-icon" alt="">
+      <div>
+        <a href="one-way_ANOVA_visualizer.html"><strong>One-Way ANOVA Visualizer →</strong></a>
+        <p>Visualize between-group and within-group variability and understand the F-ratio. See how an ANOVA table is created with visual references.</p>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <img src="realistic_clt_icon.png" class="tool-icon" alt="">
+      <div>
+        <a href="clt_realistic.html"><strong>Realistic Central Limit Theorem →</strong></a>
+        <p>See how the distribution of sample means is affected by realistic, imperfect measurement.</p>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 </div>
-
-</div>
-
 </div>
 
 <script>
@@ -479,6 +428,6 @@ requestAnimationFrame(draw);
 draw();
 
 </script>
-  
+
 </body>
 </html>

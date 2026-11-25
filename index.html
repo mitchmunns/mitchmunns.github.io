@@ -181,12 +181,9 @@ h2 {
   color: rgba(255,255,255,0.95);
 }
 
-/* CARDS: white outline with a dark fog inside, so the moving
-   background behind the text is dimmed and blurred */
+/* CARDS: white outline with a solid dark background behind the text */
 .card, .intro {
-  background: rgba(6, 9, 14, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: #0a0e14;
 }
 
 .card {
@@ -315,9 +312,7 @@ a {
   padding: 4px 14px;
   border: 1px solid rgba(255,255,255,0.7);
   border-radius: 999px;
-  background: rgba(6, 9, 14, 0.72);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  background: #0a0e14;
   user-select: none;
 }
 
@@ -347,6 +342,38 @@ a {
 .research-item {
   padding: 12px 0;
   border-bottom: 1px solid rgba(255,255,255,0.25);
+}
+
+.research-item { display: flow-root; }
+
+/* small picture from a poster, to the right of the text */
+.research-img {
+  float: right;
+  width: 190px;
+  margin: 2px 0 8px 18px;
+  padding: 5px;
+  background: #fff;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 8px;
+  line-height: 0;
+}
+
+.research-img img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.research-img.logo {
+  width: 110px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+@media (max-width: 600px) {
+  .research-img { float: none; display: block; width: auto; max-width: 300px; margin: 0 0 10px 0; }
+  .research-img.logo { width: 90px; }
 }
 
 .research-item:first-child { padding-top: 0; }
@@ -439,7 +466,7 @@ a {
   font-size: 12px;
   line-height: 1.5;
   border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 999px;
+  border-radius: 14px;
 }
 
 .card a.pill:hover {
@@ -526,6 +553,7 @@ a {
     <div class="card research">
 
       <div class="research-item">
+        <a class="research-img" href="https://doi.org/10.1016/j.intell.2026.102040" target="_blank" rel="noopener noreferrer"><img src="images/research_measurement.jpg" alt="Item characteristic curves for mental rotation test items" loading="lazy"></a>
         <h3>Spatial Ability Taxonomy &amp; Measurement</h3>
         <p>Evaluating and refining commonly used measures of spatial ability using modern psychometric techniques such as Item Response Theory and Confirmatory Factor Analysis.</p>
         <div class="research-links">
@@ -543,6 +571,7 @@ a {
       </div>
 
       <div class="research-item">
+        <a class="research-img logo" href="https://spatialtesting.org" target="_blank" rel="noopener noreferrer"><img src="images/research_repository.png" alt="OSTAR compass logo" loading="lazy"></a>
         <h3>Online Spatial Tests and Assessments Repository</h3>
         <p>Collaboration with David Uttal at Northwestern, Nora Newcombe at Temple, Joni Lakin &amp; Stefanie Wind at Alabama.</p>
         <div class="research-links">
@@ -552,6 +581,7 @@ a {
       </div>
 
       <div class="research-item">
+        <a class="research-img" href="posters/psychonomics2026_navigation.pdf" target="_blank" rel="noopener noreferrer"><img src="images/research_navigation.jpg" alt="Virtual maze and dual solutions navigation tasks with overhead maps" loading="lazy"></a>
         <h3>Sources of Individual Differences in Navigation Ability</h3>
         <p>Collaboration with Liz Chrastil, Jeff Krichmar, and Craig Stark at UC Irvine.</p>
         <p>260 participants &ndash; 40 measures of spatial ability, navigation, and general cognitive abilities.</p>
@@ -563,6 +593,7 @@ a {
       </div>
 
       <div class="research-item">
+        <a class="research-img" href="posters/psychonomics2025_verbal_reasoning.pdf" target="_blank" rel="noopener noreferrer"><img src="images/research_conceptual.jpg" alt="Spatial and abstract relations laid out on the same 2D grid" loading="lazy"></a>
         <h3>Conceptual Spatial Ability</h3>
         <p>Novel &lsquo;2D&rsquo; Transitive Inference Reasoning task.</p>
         <p>Reasoning correlates with spatial ability.</p>
