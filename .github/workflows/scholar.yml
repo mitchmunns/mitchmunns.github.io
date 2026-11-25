@@ -1,0 +1,28 @@
+name: Update publications from Google Scholar
+
+on:
+  schedule:
+    - cron: "17 9 * * 1"   # every Monday, 9:17 UTC
+  workflow_dispatch:        # "Run workflow" button on the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Read Google Scholar
+        run: python scripts/update_scholar.py
+      - name: Save the list if it changed
+        run: |
+          if git diff --quiet -- publications.json; then echo "No change."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add publications.json
+          git commit -m "Update publications from Google Scholar"
+          git push
