@@ -529,13 +529,16 @@ a {
    so colors change within a line and the same kind always looks the same.
    Name, titles and headings white; plain text off-white; people sky blue;
    places and journals teal; numbers and years violet; links lime; buttons
-   that open and close (+/-, Description +) orange. */
+   that open and close (+/-, Description +) orange; roles and degrees gold;
+   kinds of entry ([Talk], [Poster Presentation], in press, in prep) coral. */
 :root {
   --lime:   #c3e88d;  /* links */
-  --orange: #f7a072;  /* open/close buttons, CV subheadings */
+  --orange: #f7a072;  /* open/close buttons */
   --teal:   #7fdbca;  /* places, institutions, journals */
   --sky:    #89ddff;  /* people */
   --violet: #c792ea;  /* numbers, years, dates */
+  --gold:   #ffcb6b;  /* roles, degrees, CV subheadings */
+  --coral:  #ff9cac;  /* kinds of entry: [Talk], (in prep) */
   --body:   #d6deeb;  /* plain text */
   --head:   #ffffff;  /* name, titles, headings */
 }
@@ -546,11 +549,12 @@ body, .card, .intro-line, .intro-role, .research-item p, .pub-summary, .cv-entry
 .pill, .card a.pill { border-color: rgba(195,232,141,0.6); }
 .fold > summary::after { color: var(--orange); }
 .pub-toggle { color: var(--orange); border-color: rgba(247,160,114,0.6); }
-.cv-sub { color: var(--orange); }
+.cv-sub, .cv-row strong, .role { color: var(--gold); }
+.tag { color: var(--coral); }
 .pub-authors, .who { color: var(--sky); }
 .pub-venue, .cv-row em, .place { color: var(--teal); }
 .num, .pub-cites, .cv-date { color: var(--violet); }
-.cv-entry strong, .cv-row strong, .pub-authors strong { color: #ffffff; }
+.cv-entry strong, .pub-authors strong { color: #ffffff; }
 </style>
 </head>
 
@@ -569,7 +573,7 @@ body, .card, .intro-line, .intro-role, .research-item p, .pub-summary, .cv-entry
   <img src="profile.jpg" class="profile-pic" alt="Mitch Munns">
   <div class="intro-text">
     <h1>Mitch Munns</h1>
-    <p class="intro-role">PhD candidate · <span class="who">Hegarty Lab</span> · <span class="place">UCSB</span></p>
+    <p class="intro-role"><span class="role">PhD candidate</span> · <span class="who">Hegarty Lab</span> · <span class="place">UCSB</span></p>
     <p class="intro-line">Cognition, Perception, and Cognitive Neuroscience | Psychological &amp; Brain Sciences | <span class="place">University of California, Santa Barbara</span></p>
     <p class="intro-line">I study spatial mental representations using individual differences, experiments, and computational models.</p>
   </div>
@@ -818,6 +822,12 @@ function colorCvAuthors() {
     const m = el.innerHTML.match(/^([\s\S]*?)(\s*\((?:\d{4}|in press|in prep))/)
            || el.innerHTML.match(/^([\s\S]*?&amp;\s*[A-Z][\w-]+,?\s+(?:[A-Z]\.\s?)+)/);
     if (m && m[1].includes(",")) el.innerHTML = `<span class="who">${m[1]}</span>` + el.innerHTML.slice(m[1].length);
+  });
+  // kinds of entry: [Talk], [Poster Presentation], (in press), (in prep)
+  document.querySelectorAll(".cv-entry").forEach(el => {
+    el.innerHTML = el.innerHTML
+      .replace(/\[[^\]<]+\]/g, m => `<span class="tag">${m}</span>`)
+      .replace(/\((in press|in prep)\)/g, m => `<span class="tag">${m}</span>`);
   });
   // advisors and committee members in the CV rows
   document.querySelectorAll(".cv-row > div:first-child").forEach(el => {
