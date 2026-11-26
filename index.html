@@ -529,16 +529,16 @@ a {
    so colors change within a line and the same kind always looks the same.
    Name, titles and headings white; plain text off-white; people sky blue;
    places and journals teal; numbers and years violet; links lime; buttons
-   that open and close (+/-, Description +) orange; roles and degrees gold;
-   kinds of entry ([Talk], [Poster Presentation], in press, in prep) coral. */
+   that open and close (+/-, Description +) orange; roles and degrees coral;
+   kinds of entry ([Talk], [Poster Presentation], in press, in prep) gold. */
 :root {
   --lime:   #c3e88d;  /* links */
   --orange: #f7a072;  /* open/close buttons */
   --teal:   #7fdbca;  /* places, institutions, journals */
   --sky:    #89ddff;  /* people */
   --violet: #c792ea;  /* numbers, years, dates */
-  --gold:   #ffcb6b;  /* roles, degrees, CV subheadings */
-  --coral:  #ff9cac;  /* kinds of entry: [Talk], (in prep) */
+  --coral:  #ff9cac;  /* roles, degrees, CV subheadings */
+  --gold:   #ffcb6b;  /* kinds of entry: [Talk], (in prep) */
   --body:   #d6deeb;  /* plain text */
   --head:   #ffffff;  /* name, titles, headings */
 }
@@ -549,8 +549,8 @@ body, .card, .intro-line, .intro-role, .research-item p, .pub-summary, .cv-entry
 .pill, .card a.pill { border-color: rgba(195,232,141,0.6); }
 .fold > summary::after { color: var(--orange); }
 .pub-toggle { color: var(--orange); border-color: rgba(247,160,114,0.6); }
-.cv-sub, .cv-row strong, .role { color: var(--gold); }
-.tag { color: var(--coral); }
+.cv-sub, .cv-row strong, .role { color: var(--coral); }
+.tag { color: var(--gold); }
 .pub-authors, .who { color: var(--sky); }
 .pub-venue, .cv-row em, .place { color: var(--teal); }
 .num, .pub-cites, .cv-date { color: var(--violet); }
