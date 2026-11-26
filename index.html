@@ -524,6 +524,29 @@ a {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* COLOR SCHEME: like a dark-mode code editor, each kind of text has its own
+   pale color taken from the rainbow border. */
+:root {
+  --lime:   #c3e88d;  /* name */
+  --teal:   #7fdbca;  /* titles of research items and papers */
+  --sky:    #89ddff;  /* role line, links in the menu */
+  --orange: #f7a072;  /* section buttons, CV headings */
+  --coral:  #ff9cac;  /* link pills */
+  --violet: #c792ea;  /* venues, dates, counts */
+  --gold:   #ffcb6b;  /* Description +, CV subheadings */
+  --body:   #d6deeb;  /* plain text */
+}
+body, .card, .intro-line, .research-item p, .pub-authors, .pub-summary, .cv-entry { color: var(--body); }
+.intro h1 { color: var(--lime); }
+.intro-role, .nav a { color: var(--sky); }
+.fold > summary h2, .fold > summary::after, .cv-head { color: var(--orange); }
+.research-item h3, .pub-title a { color: var(--teal); }
+.pill, .card a.pill { color: var(--coral); border-color: rgba(255,156,172,0.6); }
+.pub-venue, .pub-cites, .cv-date { color: var(--violet); }
+.pub-toggle { color: var(--gold); border-color: rgba(255,203,107,0.6); }
+.cv-sub { color: var(--gold); }
+.cv-entry strong { color: #eef3fb; }
 </style>
 </head>
 

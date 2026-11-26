@@ -153,6 +153,21 @@ h2 {
   .glass { padding: 28px 22px; }
   .tool-card { align-items: flex-start; }
 }
+
+/* COLOR SCHEME, as on the home page: each kind of text has its own pale
+   color taken from the rainbow border. */
+:root {
+  --lime:   #c3e88d;
+  --teal:   #7fdbca;
+  --sky:    #89ddff;
+  --orange: #f7a072;
+  --body:   #d6deeb;
+}
+body, .card, .intro p, .tool-card p { color: var(--body); }
+.intro h1 { color: var(--lime); }
+.intro p:first-of-type, .nav a { color: var(--sky); }
+h2 { color: var(--orange); }
+.tool-card a strong { color: var(--teal); }
 </style>
 
 </head>
