@@ -527,31 +527,30 @@ a {
 
 /* COLOR SCHEME, like a code editor: color shows what KIND of word it is,
    so colors change within a line and the same kind always looks the same.
-   Numbers and years violet, places and journals teal, people sky blue,
-   titles lime, plain text off-white, headings white. */
+   Name, titles and headings white; plain text off-white; people sky blue;
+   places and journals teal; numbers and years violet; links lime; buttons
+   that open and close (+/-, Description +) orange. */
 :root {
-  --lime:   #c3e88d;  /* titles */
+  --lime:   #c3e88d;  /* links */
+  --orange: #f7a072;  /* open/close buttons, CV subheadings */
   --teal:   #7fdbca;  /* places, institutions, journals */
   --sky:    #89ddff;  /* people */
   --violet: #c792ea;  /* numbers, years, dates */
-  --coral:  #ff9cac;  /* link pills */
-  --gold:   #ffcb6b;  /* Description +, CV subheadings */
   --body:   #d6deeb;  /* plain text */
-  --head:   #ffffff;  /* headings */
+  --head:   #ffffff;  /* name, titles, headings */
 }
 body, .card, .intro-line, .intro-role, .research-item p, .pub-summary, .cv-entry { color: var(--body); }
-.intro h1 { color: var(--lime); }
-.nav a { color: var(--sky); }
-.fold > summary h2, .fold > summary::after, .cv-head { color: var(--head); }
-.research-item h3, .pub-title a, .research-project strong { color: var(--lime); }
-.pill, .card a.pill { color: var(--coral); border-color: rgba(255,156,172,0.6); }
-.pub-toggle { color: var(--gold); border-color: rgba(255,203,107,0.6); }
-.cv-sub { color: var(--gold); }
+.intro h1, .fold > summary h2, .cv-head,
+.research-item h3, .pub-title a, .research-project strong { color: var(--head); }
+.nav a, .pill, .card a.pill { color: var(--lime); }
+.pill, .card a.pill { border-color: rgba(195,232,141,0.6); }
+.fold > summary::after { color: var(--orange); }
+.pub-toggle { color: var(--orange); border-color: rgba(247,160,114,0.6); }
+.cv-sub { color: var(--orange); }
 .pub-authors, .who { color: var(--sky); }
 .pub-venue, .cv-row em, .place { color: var(--teal); }
 .num, .pub-cites, .cv-date { color: var(--violet); }
-.cv-entry strong, .cv-row strong { color: #ffffff; }
-.pub-authors strong { color: #ffffff; }
+.cv-entry strong, .cv-row strong, .pub-authors strong { color: #ffffff; }
 </style>
 </head>
 
