@@ -525,28 +525,33 @@ a {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* COLOR SCHEME: like a dark-mode code editor, each kind of text has its own
-   pale color taken from the rainbow border. */
+/* COLOR SCHEME, like a code editor: color shows what KIND of word it is,
+   so colors change within a line and the same kind always looks the same.
+   Numbers and years violet, places and journals teal, people sky blue,
+   titles lime, plain text off-white, headings white. */
 :root {
-  --lime:   #c3e88d;  /* name */
-  --teal:   #7fdbca;  /* titles of research items and papers */
-  --sky:    #89ddff;  /* role line, links in the menu */
-  --orange: #f7a072;  /* section buttons, CV headings */
+  --lime:   #c3e88d;  /* titles */
+  --teal:   #7fdbca;  /* places, institutions, journals */
+  --sky:    #89ddff;  /* people */
+  --violet: #c792ea;  /* numbers, years, dates */
   --coral:  #ff9cac;  /* link pills */
-  --violet: #c792ea;  /* venues, dates, counts */
   --gold:   #ffcb6b;  /* Description +, CV subheadings */
   --body:   #d6deeb;  /* plain text */
+  --head:   #ffffff;  /* headings */
 }
-body, .card, .intro-line, .research-item p, .pub-authors, .pub-summary, .cv-entry { color: var(--body); }
+body, .card, .intro-line, .intro-role, .research-item p, .pub-summary, .cv-entry { color: var(--body); }
 .intro h1 { color: var(--lime); }
-.intro-role, .nav a { color: var(--sky); }
-.fold > summary h2, .fold > summary::after, .cv-head { color: var(--orange); }
-.research-item h3, .pub-title a { color: var(--teal); }
+.nav a { color: var(--sky); }
+.fold > summary h2, .fold > summary::after, .cv-head { color: var(--head); }
+.research-item h3, .pub-title a, .research-project strong { color: var(--lime); }
 .pill, .card a.pill { color: var(--coral); border-color: rgba(255,156,172,0.6); }
-.pub-venue, .pub-cites, .cv-date { color: var(--violet); }
 .pub-toggle { color: var(--gold); border-color: rgba(255,203,107,0.6); }
 .cv-sub { color: var(--gold); }
-.cv-entry strong { color: #eef3fb; }
+.pub-authors, .who { color: var(--sky); }
+.pub-venue, .cv-row em, .place { color: var(--teal); }
+.num, .pub-cites, .cv-date { color: var(--violet); }
+.cv-entry strong, .cv-row strong { color: #ffffff; }
+.pub-authors strong { color: #ffffff; }
 </style>
 </head>
 
@@ -565,8 +570,8 @@ body, .card, .intro-line, .research-item p, .pub-authors, .pub-summary, .cv-entr
   <img src="profile.jpg" class="profile-pic" alt="Mitch Munns">
   <div class="intro-text">
     <h1>Mitch Munns</h1>
-    <p class="intro-role">PhD candidate · Hegarty Lab · UCSB</p>
-    <p class="intro-line">Cognition, Perception, and Cognitive Neuroscience | Psychological &amp; Brain Sciences | University of California, Santa Barbara</p>
+    <p class="intro-role">PhD candidate · <span class="who">Hegarty Lab</span> · <span class="place">UCSB</span></p>
+    <p class="intro-line">Cognition, Perception, and Cognitive Neuroscience | Psychological &amp; Brain Sciences | <span class="place">University of California, Santa Barbara</span></p>
     <p class="intro-line">I study spatial mental representations using individual differences, experiments, and computational models.</p>
   </div>
 </div>
@@ -596,7 +601,7 @@ body, .card, .intro-line, .research-item p, .pub-authors, .pub-summary, .cv-entr
       <div class="research-item">
         <a class="research-img" href="https://spatialtesting.org" target="_blank" rel="noopener noreferrer"><img src="images/research_repository.jpg" alt="The OSTAR home page at spatialtesting.org" loading="lazy"></a>
         <h3>Online Spatial Tests and Assessments Repository</h3>
-        <p>Collaboration with David Uttal at Northwestern, Nora Newcombe at Temple, Joni Lakin &amp; Stefanie Wind at Alabama.</p>
+        <p>Collaboration with <span class="who">David Uttal</span> at <span class="place">Northwestern</span>, <span class="who">Nora Newcombe</span> at <span class="place">Temple</span>, <span class="who">Joni Lakin</span> &amp; <span class="who">Stefanie Wind</span> at <span class="place">Alabama</span>.</p>
         <div class="research-links">
           <a class="pill" href="https://spatialtesting.org" target="_blank" rel="noopener noreferrer">spatialtesting.org</a>
         </div>
@@ -606,7 +611,7 @@ body, .card, .intro-line, .research-item p, .pub-authors, .pub-summary, .cv-entr
       <div class="research-item">
         <a class="research-img" href="posters/psychonomics2026_navigation.pdf" target="_blank" rel="noopener noreferrer"><img src="images/research_navigation.jpg" alt="Virtual maze and dual solutions navigation tasks with overhead maps" loading="lazy"></a>
         <h3>Sources of Individual Differences in Navigation Ability</h3>
-        <p>Collaboration with Liz Chrastil, Jeff Krichmar, and Craig Stark at UC Irvine.</p>
+        <p>Collaboration with <span class="who">Liz Chrastil</span>, <span class="who">Jeff Krichmar</span>, and <span class="who">Craig Stark</span> at <span class="place">UC Irvine</span>.</p>
         <p>260 participants &ndash; 40 measures of spatial ability, navigation, and general cognitive abilities.</p>
         <div class="research-links">
           <a class="pill" href="posters/psychonomics2026_navigation.pdf" target="_blank" rel="noopener noreferrer">Psychonomics 2026 poster</a>
@@ -784,11 +789,48 @@ async function loadPublications() {
         <div class="pub-venue">${p.venue ? `<em>${esc(p.venue)}</em>` : ""}${p.venue && p.year ? ", " : ""}${p.year || ""}${p.cited_by ? `<span class="pub-cites">· cited by ${p.cited_by}</span>` : ""}${p.summary ? `<button type="button" class="pub-toggle" aria-expanded="false">Description +</button>` : ""}</div>
         ${p.summary ? `<div class="pub-summary" hidden>${esc(p.summary)}</div>` : ""}
       </li>`).join("");
+    colorNumbers(list);
   } catch (e) {
     list.innerHTML = `<li class="pub">See my publications on ${scholarLink()}.</li>`;
   }
 }
 
+/* Code-editor colors: every number or year in plain text becomes violet
+   (links are left alone), and the author list at the start of each CV
+   reference becomes sky blue. */
+function colorNumbers(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode: n => (n.parentElement.closest("a, button, .num, .cv-date, .pub-cites, script, style")
+      || !/\d/.test(n.nodeValue)) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const n of nodes) {
+    const span = document.createElement("span");
+    span.innerHTML = esc(n.nodeValue).replace(/(?<![\w./])\d+(?:[.,]\d+)*(?![\w/]|\.\d)/g, m => `<span class="num">${m}</span>`);
+    n.replaceWith(...span.childNodes);
+  }
+}
+
+function colorCvAuthors() {
+  document.querySelectorAll(".cv-entry").forEach(el => {
+    // authors end where the year starts, "(2026)"; if there is no year, they
+    // end at the last author, "& Hegarty, M."
+    const m = el.innerHTML.match(/^([\s\S]*?)(\s*\((?:\d{4}|in press|in prep))/)
+           || el.innerHTML.match(/^([\s\S]*?&amp;\s*[A-Z][\w-]+,?\s+(?:[A-Z]\.\s?)+)/);
+    if (m && m[1].includes(",")) el.innerHTML = `<span class="who">${m[1]}</span>` + el.innerHTML.slice(m[1].length);
+  });
+  // advisors and committee members in the CV rows
+  document.querySelectorAll(".cv-row > div:first-child").forEach(el => {
+    el.innerHTML = el.innerHTML
+      .replace(/(Advisor: )(Dr\. [^;,<]+)/g, '$1<span class="who">$2</span>')
+      .replace(/(Committee Members: )([^<]+)/g, (_, a, names) =>
+        a + names.split(", ").map(n => `<span class="who">${n}</span>`).join(", "));
+  });
+}
+
+colorCvAuthors();
+document.querySelectorAll(".intro, .research, .cv").forEach(colorNumbers);
 loadPublications();
 
 // "Description +" opens the summary under a publication; "Description −" closes it.

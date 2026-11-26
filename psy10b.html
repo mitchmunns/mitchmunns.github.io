@@ -154,20 +154,20 @@ h2 {
   .tool-card { align-items: flex-start; }
 }
 
-/* COLOR SCHEME, as on the home page: each kind of text has its own pale
-   color taken from the rainbow border. */
+/* COLOR SCHEME, as on the home page (like a code editor): titles lime,
+   numbers violet, links in the menu sky blue, headings white, plain text
+   off-white. */
 :root {
   --lime:   #c3e88d;
-  --teal:   #7fdbca;
   --sky:    #89ddff;
-  --orange: #f7a072;
+  --violet: #c792ea;
   --body:   #d6deeb;
 }
 body, .card, .intro p, .tool-card p { color: var(--body); }
-.intro h1 { color: var(--lime); }
-.intro p:first-of-type, .nav a { color: var(--sky); }
-h2 { color: var(--orange); }
-.tool-card a strong { color: var(--teal); }
+.intro h1, .tool-card a strong { color: var(--lime); }
+.nav a { color: var(--sky); }
+h2 { color: #ffffff; }
+.num { color: var(--violet); }
 </style>
 
 </head>
@@ -261,6 +261,10 @@ h2 { color: var(--orange); }
 </div>
 
 <script>
+// Numbers in plain text are violet, as on the home page.
+document.querySelectorAll(".intro h1, .tool-card p").forEach(el => {
+  el.innerHTML = el.innerHTML.replace(/(?<![\w./])\d+(?:[.,]\d+)*(?![\w/]|\.\d)/g, m => `<span class="num">${m}</span>`);
+});
 
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
